@@ -1,0 +1,30 @@
+.trips {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  margin: 60px;
+  gap: 20px;
+}
+.trip:nth-child(odd) {
+  background-color: lightcoral;
+}
+.trip:nth-child(even) {
+  background-color: lightblue;
+}
+.trip {
+  display: flex;
+  flex-direction: column;
+  border-radius: 25px;
+  padding: 20px;
+}
+
+h1 {
+  font-size: 40px;
+  color: white;
+}
+.grow {
+  transition: all 0.2s ease-in-out;
+}
+.grow:hover {
+  transform: scale(1.1);
+}

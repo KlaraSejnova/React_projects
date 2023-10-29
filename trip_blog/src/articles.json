@@ -1,0 +1,6 @@
+[
+  { "id": 1, "name": "Název 1", "text": "Lorem ipsum text pro zacatek" },
+  { "id": 2, "name": "Název 2", "text": "Lorem Ipsum text" },
+  { "id": 3, "name": "Název 3", "text": "Lorem ipsum text pro zacatek" },
+  { "id": 4, "name": "Název 4", "text": "Lorem Ipsum text" }
+]
