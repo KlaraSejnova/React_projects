@@ -12,7 +12,7 @@ function App() {
     <div className="App">
       <header>Rodinné výlety</header>
       <BrowserRouter>
-        <NavbarCompoment />{" "}
+        <NavbarCompoment /> <div className="line"></div>
         <Routes>
           <Route exact path="/" element={<Home />} />
           <Route exact path="/about" element={<About />} />

@@ -2,6 +2,30 @@
   text-align: center;
 }
 header {
-  margin: 60px;
+  margin: 40px;
   font-size: 40px;
+}
+.line {
+  width: 800px;
+  height: 2px;
+  align-items: center;
+  animation: 2s alternate slidein;
+  background-color: black;
+  margin-left: 25%;
+}
+@media only screen and (max-width: 600px) {
+  .line {
+    display: none;
+  }
+}
+@keyframes slidein {
+  from {
+    margin-left: 800px;
+    width: 100%;
+  }
+
+  to {
+    margin-left: 25%;
+    width: 800px;
+  }
 }
