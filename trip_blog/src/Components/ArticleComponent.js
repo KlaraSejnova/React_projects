@@ -1,6 +1,6 @@
-import articles from "./articles.json";
+import articles from "../articles.json";
 import React from "react";
-import "./articles.css";
+import "../Style/articles.css";
 
 function ArticleComponent() {
   const [articleData, setArticleState] = React.useState(articles);

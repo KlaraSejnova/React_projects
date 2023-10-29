@@ -1,5 +1,5 @@
 import { LoremIpsum } from "react-lorem-ipsum";
-import "./about.css";
+import "../Style/about.css";
 function About() {
   return (
     <div className="about">

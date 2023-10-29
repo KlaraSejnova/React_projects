@@ -1,4 +1,4 @@
-import "./navbar.css";
+import "../Style/navbar.css";
 
 import { NavLink } from "react-router-dom";
 function NavbarCompoment() {
