@@ -6,7 +6,11 @@ header {
   font-size: 40px;
 }
 .line {
-  width: 800px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 50%;
   height: 2px;
   align-items: center;
   animation: 2s alternate slidein;
@@ -20,12 +24,12 @@ header {
 }
 @keyframes slidein {
   from {
-    margin-left: 800px;
-    width: 100%;
+    width: 0%;
+    margin-left: 10%;
   }
 
   to {
+    width: 50%;
     margin-left: 25%;
-    width: 800px;
   }
 }
