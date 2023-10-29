@@ -3,7 +3,8 @@
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
   margin: 60px;
-  gap: 20px;
+  gap: 40px;
+  color: white;
 }
 .trip:nth-child(odd) {
   background-color: lightcoral;
