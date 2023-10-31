@@ -1,6 +1,38 @@
 [
-  { "id": 1, "name": "Název 1", "text": "Lorem ipsum text pro zacatek" },
-  { "id": 2, "name": "Název 2", "text": "Lorem Ipsum text" },
-  { "id": 3, "name": "Název 3", "text": "Lorem ipsum text pro zacatek" },
-  { "id": 4, "name": "Název 4", "text": "Lorem Ipsum text" }
+  {
+    "id": 1,
+    "name": "Název 1",
+    "text": "Lorem ipsum text pro zacatek",
+    "src": "surface-455124_1280.jpg"
+  },
+  {
+    "id": 2,
+    "name": "Název 2",
+    "text": "Lorem Ipsum text",
+    "src": "surface-455124_1280.jpg"
+  },
+  {
+    "id": 3,
+    "name": "Název 3",
+    "text": "Lorem ipsum text pro zacatek",
+    "src": "surface-455124_1280.jpg"
+  },
+  {
+    "id": 4,
+    "name": "Název 4",
+    "text": "Lorem Ipsum text",
+    "src": "surface-455124_1280.jpg"
+  },
+  {
+    "id": 5,
+    "name": "Název 5",
+    "text": "Lorem ipsum text pro zacatek",
+    "src": "surface-455124_1280.jpg"
+  },
+  {
+    "id": 6,
+    "name": "Název 6",
+    "text": "Lorem Ipsum text",
+    "src": "surface-455124_1280.jpg"
+  }
 ]

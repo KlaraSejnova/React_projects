@@ -7,10 +7,15 @@ function ArticleComponent() {
   return (
     <div className="trips">
       {articleData &&
-        articleData.map(({ name, id, text }) => (
+        articleData.map(({ name, id, text, src }) => (
           <div className="trip grow ">
-            <h1 id={id}>{name}</h1>
-            <section id={id}>{text}</section>
+            <div className="image">
+              <img className="shadow" src={src} alt={name} />
+            </div>
+            <div className="text">
+              <h1 id={id}>{name}</h1>
+              <section id={id}>{text}</section>
+            </div>
           </div>
         ))}
     </div>
