@@ -1,6 +1,11 @@
+import React, { useState } from "react";
+import "../index.css";
+import clickable from "../functions/clickableFunction";
+
 const DayMondayItem = () => {
+  const [effect, setEffect] = useState(false);
   return (
-    <div className="wrapper flex gap-7 justify-center">
+    <div className="wrapper flex gap-7 justify-center m-10">
       <div className="day flex-initial w-36 ">
         <svg
           fill="#000000"
@@ -15,11 +20,18 @@ const DayMondayItem = () => {
         </svg>
       </div>
       <div
-        className="image flex-initial w-36 rounded-full bg-rose-600"
+        onAnimationEnd={() => setEffect(false)}
+        className={`${
+          effect && "animate-rotateCircle"
+        } image flex-initial w-36 rounded-full bg-rose-600 clickable`}
+        onClick={() => {
+          setEffect(true);
+        }}
+        onAnimationEndCapture={() => setEffect(false)}
         id="mydiv"
       >
         <svg
-          className="svg m-5"
+          className="w-28 pt-8 pl-8"
           version="1.1"
           id="Layer_1"
           x="0px"
@@ -52,11 +64,12 @@ const DayMondayItem = () => {
         </svg>
       </div>
       <div
-        className="image flex-initial w-36 rounded-full bg-rose-600"
+        className="image flex-initial w-36 rounded-full bg-rose-600  clickable"
         id="mydiv2"
+        onClick={clickable}
       >
         <svg
-          className="svg m-5"
+          className="w-28 pt-8 pl-8"
           version="1.1"
           id="Layer_1"
           x="0px"
@@ -112,11 +125,12 @@ const DayMondayItem = () => {
         </svg>
       </div>
       <div
-        className="image flex-initial w-36 rounded-full bg-rose-600"
+        className="image flex-initial w-36 rounded-full bg-rose-600 clickable"
         id="mydiv3"
+        onClick={clickable}
       >
         <svg
-          className="svg m-5"
+          className="w-28 pt-8 pl-8"
           viewBox="0 0 24 24"
           xmlns="http://www.w3.org/2000/svg"
         >
@@ -125,11 +139,12 @@ const DayMondayItem = () => {
         </svg>
       </div>
       <div
-        className="image flex-initial w-36 rounded-full bg-rose-600"
+        className="image flex-initial w-36 rounded-full bg-rose-600 clickable"
         id="mydiv4"
+        onClick={clickable}
       >
         <svg
-          className="svg m-4"
+          className="w-28 pt-8 pl-8"
           version="1.1"
           id="Capa_1"
           x="0px"
