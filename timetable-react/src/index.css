@@ -18,3 +18,15 @@
     background-color: green;
   }
 }
+@keyframes animate {
+  0% {
+    transform: rotateX(0deg);
+    opacity: 50%;
+    background-color: red;
+  }
+  100% {
+    transform: rotateX(360deg);
+    opacity: 100%;
+    background-color: green;
+  }
+}

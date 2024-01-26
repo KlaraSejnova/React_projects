@@ -1,4 +1,3 @@
-import "../functions/clickableFunction.js";
 import clickable from "../functions/clickableFunction.js";
 import "../index.css";
 

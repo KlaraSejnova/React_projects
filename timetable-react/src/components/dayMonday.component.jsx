@@ -20,14 +20,10 @@ const DayMondayItem = () => {
         </svg>
       </div>
       <div
-        onAnimationEnd={() => setEffect(false)}
-        className={`${
-          effect && "animate-rotateCircle"
-        } image flex-initial w-36 rounded-full bg-rose-600 clickable`}
-        onClick={() => {
-          setEffect(true);
-        }}
-        onAnimationEndCapture={() => setEffect(false)}
+        className={
+          "image flex-initial w-36 rounded-full bg-rose-600  clickable"
+        }
+        onClick={clickable}
         id="mydiv"
       >
         <svg
