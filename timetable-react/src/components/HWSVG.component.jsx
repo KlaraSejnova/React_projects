@@ -4,7 +4,7 @@ import "../index.css";
 const HWSVGItem = () => {
   return (
     <div
-      className="w-28 rounded-full bg-rose-600 opacity-50 clickable"
+      className="w-28 rounded-full bg-rose-600 opacity-50 cursor-pointer clickable"
       id="mydiv4"
       onClick={clickable}
     >
