@@ -13,6 +13,13 @@ module.exports = {
         rotateCircle: "rotateCircle 1s linear",
       },
     },
+    screens: {
+      phone: "823px",
+      tablet2: "899px",
+      tablet: "981px",
+      laptop: "1140px",
+      desktop: "1322px",
+    },
   },
   plugins: [],
 };

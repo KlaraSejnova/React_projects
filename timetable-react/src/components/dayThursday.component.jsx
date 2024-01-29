@@ -11,6 +11,7 @@ const DayThursdayItem = () => {
       <div className="day flex-initial w-24 ">
         <svg
           fill="#000000"
+          className="w-24 mt-2"
           viewBox="-0.02 0 122.88 122.88"
           version="1.1"
           id="Layer_1"

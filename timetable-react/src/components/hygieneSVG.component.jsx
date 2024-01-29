@@ -3,7 +3,7 @@ import "../index.css";
 const HygieneSVGItem = () => {
   return (
     <div
-      className="image flex-initial w-28 rounded-full bg-rose-600  opacity-50 clickable"
+      className="w-28 rounded-full bg-rose-600  opacity-50 cursor-pointer clickable"
       id="mydiv2"
       onClick={clickable}
     >
