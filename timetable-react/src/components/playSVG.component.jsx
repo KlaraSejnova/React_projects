@@ -5,13 +5,13 @@ const PlaySVGItem = () => {
   return (
     <div
       className={
-        "image flex-initial w-36 rounded-full bg-rose-600 opacity-50  clickable"
+        "image flex-initial w-28 rounded-full bg-rose-600 opacity-50  clickable"
       }
       onClick={clickable}
       id="mydiv"
     >
       <svg
-        className="w-28 pt-8 pl-8"
+        className="w-16 m-6"
         version="1.1"
         id="Layer_1"
         x="0px"

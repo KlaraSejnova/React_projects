@@ -8,7 +8,7 @@ import HygieneSVGItem from "./hygieneSVG.component";
 const DayMondayItem = () => {
   return (
     <div className="wrapper flex gap-7 justify-center">
-      <div className="day flex-initial w-36 ">
+      <div className="day flex-initial w-24 ">
         <svg
           fill="#000000"
           viewBox="-0.02 0 122.88 122.88"

@@ -4,12 +4,12 @@ import "../index.css";
 const SchoolSVGItem = () => {
   return (
     <div
-      className="image flex-initial w-36 rounded-full bg-rose-600 opacity-50 clickable"
+      className="image flex-initial w-28 rounded-full bg-rose-600 opacity-50 clickable"
       id="mydiv3"
       onClick={clickable}
     >
       <svg
-        className="w-28 pt-8 pl-8"
+        className="w-16 m-6"
         viewBox="0 0 24 24"
         xmlns="http://www.w3.org/2000/svg"
       >
