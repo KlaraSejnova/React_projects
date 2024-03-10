@@ -1,0 +1,19 @@
+.container-navigation {
+  display: none;
+  align-self: flex-end;
+  opacity: 0;
+}
+.container-navigation .navigation-items {
+  padding-bottom: 20px;
+}
+
+.show {
+  display: block;
+  animation: opacityNav 5s forwards;
+}
+
+@keyframes opacityNav {
+  100% {
+    opacity: 1;
+  }
+}/*# sourceMappingURL=navigation.css.map */
