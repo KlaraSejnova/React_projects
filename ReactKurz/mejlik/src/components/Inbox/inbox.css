@@ -1,0 +1,17 @@
+.rect {
+  border-radius: 25px;
+  border: none;
+  background-color: green;
+  padding: 10px;
+}
+
+.rect-no {
+  border-radius: 25px;
+  border: none;
+  background-color: red;
+  padding: 10px;
+}
+
+.message {
+  text-align: center;
+}

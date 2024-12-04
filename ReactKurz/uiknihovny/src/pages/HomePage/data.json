@@ -1,0 +1,23 @@
+[
+  {
+    "title": "Title 1",
+    "content": "obsah1",
+    "id": 1,
+    "src": "https://picsum.photos/400/200",
+    "link": "Cesta do pekel"
+  },
+  {
+    "title": "Title 2",
+    "content": "obsah2",
+    "id": 2,
+    "src": "https://picsum.photos/400/200",
+    "link": "Cesta do růžové zahrady"
+  },
+  {
+    "title": "Title 3",
+    "content": "obsah3",
+    "id": 3,
+    "src": "https://picsum.photos/400/200",
+    "link": "Cesta na kopec"
+  }
+]

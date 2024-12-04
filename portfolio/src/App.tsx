@@ -1,6 +1,6 @@
 import "./App.css";
 import Navigation from "./components/navigation";
-import startPortfolio from "./function/startPorfolioFunciton";
+import startPortfolio from "./function/startPorfolioFunction";
 
 function App() {
   return (

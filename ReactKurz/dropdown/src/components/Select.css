@@ -1,0 +1,7 @@
+ul {
+  color: black;
+}
+.selected {
+  background-color: blue;
+  color: white;
+}
