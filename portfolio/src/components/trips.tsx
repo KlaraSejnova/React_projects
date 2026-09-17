@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import "./trips.css";
 import { supabase } from "../lib/supabase";
+import { User } from "@supabase/supabase-js";
 
 type Trip = {
   id: number;
@@ -35,6 +36,38 @@ const Trips = ({ onBack }: { onBack: () => void }) => {
   const [mapUrl, setMapUrl] = useState(defaultMapUrl);
   const [editingTripId, setEditingTripId] = useState<number | null>(null);
   const [formError, setFormError] = useState("");
+  const [user, setUser] = useState<User | null>(null);
+  const [authLoading, setAuthLoading] = useState(Boolean(supabase));
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [authError, setAuthError] = useState("");
+
+  useEffect(() => {
+    if (!supabase) {
+      return;
+    }
+
+    const client = supabase;
+    let mounted = true;
+    const loadSession = async () => {
+      const { data } = await client.auth.getSession();
+      if (mounted) {
+        setUser(data.session?.user ?? null);
+        setAuthLoading(false);
+      }
+    };
+
+    loadSession();
+    const { data } = client.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      setAuthLoading(false);
+    });
+
+    return () => {
+      mounted = false;
+      data.subscription.unsubscribe();
+    };
+  }, []);
 
   useEffect(() => {
     const loadTrips = async () => {
@@ -63,65 +96,47 @@ const Trips = ({ onBack }: { onBack: () => void }) => {
 
   const addTrip = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!supabase || !user) {
+      return;
+    }
     setFormError("");
-    const submittedTrip = {
-      id: editingTripId ?? Date.now(),
-      title,
-      date,
-      description,
-      mapUrl,
-    };
     let updatedTrips: Trip[];
 
-    if (supabase) {
-      const result =
-        editingTripId === null
-          ? await supabase
-              .from("trips")
-              .insert({
-                title,
-                date: date || null,
-                description,
-                map_url: mapUrl,
-              })
-              .select()
-              .single()
-          : await supabase
-              .from("trips")
-              .update({
-                title,
-                date: date || null,
-                description,
-                map_url: mapUrl,
-              })
-              .eq("id", editingTripId)
-              .select()
-              .single();
+    const result =
+      editingTripId === null
+        ? await supabase
+            .from("trips")
+            .insert({
+              title,
+              date: date || null,
+              description,
+              map_url: mapUrl,
+            })
+            .select()
+            .single()
+        : await supabase
+            .from("trips")
+            .update({
+              title,
+              date: date || null,
+              description,
+              map_url: mapUrl,
+            })
+            .eq("id", editingTripId)
+            .select()
+            .single();
 
-      if (result.error) {
-        setFormError(`Výlet se nepodařilo uložit: ${result.error.message}`);
-        return;
-      }
-
-      updatedTrips =
-        editingTripId === null
-          ? [toTrip(result.data), ...trips]
-          : trips.map((trip) =>
-              trip.id === editingTripId ? toTrip(result.data) : trip,
-            );
-    } else {
-      updatedTrips =
-        editingTripId === null
-          ? [submittedTrip, ...trips]
-          : trips.map((trip) =>
-              trip.id === editingTripId ? submittedTrip : trip,
-            );
-      // Bez backendu ukládáme data pouze lokálně v tomto prohlížeči.
-      window.localStorage.setItem(
-        tripsStorageKey,
-        JSON.stringify(updatedTrips),
-      );
+    if (result.error) {
+      setFormError(`Výlet se nepodařilo uložit: ${result.error.message}`);
+      return;
     }
+
+    updatedTrips =
+      editingTripId === null
+        ? [toTrip(result.data), ...trips]
+        : trips.map((trip) =>
+            trip.id === editingTripId ? toTrip(result.data) : trip,
+          );
 
     setTrips(updatedTrips);
     setTitle("");
@@ -149,33 +164,52 @@ const Trips = ({ onBack }: { onBack: () => void }) => {
   };
 
   const deleteTrip = async (tripId: number) => {
+    if (!supabase || !user) {
+      return;
+    }
+
     if (!window.confirm("Opravdu chceš tento výlet smazat?")) {
       return;
     }
 
     setFormError("");
 
-    if (supabase) {
-      const { error } = await supabase.from("trips").delete().eq("id", tripId);
-      if (error) {
-        setFormError(`Výlet se nepodařilo smazat: ${error.message}`);
-        return;
-      }
+    const { error } = await supabase.from("trips").delete().eq("id", tripId);
+    if (error) {
+      setFormError(`Výlet se nepodařilo smazat: ${error.message}`);
+      return;
     }
 
     const updatedTrips = trips.filter((trip) => trip.id !== tripId);
     setTrips(updatedTrips);
 
-    if (!supabase) {
-      window.localStorage.setItem(
-        tripsStorageKey,
-        JSON.stringify(updatedTrips),
-      );
-    }
-
     if (editingTripId === tripId) {
       cancelEdit();
     }
+  };
+
+  const signIn = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!supabase) {
+      return;
+    }
+
+    setAuthError("");
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) {
+      setAuthError("Přihlášení se nepodařilo. Zkontroluj e-mail a heslo.");
+      return;
+    }
+
+    setPassword("");
+  };
+
+  const signOut = async () => {
+    await supabase?.auth.signOut();
+    cancelEdit();
   };
 
   return (
@@ -193,13 +227,53 @@ const Trips = ({ onBack }: { onBack: () => void }) => {
       </div>
       <h2>Moje výlety</h2>
       <p className="trips-intro">Přidej místo, na které nechceš zapomenout.</p>
+      {!authLoading && !user && supabase && (
+        <form className="auth-form" onSubmit={signIn}>
+          <h3>Přihlášení pro správu výletů</h3>
+          <label>
+            E-mail
+            <input
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              required
+            />
+          </label>
+          <label>
+            Heslo
+            <input
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              required
+            />
+          </label>
+          {authError && <p className="form-error" role="alert">{authError}</p>}
+          <button className="submit-button" type="submit">
+            Přihlásit se
+          </button>
+        </form>
+      )}
+      {!authLoading && !user && !supabase && (
+        <p className="form-error" role="alert">
+          Správa výletů je dostupná po připojení Supabase.
+        </p>
+      )}
       {formError && (
         <p className="form-error" role="alert">
           {formError}
         </p>
       )}
 
-      <form className="trip-form" onSubmit={addTrip}>
+      {user && (
+        <>
+          <div className="auth-status">
+            <span>Přihlášeno: {user.email}</span>
+            <button className="cancel-button" type="button" onClick={signOut}>
+              Odhlásit se
+            </button>
+          </div>
+          <form className="trip-form" onSubmit={addTrip}>
         <label>
           Název výletu
           <input
@@ -251,7 +325,9 @@ const Trips = ({ onBack }: { onBack: () => void }) => {
             </button>
           )}
         </div>
-      </form>
+          </form>
+        </>
+      )}
 
       <section className="trip-list" aria-live="polite">
         {trips.map((trip) => (
@@ -275,22 +351,24 @@ const Trips = ({ onBack }: { onBack: () => void }) => {
                 </a>{" "}
               </div>
             )}
-            <div className="trip-actions">
-              <button
-                className="edit-button"
-                type="button"
-                onClick={() => editTrip(trip)}
-              >
-                Upravit výlet
-              </button>
-              <button
-                className="delete-button"
-                type="button"
-                onClick={() => deleteTrip(trip.id)}
-              >
-                Smazat výlet
-              </button>
-            </div>
+            {user && (
+              <div className="trip-actions">
+                <button
+                  className="edit-button"
+                  type="button"
+                  onClick={() => editTrip(trip)}
+                >
+                  Upravit výlet
+                </button>
+                <button
+                  className="delete-button"
+                  type="button"
+                  onClick={() => deleteTrip(trip.id)}
+                >
+                  Smazat výlet
+                </button>
+              </div>
+            )}
           </article>
         ))}
       </section>

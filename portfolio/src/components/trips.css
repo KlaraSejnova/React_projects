@@ -70,6 +70,42 @@
   color: #70251b;
 }
 
+.auth-form {
+  display: grid;
+  max-width: 520px;
+  gap: 14px;
+  margin-bottom: 28px;
+  padding: 24px;
+  background: #f1eee8;
+}
+
+.auth-form h3 {
+  margin: 0;
+}
+
+.auth-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  font-size: 0.9rem;
+}
+
+.auth-form input {
+  box-sizing: border-box;
+  border: 1px solid #aaa49a;
+  padding: 11px;
+  font: inherit;
+  background: white;
+}
+
+.auth-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
 .trip-form {
   display: grid;
   grid-template-columns: 1fr 1fr;

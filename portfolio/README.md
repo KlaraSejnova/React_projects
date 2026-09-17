@@ -1,5 +1,9 @@
 # Getting Started with Create React App
 
+## Správa výletů
+
+Formulář pro přidávání, úpravu a mazání výletů je dostupný pouze po přihlášení přes Supabase Auth. V Supabase vytvoř jeden účet pro správu, vypni veřejnou registraci a v SQL editoru spusť [supabase/policies.sql](supabase/policies.sql). Veřejnost může výlety číst, ale zápis je povolen jen přihlášeným uživatelům.
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
