@@ -29,7 +29,12 @@ const Profile = ({ onBack, onTrips }: ProfileProps) => {
         aria-hidden="true"
       />
       <div className="profile-sticky-navigation">
-        <button className="home-link" type="button" onClick={onBack} aria-label="Zpět na úvodní stránku">
+        <button
+          className="home-link"
+          type="button"
+          onClick={onBack}
+          aria-label="Zpět na úvodní stránku"
+        >
           <img src="/favicon.svg" alt="" aria-hidden="true" />
         </button>
         <div className="sticky-nav-links">
