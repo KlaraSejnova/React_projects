@@ -28,7 +28,15 @@ const toTrip = (row: {
   mapUrl: row.map_url,
 });
 
-const Trips = ({ onBack }: { onBack: () => void }) => {
+const projectsUrl = "https://github.com/petrsynek/rodina";
+
+const Trips = ({
+  onBack,
+  onProfile,
+}: {
+  onBack: () => void;
+  onProfile: () => void;
+}) => {
   const [trips, setTrips] = useState<Trip[]>([]);
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
@@ -221,9 +229,17 @@ const Trips = ({ onBack }: { onBack: () => void }) => {
         aria-hidden="true"
       />
       <div className="trips-sticky-navigation">
-        <button className="back-button" type="button" onClick={onBack}>
-          Zpět na portfolio
+        <button className="home-link" type="button" onClick={onBack} aria-label="Zpět na úvodní stránku">
+          <img src="/favicon.svg" alt="" aria-hidden="true" />
         </button>
+        <div className="sticky-nav-links">
+          <button type="button" onClick={onProfile}>
+            O mně
+          </button>
+          <a href={projectsUrl} target="_blank" rel="noopener noreferrer">
+            Projekty
+          </a>
+        </div>
       </div>
       <h2>Moje výlety</h2>
       <p className="trips-intro">Přidej místo, na které nechceš zapomenout.</p>

@@ -8,11 +8,27 @@ function App() {
   const [showProfile, setShowProfile] = useState(false);
 
   if (showTrips) {
-    return <Trips onBack={() => setShowTrips(false)} />;
+    return (
+      <Trips
+        onBack={() => setShowTrips(false)}
+        onProfile={() => {
+          setShowTrips(false);
+          setShowProfile(true);
+        }}
+      />
+    );
   }
 
   if (showProfile) {
-    return <Profile onBack={() => setShowProfile(false)} />;
+    return (
+      <Profile
+        onBack={() => setShowProfile(false)}
+        onTrips={() => {
+          setShowProfile(false);
+          setShowTrips(true);
+        }}
+      />
+    );
   }
 
   return (

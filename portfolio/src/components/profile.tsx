@@ -1,7 +1,10 @@
 import "./profile.css";
 
+const projectsUrl = "https://github.com/petrsynek/rodina";
+
 type ProfileProps = {
   onBack: () => void;
+  onTrips: () => void;
 };
 
 const skills = [
@@ -16,7 +19,7 @@ const skills = [
   "Fortran",
 ];
 
-const Profile = ({ onBack }: ProfileProps) => {
+const Profile = ({ onBack, onTrips }: ProfileProps) => {
   return (
     <main className="profile-page">
       <img
@@ -26,9 +29,17 @@ const Profile = ({ onBack }: ProfileProps) => {
         aria-hidden="true"
       />
       <div className="profile-sticky-navigation">
-        <button type="button" onClick={onBack}>
-          Zpět
+        <button className="home-link" type="button" onClick={onBack} aria-label="Zpět na úvodní stránku">
+          <img src="/favicon.svg" alt="" aria-hidden="true" />
         </button>
+        <div className="sticky-nav-links">
+          <button type="button" onClick={onTrips}>
+            Moje výlety
+          </button>
+          <a href={projectsUrl} target="_blank" rel="noopener noreferrer">
+            Projekty
+          </a>
+        </div>
       </div>
 
       <header className="profile-header">
