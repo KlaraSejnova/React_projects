@@ -1,10 +1,33 @@
 .container-navigation {
   display: none;
   align-self: flex-end;
+  margin-top: 32px;
+  padding: 18px 22px 4px;
+  min-width: 180px;
+  background: rgba(222, 221, 198, 0.72);
+  border-left: 4px solid #293b31;
 }
 .container-navigation .navigation-items {
   padding-bottom: 20px;
   text-align: right;
+  color: #293b31;
+  font-size: 0.85em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.navigation-items button {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.navigation-items a {
+  color: inherit;
+  text-decoration: none;
 }
 
 .show {
@@ -21,4 +44,4 @@
     opacity: 1;
     transform: translate(0, 0px);
   }
-}/*# sourceMappingURL=navigation.css.map */
+} /*# sourceMappingURL=navigation.css.map */

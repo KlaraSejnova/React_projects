@@ -1,11 +1,19 @@
 body {
-  margin: 20px;
-  font-family: -apple-system, "Kalnia", serif, sans-serif;
+  margin: 0;
+  font-family: "Fraunces", serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  border: 1px solid black;
+  background: #aeb4b2;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
-}/*# sourceMappingURL=index.css.map */
+  font-family:
+    source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+h1,
+h2,
+h3 {
+  font-family: "Fraunces", serif;
+  font-weight: 600;
+} /*# sourceMappingURL=index.css.map */

@@ -1,0 +1,199 @@
+.trips-page {
+  position: relative;
+  isolation: isolate;
+  box-sizing: border-box;
+  width: min(1180px, calc(100% - 60px));
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 40px 30px;
+  color: #171717;
+}
+
+.trips-background {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.trips-page::before {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: rgba(239, 236, 216, 0.72);
+  content: "";
+  pointer-events: none;
+}
+
+.trips-sticky-navigation {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  min-height: 58px;
+  margin: -40px -30px 0;
+  padding: 10px 30px;
+  box-sizing: border-box;
+  background: rgba(239, 236, 216, 0.9);
+  border-bottom: 1px solid rgba(38, 53, 47, 0.18);
+  backdrop-filter: blur(5px);
+}
+
+.back-button,
+.submit-button,
+.cancel-button,
+.edit-button {
+  border: 0;
+  background: #171717;
+  color: white;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+.trips-page h2 {
+  margin: 45px 0 8px;
+  font-size: clamp(2rem, 6vw, 4rem);
+}
+
+.trips-intro {
+  margin-bottom: 28px;
+}
+
+.form-error {
+  padding: 12px;
+  border-left: 3px solid #a33a2b;
+  background: #f8e8e4;
+  color: #70251b;
+}
+
+.trip-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  padding: 24px;
+  background: #f1eee8;
+}
+
+.trip-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  font-size: 0.9rem;
+}
+
+.trip-form input,
+.trip-form textarea {
+  box-sizing: border-box;
+  border: 1px solid #aaa49a;
+  padding: 11px;
+  font: inherit;
+  background: white;
+}
+
+.trip-form small {
+  color: #625e58;
+  line-height: 1.4;
+}
+
+.trip-form textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.wide-field,
+.form-actions {
+  grid-column: 1 / -1;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.cancel-button,
+.edit-button {
+  background: transparent;
+  color: #171717;
+  border: 1px solid #171717;
+}
+
+.delete-button {
+  margin: 8px 0 0 8px;
+  border: 1px solid #a33a2b;
+  background: transparent;
+  color: #a33a2b;
+  padding: 7px 12px;
+  cursor: pointer;
+}
+
+.trip-list {
+  margin-top: 38px;
+}
+
+.trip-item {
+  border-top: 1px solid #c8c3bb;
+  padding: 20px 0;
+}
+
+.trip-content {
+  flex: 1;
+}
+
+.trip-item h3 {
+  margin: 0 0 5px;
+}
+
+.trip-item p {
+  max-width: 560px;
+  line-height: 1.5;
+}
+
+.trip-map {
+  width: min(100%, 720px);
+  margin-top: 18px;
+}
+
+.trip-map iframe {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  min-height: 240px;
+  border: none;
+}
+
+.trip-map a {
+  display: inline-block;
+  margin-top: 8px;
+  color: #171717;
+  white-space: nowrap;
+}
+
+.edit-button {
+  margin-top: 8px;
+  padding: 7px 12px;
+}
+
+@media (max-width: 560px) {
+  .trips-page {
+    width: calc(100% - 30px);
+    padding: 25px 15px;
+  }
+
+  .trips-sticky-navigation {
+    margin: -25px -15px 0;
+    padding: 8px 15px;
+  }
+
+  .trip-form {
+    grid-template-columns: 1fr;
+  }
+
+  .wide-field,
+  .submit-button {
+    grid-column: auto;
+  }
+}

@@ -1,17 +1,238 @@
 .App {
+  position: relative;
   text-align: center;
-  height: 96vh;
+  min-height: calc(100vh - 40px);
   display: flex;
+  overflow: hidden;
+  isolation: isolate;
+  background: #aeb4b2;
 }
+
+.App::before,
+.App::after {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  content: "";
+}
+
+.App::before {
+  background:
+    radial-gradient(
+      ellipse at 18% 22%,
+      rgba(255, 255, 255, 0.56) 0 12%,
+      transparent 34%
+    ),
+    radial-gradient(
+      ellipse at 73% 17%,
+      rgba(255, 255, 255, 0.42) 0 15%,
+      transparent 35%
+    ),
+    repeating-linear-gradient(
+      165deg,
+      transparent 0 12px,
+      rgba(255, 255, 255, 0.1) 13px 15px,
+      transparent 16px 29px
+    ),
+    #b7bdbe;
+  filter: saturate(0.54);
+}
+
+.App::after {
+  background:
+    linear-gradient(
+      174deg,
+      transparent 0 47%,
+      #d7d4bf 47.5% 64%,
+      #87928a 64.5% 100%
+    ),
+    repeating-linear-gradient(
+      102deg,
+      transparent 0 24px,
+      rgba(146, 87, 61, 0.22) 25px 27px,
+      transparent 28px 46px
+    );
+  opacity: 0.9;
+}
+
+.landscape-illustration {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.landscape-birds {
+  position: absolute;
+  top: 18%;
+  right: 17%;
+  color: #23332e;
+  font-family: Georgia, serif;
+  font-size: clamp(0.9rem, 2vw, 1.5rem);
+  letter-spacing: 0.6em;
+  transform: rotate(-6deg);
+}
+
+.landscape-trees {
+  position: absolute;
+  right: -8%;
+  bottom: 43%;
+  left: -8%;
+  height: 15%;
+  background: #3d4c3f;
+  border-radius: 52% 48% 0 0 / 70% 52% 0 0;
+  box-shadow:
+    0 -22px 0 #657055,
+    0 -40px 0 #4d5c4b;
+  opacity: 0.92;
+}
+
+.tree {
+  position: absolute;
+  bottom: 12%;
+  width: 15%;
+  height: 70%;
+  border-radius: 48% 52% 42% 58%;
+  background: #26352e;
+  box-shadow:
+    inset 15px 10px 0 rgba(177, 177, 137, 0.32),
+    inset -12px -8px 0 rgba(16, 28, 25, 0.25);
+}
+
+.tree-one {
+  left: 2%;
+  transform: rotate(-8deg);
+}
+.tree-two {
+  left: 18%;
+  height: 84%;
+  background: #52604b;
+}
+.tree-three {
+  left: 35%;
+  width: 18%;
+  height: 76%;
+  transform: rotate(7deg);
+}
+.tree-four {
+  left: 54%;
+  height: 88%;
+  background: #2b3b31;
+}
+.tree-five {
+  left: 70%;
+  width: 18%;
+  height: 78%;
+  background: #59664e;
+}
+.tree-six {
+  right: -2%;
+  height: 92%;
+  transform: rotate(-5deg);
+}
+
+.landscape-house {
+  position: absolute;
+  bottom: 40%;
+  left: 43%;
+  z-index: 2;
+  width: 58px;
+  height: 48px;
+}
+
+.house-body {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 34px;
+  background: #e8e4d1;
+  border: 2px solid #27352f;
+}
+
+.house-roof {
+  position: absolute;
+  top: 0;
+  left: -7px;
+  width: 72px;
+  height: 25px;
+  background: #232a29;
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+
+.house-door {
+  position: absolute;
+  bottom: 0;
+  left: 24px;
+  width: 10px;
+  height: 19px;
+  background: #394239;
+}
+
+.house-smoke {
+  position: absolute;
+  top: -25px;
+  left: 36px;
+  width: 5px;
+  height: 25px;
+  border-radius: 50%;
+  border-left: 2px solid rgba(240, 239, 223, 0.72);
+  transform: rotate(12deg);
+}
+
+.landscape-field {
+  position: absolute;
+  right: -10%;
+  bottom: -16%;
+  left: -10%;
+  height: 47%;
+  border-radius: 52% 48% 0 0 / 25% 20% 0 0;
+  background: #858f88;
+  transform: rotate(-4deg);
+  opacity: 0.92;
+}
+
+.landscape-field-lines {
+  position: absolute;
+  right: 20%;
+  bottom: 0;
+  width: 54%;
+  height: 32%;
+  background: repeating-linear-gradient(
+    97deg,
+    transparent 0 13px,
+    rgba(121, 67, 49, 0.52) 14px 16px,
+    transparent 17px 28px
+  );
+  transform: rotate(-5deg);
+  opacity: 0.62;
+}
+
+.landscape-path {
+  position: absolute;
+  right: 38%;
+  bottom: 26%;
+  width: 9%;
+  height: 40%;
+  border-radius: 48% 52% 0 0;
+  background: #dedbc4;
+  transform: rotate(8deg);
+  box-shadow: 16px 0 0 rgba(245, 242, 222, 0.35);
+}
+
 .App .App-header {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  box-sizing: border-box;
   font-size: calc(10px + 2vmin);
   padding: 30px;
-  color: black;
-  cursor: pointer;
+  color: #17231e;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
 }
 .App .App-header h1 {
   animation: 3s floating ease-in;
@@ -20,6 +241,131 @@
   justify-content: start;
   align-items: flex-start;
   cursor: auto;
+}
+
+.App .App-header h1 {
+  margin: 0;
+  max-width: 620px;
+  font-size: clamp(2.4rem, 7vw, 5.8rem);
+  line-height: 0.95;
+}
+
+.landscape-intro {
+  margin: 18px 0 0;
+  color: #111713;
+  font-family: "Fraunces", serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+}
+
+.landscape-navigation {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: clamp(8px, 3vw, 42px);
+  width: min(100%, 900px);
+  margin-top: auto;
+  padding-top: 100px;
+}
+
+.landscape-hill {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex: 1;
+  min-height: clamp(180px, 28vw, 310px);
+  padding: 52px 16px 0;
+  border: 0;
+  border-radius: 52% 48% 0 0 / 36% 34% 0 0;
+  color: #e7e4ca;
+  font-family: "Fraunces", serif;
+  font-size: clamp(0.72rem, 1.6vw, 1rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.landscape-hill::before {
+  position: absolute;
+  inset: 20% 9% 0;
+  border-radius: 50% 50% 0 0;
+  background: repeating-linear-gradient(
+    112deg,
+    transparent 0 16px,
+    rgba(210, 216, 187, 0.2) 17px 19px,
+    transparent 20px 34px
+  );
+  opacity: 0.8;
+}
+
+.landscape-hill::after {
+  position: absolute;
+  top: 14%;
+  left: 44%;
+  width: 2px;
+  height: 70px;
+  background: rgba(226, 226, 202, 0.5);
+  transform: rotate(20deg);
+}
+
+.landscape-hill span {
+  position: relative;
+  z-index: 1;
+  padding: 9px 12px;
+  border: 1px solid rgba(231, 228, 202, 0.6);
+  background: rgba(23, 35, 30, 0.2);
+  transition:
+    background 260ms ease,
+    color 260ms ease;
+}
+
+.landscape-hill:hover,
+.landscape-hill:focus-visible {
+  filter: saturate(1.25);
+  transform: translateY(-18px);
+}
+
+.landscape-hill:hover span,
+.landscape-hill:focus-visible span {
+  background: #e7e4ca;
+  color: #293b31;
+}
+
+.hill-projects {
+  min-height: clamp(170px, 25vw, 270px);
+  background: #3c4a3d;
+}
+
+.hill-trips {
+  min-height: clamp(220px, 34vw, 360px);
+  background: #667056;
+}
+
+.hill-contact {
+  min-height: clamp(190px, 29vw, 315px);
+  background: #2c3b32;
+}
+
+@media (max-width: 600px) {
+  .App .App-header {
+    padding: 24px 16px;
+  }
+
+  .landscape-navigation {
+    gap: 6px;
+    padding-top: 70px;
+  }
+
+  .landscape-hill {
+    padding-inline: 4px;
+    writing-mode: vertical-rl;
+  }
+
+  .landscape-hill span {
+    padding: 8px 6px;
+  }
 }
 
 @keyframes floating {
@@ -32,4 +378,134 @@
   100% {
     transform: translate(0, 0px);
   }
-}/*# sourceMappingURL=App.css.map */
+} /*# sourceMappingURL=App.css.map */
+
+/* The illustration is the single visual layer; navigation sits above it. */
+.App {
+  display: block;
+  min-height: 100vh;
+  background: #aeb6b5;
+}
+
+.App::before,
+.App::after {
+  display: none;
+}
+
+.App .App-header {
+  justify-content: flex-start;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: clamp(42px, 8vh, 88px) 24px 0;
+  color: #24352e;
+  text-shadow: none;
+}
+
+.landscape-background {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.App .App-header h1 {
+  width: min(92vw, 700px);
+  max-width: 700px;
+  margin: 0;
+  color: #111713;
+  font-size: clamp(2.6rem, 7vw, 5.8rem);
+  line-height: 0.95;
+  text-shadow: none;
+  animation: title-arrives 900ms ease-out both;
+}
+
+.landscape-navigation {
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
+  width: calc(100% + 48px);
+  margin-left: -24px;
+  padding: 100px 0 0;
+  gap: 0;
+}
+
+.landscape-hill {
+  min-width: 0;
+  min-height: clamp(175px, 29vw, 310px);
+  margin-inline: -2.5%;
+  border-radius: 50% 50% 0 0 / 38% 38% 0 0;
+  clip-path: none;
+  box-shadow: inset 0 16px rgba(239, 234, 210, 0.1);
+  transform-origin: bottom center;
+  font-family: "Fraunces", serif;
+  font-size: clamp(0.72rem, 1.6vw, 1rem);
+  font-weight: 400;
+}
+
+.landscape-hill span {
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+.landscape-hill::before {
+  display: none;
+}
+
+.landscape-hill::after {
+  inset: 30% 12% 0;
+  border-radius: 50% 50% 0 0;
+  background: repeating-linear-gradient(
+    108deg,
+    transparent 0 16px,
+    rgba(222, 224, 194, 0.2) 17px 19px,
+    transparent 20px 37px
+  );
+}
+
+.landscape-hill:hover,
+.landscape-hill:focus-visible {
+  z-index: 2;
+  transform: scaleY(1.08);
+  box-shadow:
+    inset 0 16px rgba(239, 234, 210, 0.17),
+    0 20px 20px rgba(35, 53, 46, 0.12);
+}
+
+@keyframes title-arrives {
+  from {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 600px) {
+  .App .App-header {
+    padding-inline: 12px;
+  }
+  .landscape-navigation {
+    width: calc(100% + 24px);
+    margin-left: -12px;
+    gap: 0;
+    padding: 70px 0 0;
+  }
+  .landscape-hill {
+    min-height: 220px;
+    margin-inline: -1%;
+    padding-inline: 3px;
+    writing-mode: vertical-rl;
+  }
+  .landscape-hill span {
+    padding: 8px 6px;
+  }
+}
