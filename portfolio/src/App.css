@@ -494,16 +494,28 @@
     padding-inline: 12px;
   }
   .landscape-navigation {
+    flex-direction: row;
+    align-items: flex-end;
     width: calc(100% + 24px);
     margin-left: -12px;
     gap: 0;
     padding: 70px 0 0;
   }
   .landscape-hill {
-    min-height: 220px;
+    width: auto;
+    min-height: 0;
     margin-inline: -1%;
     padding-inline: 3px;
-    writing-mode: vertical-rl;
+    writing-mode: horizontal-tb;
+  }
+  .hill-projects {
+    min-height: 175px;
+  }
+  .hill-trips {
+    min-height: 220px;
+  }
+  .hill-contact {
+    min-height: 195px;
   }
   .landscape-hill span {
     padding: 8px 6px;
