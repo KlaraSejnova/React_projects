@@ -248,7 +248,11 @@ const Trips = ({ onBack }: { onBack: () => void }) => {
               required
             />
           </label>
-          {authError && <p className="form-error" role="alert">{authError}</p>}
+          {authError && (
+            <p className="form-error" role="alert">
+              {authError}
+            </p>
+          )}
           <button className="submit-button" type="submit">
             Přihlásit se
           </button>
@@ -274,57 +278,57 @@ const Trips = ({ onBack }: { onBack: () => void }) => {
             </button>
           </div>
           <form className="trip-form" onSubmit={addTrip}>
-        <label>
-          Název výletu
-          <input
-            value={title}
-            onChange={(event) => setTitle(event.target.value)}
-            required
-          />
-        </label>
-        <label>
-          Datum
-          <input
-            type="date"
-            value={date}
-            onChange={(event) => setDate(event.target.value)}
-          />
-        </label>
-        <label className="wide-field">
-          Popis
-          <textarea
-            value={description}
-            onChange={(event) => setDescription(event.target.value)}
-            required
-          />
-        </label>
-        <label className="wide-field">
-          Vložit mapu z Mapy.cz
-          <input
-            type="url"
-            placeholder="URL z možnosti Vložit mapu"
-            value={mapUrl}
-            onChange={(event) => setMapUrl(event.target.value)}
-          />
-          <small>
-            Použij odkaz pro vložení mapy, ne běžný odkaz z adresního řádku
-            Mapy.cz.
-          </small>
-        </label>
-        <div className="form-actions">
-          <button className="submit-button" type="submit">
-            {editingTripId === null ? "Přidat výlet" : "Uložit úpravy"}
-          </button>
-          {editingTripId !== null && (
-            <button
-              className="cancel-button"
-              type="button"
-              onClick={cancelEdit}
-            >
-              Zrušit úpravu
-            </button>
-          )}
-        </div>
+            <label>
+              Název výletu
+              <input
+                value={title}
+                onChange={(event) => setTitle(event.target.value)}
+                required
+              />
+            </label>
+            <label>
+              Datum
+              <input
+                type="date"
+                value={date}
+                onChange={(event) => setDate(event.target.value)}
+              />
+            </label>
+            <label className="wide-field">
+              Popis
+              <textarea
+                value={description}
+                onChange={(event) => setDescription(event.target.value)}
+                required
+              />
+            </label>
+            <label className="wide-field">
+              Vložit mapu z Mapy.cz
+              <input
+                type="url"
+                placeholder="URL z možnosti Vložit mapu"
+                value={mapUrl}
+                onChange={(event) => setMapUrl(event.target.value)}
+              />
+              <small>
+                Použij odkaz pro vložení mapy, ne běžný odkaz z adresního řádku
+                Mapy.cz.
+              </small>
+            </label>
+            <div className="form-actions">
+              <button className="submit-button" type="submit">
+                {editingTripId === null ? "Přidat výlet" : "Uložit úpravy"}
+              </button>
+              {editingTripId !== null && (
+                <button
+                  className="cancel-button"
+                  type="button"
+                  onClick={cancelEdit}
+                >
+                  Zrušit úpravu
+                </button>
+              )}
+            </div>
           </form>
         </>
       )}
