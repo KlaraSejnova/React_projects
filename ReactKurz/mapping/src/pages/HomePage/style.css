@@ -1,5 +1,0 @@
-.item__done--tick::after {
-  content: "\2713";
-  color: green;
-  font-weight: bold;
-}
