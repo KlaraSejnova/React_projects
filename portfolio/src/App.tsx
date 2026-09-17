@@ -33,6 +33,28 @@ function App() {
 
   return (
     <div className="App">
+      <svg className="landscape-filters" aria-hidden="true">
+        <defs>
+          <filter id="watercolor" x="-8%" y="-8%" width="116%" height="116%">
+            <feTurbulence
+              type="fractalNoise"
+              baseFrequency=".026"
+              numOctaves="3"
+              seed="8"
+              result="paper"
+            />
+            <feDisplacementMap
+              in="SourceGraphic"
+              in2="paper"
+              scale="11"
+              xChannelSelector="R"
+              yChannelSelector="G"
+              result="wash"
+            />
+            <feGaussianBlur in="wash" stdDeviation=".2" />
+          </filter>
+        </defs>
+      </svg>
       <img
         className="landscape-background"
         src="/landscape.svg"

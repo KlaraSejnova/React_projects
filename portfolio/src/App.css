@@ -334,18 +334,24 @@
 }
 
 .hill-projects {
+  --hill-light: #52604e;
+  --hill-color: #3c4a3d;
+  --hill-dark: #2f3c31;
   min-height: clamp(170px, 25vw, 270px);
-  background: #3c4a3d;
 }
 
 .hill-trips {
+  --hill-light: #7b866a;
+  --hill-color: #667056;
+  --hill-dark: #4f5b49;
   min-height: clamp(220px, 34vw, 360px);
-  background: #667056;
 }
 
 .hill-contact {
+  --hill-light: #435449;
+  --hill-color: #2c3b32;
+  --hill-dark: #243129;
   min-height: clamp(190px, 29vw, 315px);
-  background: #2c3b32;
 }
 
 @media (max-width: 600px) {
@@ -414,6 +420,12 @@
   pointer-events: none;
 }
 
+.landscape-filters {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
 .App .App-header h1 {
   width: min(92vw, 700px);
   max-width: 700px;
@@ -439,8 +451,10 @@
   min-width: 0;
   min-height: clamp(175px, 29vw, 310px);
   margin-inline: -2.5%;
+  isolation: isolate;
+  overflow: hidden;
   border-radius: 50% 50% 0 0 / 38% 38% 0 0;
-  clip-path: none;
+  background: transparent;
   box-shadow: inset 0 16px rgba(239, 234, 210, 0.1);
   transform-origin: bottom center;
   font-family: "Fraunces", serif;
@@ -455,7 +469,19 @@
 }
 
 .landscape-hill::before {
-  display: none;
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    180deg,
+    var(--hill-light) 0%,
+    var(--hill-color) 48%,
+    var(--hill-dark) 100%
+  );
+  opacity: 1;
+  filter: url("#watercolor");
 }
 
 .landscape-hill::after {
