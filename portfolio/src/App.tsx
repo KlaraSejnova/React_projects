@@ -38,7 +38,7 @@ function App() {
           <filter id="watercolor" x="-8%" y="-8%" width="116%" height="116%">
             <feTurbulence
               type="fractalNoise"
-              baseFrequency=".026"
+              baseFrequency=".016"
               numOctaves="3"
               seed="8"
               result="paper"

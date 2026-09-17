@@ -334,23 +334,23 @@
 }
 
 .hill-projects {
-  --hill-light: #52604e;
-  --hill-color: #3c4a3d;
-  --hill-dark: #2f3c31;
+  --hill-light: #526957;
+  --hill-color: #435a4b;
+  --hill-dark: #33493e;
   min-height: clamp(170px, 25vw, 270px);
 }
 
 .hill-trips {
   --hill-light: #7b866a;
-  --hill-color: #667056;
-  --hill-dark: #4f5b49;
+  --hill-color: #68765c;
+  --hill-dark: #596750;
   min-height: clamp(220px, 34vw, 360px);
 }
 
 .hill-contact {
-  --hill-light: #435449;
-  --hill-color: #2c3b32;
-  --hill-dark: #243129;
+  --hill-light: #526957;
+  --hill-color: #3d5547;
+  --hill-dark: #33493e;
   min-height: clamp(190px, 29vw, 315px);
 }
 
@@ -531,8 +531,12 @@
     width: auto;
     min-height: 0;
     margin-inline: -1%;
+    border-radius: 34% 66% 0 0 / 44% 34% 0 0;
     padding-inline: 3px;
     writing-mode: horizontal-tb;
+  }
+  .landscape-hill:nth-child(2) {
+    border-radius: 66% 34% 0 0 / 34% 44% 0 0;
   }
   .hill-projects {
     min-height: 175px;
