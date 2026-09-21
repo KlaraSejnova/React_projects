@@ -1,0 +1,269 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f5f2e9;
+  --foreground: #17324d;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.dashboard-shell {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  padding: 48px 24px;
+  background-color: #f5f2e9;
+  background-image: radial-gradient(#d8e8df 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.dashboard {
+  width: min(100%, 1040px);
+  padding: clamp(24px, 5vw, 52px);
+  border: 2px solid #17324d;
+  border-radius: 8px;
+  background: #fffdf7;
+  box-shadow: 9px 9px 0 #f6c95e;
+}
+
+.dashboard-header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 38px;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  color: #d75d44;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 0;
+  color: #17324d;
+  font-size: clamp(2.15rem, 6vw, 4.35rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.intro {
+  margin: 12px 0 0;
+  color: #577087;
+  font-size: 1rem;
+}
+
+.weekly-score {
+  display: grid;
+  min-width: 116px;
+  gap: 3px;
+  padding: 13px 16px;
+  border: 2px solid #17324d;
+  border-radius: 8px;
+  background: #b8dfc4;
+  text-align: center;
+}
+
+.weekly-score span,
+.progress-copy span {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.weekly-score strong {
+  font-size: 1.55rem;
+  line-height: 1;
+}
+
+.progress-section {
+  margin-bottom: 30px;
+}
+
+.progress-copy {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 9px;
+}
+
+.progress-track {
+  height: 14px;
+  overflow: hidden;
+  border: 2px solid #17324d;
+  border-radius: 8px;
+  background: #e8e2d4;
+}
+
+.progress-fill {
+  height: 100%;
+  border-right: 2px solid #17324d;
+  background: #f6c95e;
+  transition: width 220ms ease;
+}
+
+.week-grid {
+  display: grid;
+  grid-template-columns: minmax(180px, 1.6fr) repeat(7, minmax(40px, 0.55fr));
+  overflow-x: auto;
+  border: 2px solid #17324d;
+  border-radius: 8px;
+  background: #17324d;
+  gap: 2px;
+}
+
+.grid-corner,
+.day-heading {
+  display: grid;
+  min-height: 56px;
+  place-items: center;
+  background: #e6f2f5;
+  color: #17324d;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.grid-corner {
+  justify-content: start;
+  padding-left: 20px;
+}
+
+.routine-row {
+  display: contents;
+}
+
+.routine-info,
+.check-cell {
+  min-height: 84px;
+  background: #fffdf7;
+}
+
+.routine-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 18px;
+}
+
+.routine-info > span:last-child {
+  display: grid;
+  gap: 3px;
+}
+
+.routine-info strong {
+  font-size: 0.95rem;
+}
+
+.routine-info small {
+  color: #718194;
+  font-size: 0.73rem;
+}
+
+.routine-icon {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  background: #fbe5a8;
+  font-size: 1.35rem;
+}
+
+.check-cell {
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.check-cell input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.check-cell span {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border: 2px solid #9aacb6;
+  border-radius: 50%;
+  color: #17324d;
+  font-size: 1.15rem;
+  font-weight: 900;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.check-cell:hover span {
+  border-color: #d75d44;
+  transform: scale(1.08);
+}
+
+.check-cell input:checked + span {
+  border-color: #b8dfc4;
+  background: #b8dfc4;
+}
+
+.check-cell input:focus-visible + span {
+  outline: 3px solid #f6c95e;
+  outline-offset: 3px;
+}
+
+.footer-note {
+  margin: 26px 0 0;
+  color: #577087;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+@media (max-width: 680px) {
+  .dashboard-shell {
+    align-items: start;
+    padding: 16px 12px;
+  }
+
+  .dashboard {
+    padding: 24px 16px;
+    box-shadow: 5px 5px 0 #f6c95e;
+  }
+
+  .dashboard-header {
+    align-items: end;
+    margin-bottom: 28px;
+  }
+
+  .weekly-score {
+    min-width: 90px;
+    padding: 10px;
+  }
+
+  .week-grid {
+    grid-template-columns: minmax(170px, 1fr) repeat(7, 42px);
+  }
+}
