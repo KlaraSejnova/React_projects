@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Můj týden",
   description: "Týdenní přehled úkolů pro děti",
-  manifest: "/weekdashboard/manifest.webmanifest",
+  manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",

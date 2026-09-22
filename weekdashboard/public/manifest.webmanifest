@@ -3,19 +3,19 @@
   "short_name": "Můj týden",
   "description": "Týdenní přehled úkolů pro děti",
   "lang": "cs",
-  "start_url": "/weekdashboard/",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#f5f2e9",
   "theme_color": "#f5f2e9",
   "icons": [
     {
-      "src": "/weekdashboard/icon-192.svg",
+      "src": "/icon-192.svg",
       "sizes": "192x192",
       "type": "image/svg+xml",
       "purpose": "any maskable"
     },
     {
-      "src": "/weekdashboard/icon-512.svg",
+      "src": "/icon-512.svg",
       "sizes": "512x512",
       "type": "image/svg+xml",
       "purpose": "any maskable"

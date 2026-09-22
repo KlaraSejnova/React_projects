@@ -1,9 +1,9 @@
 [build]
   base = "."
-  command = "npm install --prefix portfolio && npm install --prefix weekdashboard && npm run build --prefix portfolio && npm run build --prefix weekdashboard && rm -rf dist && mkdir -p dist/weekdashboard && cp -R portfolio/build/. dist/ && cp -R weekdashboard/out/. dist/weekdashboard/"
+  command = "npm install --prefix portfolio && npm install --prefix weekdashboard && npm run build --prefix portfolio && npm run build --prefix weekdashboard && rm -rf dist && mkdir -p dist/portfolio && cp -R weekdashboard/out/. dist/ && cp -R portfolio/build/. dist/portfolio/"
   publish = "dist"
 
 [[redirects]]
-  from = "/weekdashboard"
-  to = "/weekdashboard/"
+  from = "/portfolio"
+  to = "/portfolio/"
   status = 301
