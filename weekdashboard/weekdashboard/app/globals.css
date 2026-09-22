@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+/* Základní barvy aplikace, které používá také Tailwind theme. */
 :root {
   --background: #f5f2e9;
   --foreground: #17324d;
@@ -18,10 +19,12 @@ body {
   font-family: var(--font-geist-sans), sans-serif;
 }
 
+/* Rozměry prvků se počítají včetně okrajů, aby se layout neposouval. */
 * {
   box-sizing: border-box;
 }
 
+/* Tečkované pozadí a vycentrování hlavního panelu. */
 .dashboard-shell {
   display: flex;
   flex: 1;
@@ -32,15 +35,17 @@ body {
   background-size: 20px 20px;
 }
 
+/* Hlavní bílá plocha dashboardu s barevným rámečkem a stínem. */
 .dashboard {
   width: min(100%, 1040px);
   padding: clamp(24px, 5vw, 52px);
-  border: 2px solid #17324d;
+  border: 2px solid #c65aa8;
   border-radius: 8px;
   background: #fffdf7;
   box-shadow: 9px 9px 0 #f6c95e;
 }
 
+/* Záhlaví se na větší obrazovce skládá do dvou sloupců. */
 .dashboard-header {
   display: flex;
   align-items: start;
@@ -73,6 +78,52 @@ h1 {
   font-size: 1rem;
 }
 
+.week-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+/* Ovládání pro přechod na předchozí nebo následující týden. */
+.week-label {
+  color: #17324d;
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-transform: capitalize;
+}
+
+.week-arrow {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border: 2px solid #17324d;
+  border-radius: 50%;
+  background: #f4c5e6;
+  color: #5b3278;
+  cursor: pointer;
+  font-size: 1.2rem;
+  line-height: 1;
+  padding: 0 0 3px;
+  transition:
+    background-color 160ms ease,
+    transform 160ms ease;
+}
+
+.week-arrow:hover {
+  background: #cbb7f2;
+  border-color: #6b438f;
+  color: #3e2756;
+  transform: translateY(-2px);
+}
+
+.week-arrow:focus-visible {
+  outline: 3px solid #d75d44;
+  outline-offset: 3px;
+}
+
+/* Souhrnný počet dokončených úkolů v aktuálně otevřeném týdnu. */
 .weekly-score {
   display: grid;
   min-width: 116px;
@@ -101,6 +152,7 @@ h1 {
   margin-bottom: 30px;
 }
 
+/* Číselný popisek a barevná lišta týdenního postupu. */
 .progress-copy {
   display: flex;
   justify-content: space-between;
@@ -122,6 +174,7 @@ h1 {
   transition: width 220ms ease;
 }
 
+/* Tabulka používá první sloupec pro názvy a dalších sedm pro dny. */
 .week-grid {
   display: grid;
   grid-template-columns: minmax(180px, 1.6fr) repeat(7, minmax(40px, 0.55fr));
@@ -148,6 +201,16 @@ h1 {
   padding-left: 20px;
 }
 
+.day-heading.current-day,
+.check-cell.current-day {
+  background: #fff2c7;
+}
+
+.day-heading.current-day {
+  color: #d75d44;
+}
+
+/* display: contents dovolí, aby se buňky každého úkolu chovaly jako řádek gridu. */
 .routine-row {
   display: contents;
 }
@@ -190,13 +253,26 @@ h1 {
   font-size: 1.35rem;
 }
 
+/* Buňka s checkboxem je klikací pouze tehdy, když je úkol dostupný. */
 .check-cell {
   display: grid;
   place-items: center;
   cursor: pointer;
 }
 
+.check-cell:not(.current-day) {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
+.check-cell.available-cell {
+  cursor: pointer;
+  opacity: 1;
+  background: #fff0fb;
+}
+
 .check-cell input {
+  /* Nativní checkbox zůstává přístupný, ale vzhled zajišťuje vlastní kruh. */
   position: absolute;
   width: 1px;
   height: 1px;
@@ -234,6 +310,7 @@ h1 {
   outline-offset: 3px;
 }
 
+/* Věta se vykreslí z Reactu pouze po dokončení nejméně dvou dnešních úkolů. */
 .footer-note {
   margin: 26px 0 0;
   color: #577087;
@@ -242,6 +319,7 @@ h1 {
   text-align: center;
 }
 
+/* Na mobilu zmenšíme okraje a ponecháme tabulce vodorovné posouvání. */
 @media (max-width: 680px) {
   .dashboard-shell {
     align-items: start;
@@ -256,6 +334,10 @@ h1 {
   .dashboard-header {
     align-items: end;
     margin-bottom: 28px;
+  }
+
+  .week-controls {
+    flex-wrap: wrap;
   }
 
   .weekly-score {
