@@ -1,11 +1,13 @@
 "use client";
 
 import {
+  useEffect,
   useState,
-  useSyncExternalStore,
+  type FormEvent,
   type ReactNode,
   type CSSProperties,
 } from "react";
+import { supabase } from "../lib/supabase";
 
 const users = [
   { id: "barca", name: "Barča", vocative: "Barčo" },
@@ -106,6 +108,21 @@ const routines = [
 
 type CompletionState = Record<string, boolean>;
 
+type DashboardProfile = {
+  id: string;
+  name: string;
+  vocative: string;
+};
+
+type DashboardRoutine = {
+  id: string;
+  name: string;
+  detail: string | null;
+  color: string;
+  weekend_only: boolean;
+  position: number;
+};
+
 function completionKey(day: string, routine: string) {
   return `${day}-${routine}`;
 }
@@ -140,39 +157,283 @@ function progressStorageKey(userId: string, weekStart: Date) {
   return `weekdashboard-progress-${userId}-${year}-${month}-${day}`;
 }
 
-function subscribeToProgress(onStoreChange: () => void) {
-  window.addEventListener("weekdashboard-progress-changed", onStoreChange);
-  return () =>
-    window.removeEventListener("weekdashboard-progress-changed", onStoreChange);
-}
-
 function getTodayKey() {
   return days[(new Date().getDay() + 6) % 7].key;
+}
+
+function toDateKey(date: Date) {
+  return date.toISOString().slice(0, 10);
 }
 
 export default function Home() {
   const [activeUser, setActiveUser] = useState(users[0].id);
   const [weekOffset, setWeekOffset] = useState(0);
+  const [authenticatedUserId, setAuthenticatedUserId] = useState<string | null>(
+    null,
+  );
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [authError, setAuthError] = useState("");
+  const [isLoading, setIsLoading] = useState(Boolean(supabase));
+  const [profiles, setProfiles] = useState<DashboardProfile[]>([]);
+  const [databaseRoutines, setDatabaseRoutines] = useState<DashboardRoutine[]>(
+    [],
+  );
+  const [completed, setCompleted] = useState<CompletionState>({});
+  const client = supabase;
   const weekStart = getWeekStart(weekOffset);
   const storageKey = progressStorageKey(activeUser, weekStart);
-  const progressSnapshot = useSyncExternalStore(
-    subscribeToProgress,
-    () => window.localStorage.getItem(storageKey) ?? "",
-    () => "",
-  );
-  const completed: CompletionState = progressSnapshot
-    ? JSON.parse(progressSnapshot)
-    : {};
-  const currentUser = users.find((user) => user.id === activeUser) ?? users[0];
-  const isTester = activeUser === "tester";
+  const currentUser =
+    profiles.find((user) => user.id === activeUser) ??
+    users.find((user) => user.id === activeUser) ??
+    users[0];
+  const isTester = currentUser.name === "Tester";
   const todayKey = weekOffset === 0 ? getTodayKey() : "";
   const [dismissedRewardKey, setDismissedRewardKey] = useState("");
 
-  function toggleRoutine(day: string, routine: string) {
-    const key = completionKey(day, routine);
-    const nextProgress = { ...completed, [key]: !completed[key] };
-    window.localStorage.setItem(storageKey, JSON.stringify(nextProgress));
-    window.dispatchEvent(new Event("weekdashboard-progress-changed"));
+  useEffect(() => {
+    const databaseClient = client;
+    if (!databaseClient) {
+      const saved = window.localStorage.getItem(storageKey);
+      window.setTimeout(() => setCompleted(saved ? JSON.parse(saved) : {}), 0);
+      return;
+    }
+    const requiredClient = databaseClient;
+
+    let cancelled = false;
+    async function loadSession() {
+      const { data } = await requiredClient.auth.getSession();
+      if (!cancelled) {
+        setAuthenticatedUserId(data.session?.user.id ?? null);
+      }
+      setIsLoading(false);
+    }
+
+    void loadSession();
+    const { data } = requiredClient.auth.onAuthStateChange((_event, session) => {
+      setAuthenticatedUserId(session?.user.id ?? null);
+    });
+
+    return () => {
+      cancelled = true;
+      data.subscription.unsubscribe();
+    };
+  }, [client, storageKey]);
+
+  useEffect(() => {
+    const databaseClient = client!;
+    if (!databaseClient || !authenticatedUserId) return;
+
+    let cancelled = false;
+    async function loadDashboardData() {
+      const [profilesResult, routinesResult] = await Promise.all([
+        databaseClient
+          .from("dashboard_profiles")
+          .select("id, name, vocative")
+          .eq("owner_id", authenticatedUserId)
+          .order("created_at"),
+        databaseClient
+          .from("dashboard_routines")
+          .select("id, name, detail, color, weekend_only, position")
+          .eq("owner_id", authenticatedUserId)
+          .order("position"),
+      ]);
+
+      if (profilesResult.error || routinesResult.error) {
+        setAuthError("Data se nepodařilo načíst ze Supabase.");
+        return;
+      }
+
+      let loadedProfiles = (profilesResult.data ?? []) as DashboardProfile[];
+      let loadedRoutines = (routinesResult.data ?? []) as DashboardRoutine[];
+
+      if (loadedProfiles.length === 0) {
+        const { data } = await databaseClient
+          .from("dashboard_profiles")
+          .insert(
+            users.map(({ name, vocative }) => ({
+              owner_id: authenticatedUserId,
+              name,
+              vocative,
+            })),
+          )
+          .select("id, name, vocative");
+        loadedProfiles = (data ?? []) as DashboardProfile[];
+      }
+
+      if (loadedRoutines.length === 0) {
+        const { data } = await databaseClient
+          .from("dashboard_routines")
+          .insert(
+            routines.map((routine, position) => ({
+              owner_id: authenticatedUserId,
+              name: routine.name,
+              detail: routine.detail,
+              color: routine.color,
+              weekend_only: routine.weekendOnly ?? false,
+              position,
+            })),
+          )
+          .select("id, name, detail, color, weekend_only, position");
+        loadedRoutines = (data ?? []) as DashboardRoutine[];
+      }
+
+      if (!cancelled) {
+        setProfiles(loadedProfiles);
+        setDatabaseRoutines(loadedRoutines);
+        if (loadedProfiles[0]) setActiveUser(loadedProfiles[0].id);
+      }
+    }
+
+    void loadDashboardData();
+    return () => {
+      cancelled = true;
+    };
+  }, [authenticatedUserId, client]);
+
+  useEffect(() => {
+    const databaseClient = client!;
+    if (!databaseClient || !authenticatedUserId || !profiles.length) return;
+    const profile = profiles.find((item) => item.id === activeUser);
+    if (!profile) return;
+    const profileId = profile.id;
+
+    async function loadCompletions() {
+      const { data: week, error: weekError } = await databaseClient
+        .from("dashboard_weeks")
+        .upsert(
+          {
+            owner_id: authenticatedUserId,
+            week_start: toDateKey(weekStart),
+          },
+          { onConflict: "owner_id,week_start" },
+        )
+        .select("id")
+        .single();
+
+      if (weekError || !week) return;
+      const { data } = await databaseClient
+        .from("dashboard_completions")
+        .select("routine_id, day, completed")
+        .eq("owner_id", authenticatedUserId)
+        .eq("profile_id", profileId)
+        .eq("week_id", week.id);
+
+      const next: CompletionState = {};
+      for (const completion of data ?? []) {
+        const routine = databaseRoutines.find(
+          (item) => item.id === completion.routine_id,
+        );
+        const completionDate = new Date(`${completion.day}T12:00:00`);
+        const day = days[(completionDate.getDay() + 6) % 7];
+        if (routine && day) {
+          next[completionKey(day.key, routine.name)] = completion.completed;
+        }
+      }
+      setCompleted(next);
+    }
+
+    void loadCompletions();
+  }, [activeUser, authenticatedUserId, client, databaseRoutines, profiles, weekStart]);
+
+  async function toggleRoutine(day: string, routine: string) {
+    const visualRoutine = routines.find((item) => item.id === routine);
+    const routineName = visualRoutine?.name ?? routine;
+    const key = completionKey(day, client ? routineName : routine);
+    const nextValue = !completed[key];
+    setCompleted((current) => ({ ...current, [key]: nextValue }));
+
+    const databaseClient = client!;
+    if (!databaseClient || !authenticatedUserId) {
+      const nextProgress = { ...completed, [key]: nextValue };
+      window.localStorage.setItem(storageKey, JSON.stringify(nextProgress));
+      return;
+    }
+
+    const profile = profiles.find((item) => item.id === activeUser);
+    const databaseRoutine = databaseRoutines.find(
+      (item) => item.name === routineName,
+    );
+    const dayIndex = days.findIndex((item) => item.key === day);
+    if (!profile || !databaseRoutine || dayIndex < 0) return;
+
+    const completionDate = new Date(weekStart);
+    completionDate.setDate(completionDate.getDate() + dayIndex);
+    const { data: week } = await databaseClient
+      .from("dashboard_weeks")
+      .upsert(
+        {
+          owner_id: authenticatedUserId,
+          week_start: toDateKey(weekStart),
+        },
+        { onConflict: "owner_id,week_start" },
+      )
+      .select("id")
+      .single();
+
+    if (!week) return;
+    await databaseClient.from("dashboard_completions").upsert(
+      {
+        owner_id: authenticatedUserId,
+        week_id: week.id,
+        profile_id: profile.id,
+        routine_id: databaseRoutine.id,
+        day: toDateKey(completionDate),
+        completed: nextValue,
+      },
+      { onConflict: "profile_id,week_id,routine_id,day" },
+    );
+  }
+
+  async function signIn(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!client) return;
+    setAuthError("");
+    const { error } = await client.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) setAuthError("Přihlášení se nepodařilo. Zkontroluj údaje.");
+  }
+
+  if (isLoading) {
+    return <main className="dashboard-shell" aria-busy="true" />;
+  }
+
+  if (supabase && !authenticatedUserId) {
+    return (
+      <main className="dashboard-shell">
+        <section className="dashboard auth-panel" aria-labelledby="login-title">
+          <p className="eyebrow">Můj týden</p>
+          <h1 id="login-title">Přihlášení</h1>
+          <p className="intro">Přihlas se pro načtení svých týdnů a úkolů.</p>
+          <form className="auth-form" onSubmit={signIn}>
+            <label>
+              E-mail
+              <input
+                type="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                required
+              />
+            </label>
+            <label>
+              Heslo
+              <input
+                type="password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                required
+              />
+            </label>
+            {authError && <p role="alert">{authError}</p>}
+            <button type="submit" className="reward-modal-button">
+              Přihlásit se
+            </button>
+          </form>
+        </section>
+      </main>
+    );
   }
 
   const completedCount = Object.values(completed).filter(Boolean).length;
@@ -182,7 +443,8 @@ export default function Home() {
   const progress = Math.round((completedCount / totalCount) * 100);
   const completedTodayCount = todayKey
     ? routines.filter(
-        (routine) => completed[completionKey(todayKey, routine.id)],
+        (routine) =>
+          completed[completionKey(todayKey, client ? routine.name : routine.id)],
       ).length
     : 0;
   const rewardKey = `${activeUser}-${weekOffset}`;
@@ -218,7 +480,7 @@ export default function Home() {
       )}
       <section className="dashboard" aria-labelledby="dashboard-title">
         <div className="user-switcher" role="tablist" aria-label="Vyber dítě">
-          {users.map((user) => (
+          {(profiles.length ? profiles : users).map((user) => (
             <button
               key={user.id}
               type="button"
@@ -304,7 +566,10 @@ export default function Home() {
                 </span>
               </div>
               {days.map((day) => {
-                const key = completionKey(day.key, routine.id);
+                const key = completionKey(
+                  day.key,
+                  client ? routine.name : routine.id,
+                );
                 const isCompleted = completed[key] ?? false;
                 const isAvailable = isTester
                   ? true
