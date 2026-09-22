@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#b9c2c4"/>
+      <stop offset="1" stop-color="#d8d8ce"/>
+    </linearGradient>
+    <linearGradient id="backHill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#526957"/>
+      <stop offset="1" stop-color="#33493e"/>
+    </linearGradient>
+    <linearGradient id="middleHill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7b866a"/>
+      <stop offset="1" stop-color="#596750"/>
+    </linearGradient>
+    <linearGradient id="creamField" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f0ecd9"/>
+      <stop offset="1" stop-color="#d9d5bf"/>
+    </linearGradient>
+    <linearGradient id="frontField" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#c0c5bb"/>
+      <stop offset="1" stop-color="#929e98"/>
+    </linearGradient>
+    <linearGradient id="path" x1="0" y1="0" x2="0.8" y2="1">
+      <stop offset="0" stop-color="#f3efd9"/>
+      <stop offset="1" stop-color="#d8d1b9"/>
+    </linearGradient>
+    <pattern id="fieldLines" width="28" height="28" patternUnits="userSpaceOnUse" patternTransform="rotate(10)">
+      <path d="M4 0v28M16 0v28" stroke="#9b6958" stroke-width="2" opacity=".58"/>
+    </pattern>
+    <pattern id="softLines" width="24" height="24" patternUnits="userSpaceOnUse" patternTransform="rotate(-12)">
+      <path d="M4 0v24M15 0v24" stroke="#69766f" stroke-width="2" opacity=".42"/>
+    </pattern>
+    <filter id="watercolor" x="-8%" y="-8%" width="116%" height="116%">
+      <feTurbulence type="fractalNoise" baseFrequency=".026" numOctaves="3" seed="8" result="paper"/>
+      <feDisplacementMap in="SourceGraphic" in2="paper" scale="11" xChannelSelector="R" yChannelSelector="G" result="wash"/>
+      <feGaussianBlur in="wash" stdDeviation=".2"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="760" fill="url(#sky)"/>
+  <g filter="url(#watercolor)">
+  <path d="M0 275 Q130 190 285 270 T560 286 Q745 205 890 260 T1200 225V390H0Z" fill="url(#backHill)" opacity=".94"/>
+  <path d="M0 305 Q160 250 320 335 T620 322 Q780 255 950 315 T1200 270V430H0Z" fill="url(#middleHill)" opacity=".9"/>
+  <path d="M0 360 Q180 315 355 380 T690 365 Q850 315 1015 365 T1200 335V535H0Z" fill="url(#creamField)" opacity=".94"/>
+  <path d="M0 397 Q180 350 355 415 T690 400 Q850 350 1015 400 T1200 370" fill="none" stroke="#263c34" stroke-width="12"/>
+  <path d="M0 420 Q180 385 360 440 T700 425 Q860 375 1030 425 T1200 400V620H0Z" fill="url(#creamField)" opacity=".93"/>
+  <path d="M0 420 Q180 385 360 440 T700 425 Q860 375 1030 425 T1200 400V620H0Z" fill="url(#fieldLines)" opacity=".9"/>
+  <path d="M0 586 Q185 520 380 594 T720 575 Q910 505 1200 555V760H0Z" fill="url(#frontField)" opacity=".9"/>
+  <path d="M0 586 Q185 520 380 594 T720 575 Q910 505 1200 555V760H0Z" fill="url(#softLines)"/>
+  <path d="M665 367 Q625 410 560 448 Q505 480 540 540 Q575 596 470 760H575 Q650 625 610 555 Q580 505 640 466 Q702 425 710 385Z" fill="url(#path)"/>
+  <g fill="#283b32">
+    <path d="M90 304l20-62 20 62zM124 310l18-52 18 52zM1030 302l20-70 20 70zM1070 302l16-54 16 54zM1110 300l20-82 20 82z"/>
+  </g>
+  <g>
+    <path d="M425 390h92v61h-92z" fill="#e8e4d2" stroke="#26352f" stroke-width="3"/>
+    <path d="M408 392l64-48 64 48z" fill="#a44738"/>
+    <path d="M461 416h16v35h-16z" fill="#455047"/>
+    <path d="M499 407h12v12h-12z" fill="#88938a"/>
+    <path d="M488 342q-7-20 3-31" fill="none" stroke="#edf0e5" stroke-width="4" opacity=".8"/>
+  </g>
+  </g>
+  <g fill="none" stroke="#111713" stroke-width="3" stroke-linecap="round">
+    <path d="M840 160q10-11 20 0 10-11 20 0"/>
+    <path d="M895 135q8-9 16 0 8-9 16 0"/>
+    <path d="M930 185q7-8 14 0 7-8 14 0"/>
+    <path d="M1000 120q6-7 12 0 6-7 12 0"/>
+  </g>
+  <g fill="#384b39">
+    <path d="M150 480q-24-68 6-99 30 31 7 99zM205 478q-20-52 7-79 28 27 6 79zM1020 520q-25-72 7-108 32 36 7 108zM1080 518q-21-56 6-86 28 30 7 86z"/>
+  </g>
+</svg>
