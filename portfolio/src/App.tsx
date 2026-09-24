@@ -1,5 +1,6 @@
 import "./App.css";
 import Profile from "./components/profile";
+import Projects from "./components/projects";
 import Trips from "./components/trips";
 import { useState } from "react";
 
@@ -7,6 +8,7 @@ import { useState } from "react";
 function App() {
   const [showTrips, setShowTrips] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [showProjects, setShowProjects] = useState(false);
 
   // Místo routeru se zde jednoduše přepínají tři obrazovky podle lokálního stavu.
   if (showTrips) {
@@ -16,6 +18,10 @@ function App() {
         onProfile={() => {
           setShowTrips(false);
           setShowProfile(true);
+        }}
+        onProjects={() => {
+          setShowTrips(false);
+          setShowProjects(true);
         }}
       />
     );
@@ -28,6 +34,26 @@ function App() {
         onTrips={() => {
           setShowProfile(false);
           setShowTrips(true);
+        }}
+        onProjects={() => {
+          setShowProfile(false);
+          setShowProjects(true);
+        }}
+      />
+    );
+  }
+
+  if (showProjects) {
+    return (
+      <Projects
+        onBack={() => setShowProjects(false)}
+        onTrips={() => {
+          setShowProjects(false);
+          setShowTrips(true);
+        }}
+        onProfile={() => {
+          setShowProjects(false);
+          setShowProfile(true);
         }}
       />
     );
@@ -67,16 +93,15 @@ function App() {
       <header className="App-header">
         <h1>Portfolio Klára Šejnová</h1>
         <p className="landscape-intro">Vyber si kopeček a objev další cestu.</p>
-        {/* Tři "kopečky": odkaz na externí projekt a dvě přepnutí lokálního stavu. */}
+        {/* Tři "kopečky" přepínají mezi obrazovkami portfolia. */}
         <nav className="landscape-navigation" aria-label="Hlavní navigace">
-          <a
+          <button
             className="landscape-hill hill-projects"
-            href="https://weekdashboard.netlify.app"
-            target="_blank"
-            rel="noopener noreferrer"
+            type="button"
+            onClick={() => setShowProjects(true)}
           >
             <span>Projects</span>
-          </a>
+          </button>
           <button
             className="landscape-hill hill-trips"
             type="button"

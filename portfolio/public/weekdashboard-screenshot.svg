@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1540" role="img" aria-labelledby="title description">
+  <title id="title">Weekdashboard po přihlášení</title>
+  <desc id="description">Přehled týdne s úkoly a postupem.</desc>
+  <rect width="800" height="1540" fill="#170f2b" />
+  <image href="weekdashboard-header.png" x="0" y="0" width="800" height="430" preserveAspectRatio="xMidYMid meet" />
+  <image href="weekdashboard-progress.png" x="0" y="430" width="800" height="180" preserveAspectRatio="xMidYMid meet" />
+  <image href="weekdashboard-tasks.png" x="0" y="610" width="800" height="930" preserveAspectRatio="xMidYMid meet" />
+</svg>

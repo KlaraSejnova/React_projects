@@ -1,10 +1,9 @@
 import "./profile.css";
 
-const projectsUrl = "https://weekdashboard.netlify.app";
-
 type ProfileProps = {
   onBack: () => void;
   onTrips: () => void;
+  onProjects: () => void;
 };
 
 // Seznam dovedností zobrazených jako štítky v sekci Skills.
@@ -21,7 +20,7 @@ const skills = [
 ];
 
 // Stránka "O mně": životopis s kontaktem, dovednostmi, praxi a vzděláním.
-const Profile = ({ onBack, onTrips }: ProfileProps) => {
+const Profile = ({ onBack, onTrips, onProjects }: ProfileProps) => {
   return (
     <main className="profile-page">
       <img
@@ -47,9 +46,9 @@ const Profile = ({ onBack, onTrips }: ProfileProps) => {
           <button type="button" onClick={onTrips}>
             Moje výlety
           </button>
-          <a href={projectsUrl} target="_blank" rel="noopener noreferrer">
+          <button type="button" onClick={onProjects}>
             Projekty
-          </a>
+          </button>
         </div>
       </div>
 

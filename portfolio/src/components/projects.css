@@ -1,0 +1,217 @@
+.projects-page {
+  position: relative;
+  isolation: isolate;
+  box-sizing: border-box;
+  width: min(1180px, calc(100% - 48px));
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 0 34px 70px;
+  color: #18251f;
+}
+
+.projects-background {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.projects-page::before {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: rgba(245, 241, 222, 0.86);
+  content: "";
+  pointer-events: none;
+}
+
+.projects-sticky-navigation {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  margin: 0 -34px;
+  padding: 12px 34px;
+  background: rgba(245, 241, 222, 0.92);
+  border-bottom: 1px solid rgba(24, 37, 31, 0.18);
+  backdrop-filter: blur(5px);
+}
+
+.projects-sticky-navigation .home-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.projects-sticky-navigation .home-link img {
+  width: 28px;
+  height: 28px;
+}
+
+.projects-sticky-navigation .sticky-nav-links {
+  display: flex;
+  gap: 10px;
+}
+
+.projects-sticky-navigation .sticky-nav-links button {
+  border: 1px solid #263c34;
+  padding: 9px 14px;
+  background: transparent;
+  color: #263c34;
+  font: inherit;
+  cursor: pointer;
+}
+
+.projects-header {
+  max-width: 760px;
+  padding: 68px 0 48px;
+}
+
+.projects-kicker,
+.project-number {
+  margin: 0;
+  color: #6d4e38;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.projects-header h1 {
+  max-width: 700px;
+  margin: 12px 0 18px;
+  color: #111713;
+  font-size: clamp(3rem, 8vw, 6.8rem);
+  line-height: 0.9;
+}
+
+.projects-header p:last-child {
+  max-width: 520px;
+  margin: 0;
+  font-size: 1.12rem;
+  line-height: 1.6;
+}
+
+.project-list {
+  padding-bottom: 24px;
+}
+
+.project-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  gap: 36px;
+  align-items: stretch;
+  padding: 18px;
+  background: rgba(247, 244, 232, 0.86);
+  border: 1px solid rgba(38, 60, 52, 0.22);
+  box-shadow: 12px 14px 0 rgba(91, 73, 52, 0.12);
+}
+
+.project-preview {
+  align-self: start;
+  overflow: hidden;
+  background: #19251f;
+  border: 8px solid #263c34;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+}
+
+.project-preview img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 0;
+  background: #f7f4e8;
+}
+
+.project-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 24px 22px 24px 0;
+}
+
+.project-details h2 {
+  margin: 12px 0 16px;
+  color: #111713;
+  font-size: clamp(2rem, 4vw, 3.8rem);
+  line-height: 0.92;
+}
+
+.project-details p:not(.project-number) {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.project-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  align-self: flex-start;
+  margin-top: 30px;
+  padding: 11px 15px;
+  border: 1px solid #263c34;
+  color: #263c34;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.project-link span {
+  font-size: 1.2em;
+  line-height: 1;
+}
+
+.project-link:hover,
+.project-link:focus-visible,
+.projects-sticky-navigation .sticky-nav-links button:hover,
+.projects-sticky-navigation .sticky-nav-links button:focus-visible {
+  background: #263c34;
+  color: #f7f4e8;
+}
+
+@media (max-width: 760px) {
+  .projects-page {
+    width: min(100% - 28px, 620px);
+    padding: 0 14px 48px;
+  }
+
+  .projects-sticky-navigation {
+    margin: 0 -14px;
+    padding: 10px 14px;
+  }
+
+  .projects-sticky-navigation .sticky-nav-links {
+    gap: 6px;
+  }
+
+  .projects-sticky-navigation .sticky-nav-links button {
+    padding: 8px 9px;
+    font-size: 0.84rem;
+  }
+
+  .projects-header {
+    padding: 48px 0 34px;
+  }
+
+  .project-card {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 12px;
+  }
+
+  .project-details {
+    padding: 4px 10px 18px;
+  }
+}

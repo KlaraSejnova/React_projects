@@ -30,16 +30,16 @@ const toTrip = (row: {
   mapUrl: row.map_url,
 });
 
-const projectsUrl = "https://weekdashboard.netlify.app";
-
 // Stránka výletů: přihlášení přes Supabase umožňuje přidávat/upravovat/mazat výlety.
 // Bez Supabase konfigurace se použije jen čtení z localStorage (bez editace).
 const Trips = ({
   onBack,
   onProfile,
+  onProjects,
 }: {
   onBack: () => void;
   onProfile: () => void;
+  onProjects: () => void;
 }) => {
   const [trips, setTrips] = useState<Trip[]>([]);
   const [title, setTitle] = useState("");
@@ -262,9 +262,9 @@ const Trips = ({
           <button type="button" onClick={onProfile}>
             O mně
           </button>
-          <a href={projectsUrl} target="_blank" rel="noopener noreferrer">
+          <button type="button" onClick={onProjects}>
             Projekty
-          </a>
+          </button>
         </div>
       </div>
       <h2>Moje výlety</h2>

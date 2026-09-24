@@ -1,11 +1,14 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import App from "./App";
 
-// Výchozí test vygenerovaný Create React App - ověřuje, že se App vykreslí.
-// Pozn.: hledaný text "learn react" je pozůstatek šablony a v aktuální App.tsx se nevyskytuje.
-test("renders learn react link", () => {
+test("opens the projects page from the home navigation", () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole("button", { name: "Projects" }));
+
+  expect(
+    screen.getByRole("heading", { name: "Týdenní plánovač" }),
+  ).toBeInTheDocument();
+  expect(screen.getByText(/Aplikace pro moje dcery/i)).toBeInTheDocument();
 });
