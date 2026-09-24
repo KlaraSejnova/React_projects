@@ -726,10 +726,22 @@ h1 {
   }
 
   .dashboard-header {
+    position: relative;
     align-items: start;
     flex-direction: column;
     gap: 18px;
     margin-bottom: 24px;
+  }
+
+  .dashboard-header > div:first-child {
+    padding-right: 108px;
+  }
+
+  .sign-out-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-left: 0;
   }
 
   .week-controls {
