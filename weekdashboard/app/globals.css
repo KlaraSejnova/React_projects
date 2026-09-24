@@ -707,6 +707,17 @@ h1 {
     0 0 18px color-mix(in srgb, var(--accent, var(--cyan)) 60%, transparent);
 }
 
+.check-cell input:checked ~ .coin .coin-back {
+  border-width: 2px;
+  box-shadow:
+    inset -4px -5px 8px rgba(0, 0, 0, 0.2),
+    inset 3px 3px 9px rgba(255, 255, 255, 0.24),
+    0 0 12px var(--accent, var(--cyan)),
+    0 0 28px color-mix(in srgb, var(--accent, var(--cyan)) 85%, transparent),
+    0 0 48px color-mix(in srgb, var(--accent, var(--cyan)) 50%, transparent);
+  filter: brightness(1.25) saturate(1.3);
+}
+
 .check-cell input:focus-visible ~ .coin .coin-face {
   outline: 2px solid var(--pink);
   outline-offset: 3px;
