@@ -53,6 +53,7 @@ const Trips = ({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [authError, setAuthError] = useState("");
+  const [isSigningIn, setIsSigningIn] = useState(false);
 
   useEffect(() => {
     if (!supabase) {
@@ -212,10 +213,17 @@ const Trips = ({
     }
 
     setAuthError("");
+    if (!email.trim() || !password) {
+      setAuthError("Vyplň e-mail i heslo.");
+      return;
+    }
+
+    setIsSigningIn(true);
     const { error } = await supabase.auth.signInWithPassword({
-      email,
+      email: email.trim(),
       password,
     });
+    setIsSigningIn(false);
     if (error) {
       setAuthError("Přihlášení se nepodařilo. Zkontroluj e-mail a heslo.");
       return;
@@ -263,7 +271,7 @@ const Trips = ({
       <p className="trips-intro">Přidej místo, na které nechceš zapomenout.</p>
       {/* Bez přihlášení se zobrazí jen přihlašovací formulář, ne editace výletů. */}
       {!authLoading && !user && supabase && (
-        <form className="auth-form" onSubmit={signIn}>
+        <form className="auth-form" onSubmit={signIn} noValidate>
           <h3>Přihlášení pro správu výletů</h3>
           <label>
             E-mail
@@ -271,7 +279,6 @@ const Trips = ({
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              required
             />
           </label>
           <label>
@@ -280,7 +287,6 @@ const Trips = ({
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              required
             />
           </label>
           {authError && (
@@ -288,8 +294,12 @@ const Trips = ({
               {authError}
             </p>
           )}
-          <button className="submit-button" type="submit">
-            Přihlásit se
+          <button
+            className="submit-button"
+            type="submit"
+            disabled={isSigningIn}
+          >
+            {isSigningIn ? "Přihlašuji..." : "Přihlásit se"}
           </button>
         </form>
       )}
