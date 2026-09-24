@@ -262,30 +262,38 @@ export default function Home() {
     event.preventDefault();
     if (!supabase || !loginProfile) return;
 
-    setIsLoggingIn(true);
     setLoginError("");
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: email.trim(),
-      password,
-    });
-
-    if (error || !data.session) {
-      setLoginError("Email nebo heslo není správně.");
-      setIsLoggingIn(false);
+    if (!email.trim() || !password) {
+      setLoginError("Vyplň email i heslo.");
       return;
     }
 
-    const accountProfile = data.user.user_metadata?.profile;
-    if (accountProfile !== loginProfile) {
-      await supabase.auth.signOut();
-      setLoginError("Tento účet není přiřazený k vybranému profilu.");
-      setIsLoggingIn(false);
-      return;
-    }
+    setIsLoggingIn(true);
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      });
 
-    window.localStorage.setItem(authProfileStorageKey, loginProfile);
-    setAuthProfile(loginProfile);
-    setIsLoggingIn(false);
+      if (error || !data.session) {
+        setLoginError("Email nebo heslo není správně.");
+        return;
+      }
+
+      const accountProfile = data.user.user_metadata?.profile;
+      if (accountProfile !== loginProfile) {
+        await supabase.auth.signOut();
+        setLoginError("Tento účet není přiřazený k vybranému profilu.");
+        return;
+      }
+
+      window.localStorage.setItem(authProfileStorageKey, loginProfile);
+      setAuthProfile(loginProfile);
+    } catch {
+      setLoginError("Přihlášení se nepodařilo. Zkus to prosím znovu.");
+    } finally {
+      setIsLoggingIn(false);
+    }
   }
 
   // Odhlásí testera z localStorage, nebo skutečného uživatele ze Supabase.
@@ -336,7 +344,7 @@ export default function Home() {
               ))}
             </div>
           ) : (
-            <form className="login-form" onSubmit={signInAccount}>
+            <form className="login-form" onSubmit={signInAccount} noValidate>
               <p className="login-selected">
                 Přihlašuješ se jako{" "}
                 {loginProfile === "barca" ? "Barča" : "Terka"}
@@ -347,7 +355,6 @@ export default function Home() {
                   type="email"
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
-                  required
                 />
               </label>
               <label>
@@ -356,7 +363,6 @@ export default function Home() {
                   type="password"
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
-                  required
                 />
               </label>
               {loginError && <p className="login-error">{loginError}</p>}
