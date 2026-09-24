@@ -260,7 +260,12 @@ export default function Home() {
   // Ověří email a heslo přes Supabase a zkontroluje, že účet patří k vybranému profilu.
   async function signInAccount(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!supabase || !loginProfile) return;
+    if (!loginProfile) return;
+
+    if (!supabase) {
+      setLoginError("Přihlášení není na této verzi aplikace nastavené.");
+      return;
+    }
 
     setLoginError("");
     if (!email.trim() || !password) {
