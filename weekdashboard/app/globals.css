@@ -528,6 +528,12 @@ h1 {
   transition: width 220ms ease;
 }
 
+.progress-error {
+  margin: 10px 0 0;
+  color: #ffb5d9;
+  font-size: 0.82rem;
+}
+
 /* Tabulka úkolů: první sloupec názvy úkolů, dalších sedm sloupců dny týdne. */
 .week-grid {
   display: grid;

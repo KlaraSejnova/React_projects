@@ -207,6 +207,7 @@ export default function Home() {
   const [selectedDayKey, setSelectedDayKey] = useState(getTodayKey());
   const [showMobileWeek, setShowMobileWeek] = useState(false);
   const [completed, setCompleted] = useState<CompletionState>({});
+  const [progressError, setProgressError] = useState("");
   // Tester nepotřebuje Supabase přihlášení, ostatní profily ano.
   const activeUser = localUser === "tester" ? localUser : authProfile;
   const weekStart = getWeekStart(weekOffset);
@@ -260,37 +261,64 @@ export default function Home() {
       0,
     );
 
-    if (!authUserId || !supabase) {
+    const isCloudTester = localUser === "tester";
+    if ((!authUserId && !isCloudTester) || !supabase) {
       return () => window.clearTimeout(timeoutId);
     }
 
     const client = supabase;
+    const progressTable = isCloudTester
+      ? "dashboard_guest_progress"
+      : "dashboard_progress";
     let cancelled = false;
     const loadCloudProgress = async () => {
-      const { data, error } = await client
-        .from("dashboard_progress")
+      let progressQuery = client
+        .from(progressTable)
         .select("completion_key, completed")
-        .eq("owner_id", authUserId)
         .eq("week_start", currentWeekDate);
+      progressQuery = isCloudTester
+        ? progressQuery.eq("profile_key", "tester")
+        : progressQuery.eq("owner_id", authUserId);
+      const { data, error } = await progressQuery;
 
-      if (cancelled || error) return;
+      if (cancelled) return;
+      if (error) {
+        setProgressError(
+          `Postup se nepodařilo načíst z cloudu: ${error.message}`,
+        );
+        return;
+      }
 
       const localProgress = saved ? JSON.parse(saved) : {};
       if (data.length === 0 && Object.keys(localProgress).length > 0) {
         const rows = Object.entries(localProgress).map(
-          ([completionKey, completed]) => ({
-            owner_id: authUserId,
-            week_start: currentWeekDate,
-            completion_key: completionKey,
-            completed: Boolean(completed),
-          }),
+          ([completionKey, completed]) =>
+            isCloudTester
+              ? {
+                  profile_key: "tester",
+                  week_start: currentWeekDate,
+                  completion_key: completionKey,
+                  completed: Boolean(completed),
+                }
+              : {
+                  owner_id: authUserId,
+                  week_start: currentWeekDate,
+                  completion_key: completionKey,
+                  completed: Boolean(completed),
+                },
         );
         const { error: migrationError } = await client
-          .from("dashboard_progress")
+          .from(progressTable)
           .upsert(rows, {
-            onConflict: "owner_id,week_start,completion_key",
+            onConflict: isCloudTester
+              ? "profile_key,week_start,completion_key"
+              : "owner_id,week_start,completion_key",
           });
-        if (!migrationError && !cancelled) {
+        if (migrationError) {
+          setProgressError(
+            `Postup se nepodařilo uložit do cloudu: ${migrationError.message}`,
+          );
+        } else if (!cancelled) {
           setCompleted(localProgress);
         }
         return;
@@ -310,7 +338,7 @@ export default function Home() {
       cancelled = true;
       window.clearTimeout(timeoutId);
     };
-  }, [activeUser, authUserId, currentWeekDate, storageKey]);
+  }, [activeUser, authUserId, currentWeekDate, localUser, storageKey]);
 
   // Přihlásí zkušební profil bez Supabase, jen uloží značku do localStorage.
   function signInTester() {
@@ -464,19 +492,34 @@ export default function Home() {
     const nextProgress = { ...completed, [key]: nextValue };
     window.localStorage.setItem(storageKey, JSON.stringify(nextProgress));
 
-    if (authUserId && supabase) {
-      const { error } = await supabase.from("dashboard_progress").upsert(
-        {
-          owner_id: authUserId,
-          week_start: currentWeekDate,
-          completion_key: key,
-          completed: nextValue,
-        },
-        { onConflict: "owner_id,week_start,completion_key" },
-      );
+    const isCloudTester = localUser === "tester";
+    if ((authUserId || isCloudTester) && supabase) {
+      const result = isCloudTester
+        ? await supabase.from("dashboard_guest_progress").upsert(
+            {
+              profile_key: "tester",
+              week_start: currentWeekDate,
+              completion_key: key,
+              completed: nextValue,
+            },
+            { onConflict: "profile_key,week_start,completion_key" },
+          )
+        : await supabase.from("dashboard_progress").upsert(
+            {
+              owner_id: authUserId,
+              week_start: currentWeekDate,
+              completion_key: key,
+              completed: nextValue,
+            },
+            { onConflict: "owner_id,week_start,completion_key" },
+          );
 
-      if (error) {
-        console.error("Nepodařilo se uložit postup do cloudu.", error);
+      if (result.error) {
+        setProgressError(
+          `Postup se nepodařilo uložit do cloudu: ${result.error.message}`,
+        );
+      } else {
+        setProgressError("");
       }
     }
   }
@@ -578,6 +621,11 @@ export default function Home() {
           <div className="progress-track" aria-hidden="true">
             <div className="progress-fill" style={{ width: `${progress}%` }} />
           </div>
+          {progressError && (
+            <p className="progress-error" role="alert">
+              {progressError}
+            </p>
+          )}
         </section>
 
         {/* Mobilní zobrazení jednoho dne, na širších obrazovkách skryté přes CSS. */}

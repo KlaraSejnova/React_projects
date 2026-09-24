@@ -48,17 +48,28 @@ create table if not exists public.dashboard_progress (
   primary key (owner_id, week_start, completion_key)
 );
 
+create table if not exists public.dashboard_guest_progress (
+  profile_key text not null,
+  week_start date not null,
+  completion_key text not null,
+  completed boolean not null default true,
+  updated_at timestamptz not null default now(),
+  primary key (profile_key, week_start, completion_key)
+);
+
 alter table public.dashboard_profiles enable row level security;
 alter table public.dashboard_routines enable row level security;
 alter table public.dashboard_weeks enable row level security;
 alter table public.dashboard_completions enable row level security;
 alter table public.dashboard_progress enable row level security;
+alter table public.dashboard_guest_progress enable row level security;
 
 drop policy if exists "Owners manage dashboard profiles" on public.dashboard_profiles;
 drop policy if exists "Owners manage dashboard routines" on public.dashboard_routines;
 drop policy if exists "Owners manage dashboard weeks" on public.dashboard_weeks;
 drop policy if exists "Owners manage dashboard completions" on public.dashboard_completions;
 drop policy if exists "Owners manage dashboard progress" on public.dashboard_progress;
+drop policy if exists "Tester manages guest progress" on public.dashboard_guest_progress;
 
 create policy "Owners manage dashboard profiles"
 on public.dashboard_profiles for all
@@ -84,6 +95,11 @@ create policy "Owners manage dashboard progress"
 on public.dashboard_progress for all
 using (auth.uid() = owner_id)
 with check (auth.uid() = owner_id);
+
+create policy "Tester manages guest progress"
+on public.dashboard_guest_progress for all
+using (profile_key = 'tester')
+with check (profile_key = 'tester');
 
 update auth.users
 set raw_user_meta_data =
