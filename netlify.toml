@@ -1,12 +1,8 @@
 [build]
   base = "."
-  command = "npm install --prefix portfolio && npm install --prefix weekdashboard && npm run build --prefix portfolio && npm run build --prefix weekdashboard && rm -rf dist && mkdir -p dist/portfolio && cp -R weekdashboard/out/. dist/ && cp -R portfolio/build/. dist/portfolio/"
-  publish = "dist"
+  command = "npm install --prefix portfolio && npm run build --prefix portfolio"
+  publish = "portfolio/build"
 
 [build.environment]
   SECRETS_SCAN_OMIT_KEYS = "REACT_APP_SUPABASE_URL,REACT_APP_SUPABASE_ANON_KEY"
 
-[[redirects]]
-  from = "/portfolio"
-  to = "/portfolio/"
-  status = 301

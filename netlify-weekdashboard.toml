@@ -1,0 +1,4 @@
+[build]
+  base = "."
+  command = "npm install --prefix weekdashboard && npm run build --prefix weekdashboard"
+  publish = "weekdashboard/out"
