@@ -67,7 +67,7 @@ function App() {
         <nav className="landscape-navigation" aria-label="Hlavní navigace">
           <a
             className="landscape-hill hill-projects"
-            href="https://github.com/petrsynek/rodina"
+            href="https://weekdashboard.netlify.app"
             target="_blank"
             rel="noopener noreferrer"
           >
