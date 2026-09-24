@@ -1,6 +1,14 @@
 "use client";
 
-import { useEffect, useState, type ReactNode, type CSSProperties } from "react";
+import {
+  useEffect,
+  useState,
+  useSyncExternalStore,
+  type FormEvent,
+  type ReactNode,
+  type CSSProperties,
+} from "react";
+import { supabase } from "../lib/supabase";
 
 const users = [
   { id: "barca", name: "Barča", vocative: "Barčo" },
@@ -100,6 +108,21 @@ const routines = [
 
 type CompletionState = Record<string, boolean>;
 
+const userStorageKey = "weekdashboard-user";
+const authProfileStorageKey = "weekdashboard-auth-profile";
+
+function getStoredUser() {
+  if (typeof window === "undefined") return null;
+  const savedUser = window.localStorage.getItem(userStorageKey);
+  return users.some((user) => user.id === savedUser) ? savedUser : null;
+}
+
+function subscribeToStoredUser(onChange: () => void) {
+  window.addEventListener("weekdashboard-user-change", onChange);
+  return () =>
+    window.removeEventListener("weekdashboard-user-change", onChange);
+}
+
 function completionKey(day: string, routine: string) {
   return `${day}-${routine}`;
 }
@@ -139,27 +162,197 @@ function getTodayKey() {
 }
 
 export default function Home() {
-  const [activeUser, setActiveUser] = useState(users[0].id);
+  const localUser = useSyncExternalStore(
+    subscribeToStoredUser,
+    getStoredUser,
+    () => null,
+  );
+  const [authProfile, setAuthProfile] = useState<string | null>(null);
+  const [authReady, setAuthReady] = useState(!supabase);
+  const [loginProfile, setLoginProfile] = useState<"barca" | "terka" | null>(
+    null,
+  );
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [weekOffset, setWeekOffset] = useState(0);
   const [selectedDayKey, setSelectedDayKey] = useState(getTodayKey());
   const [showMobileWeek, setShowMobileWeek] = useState(false);
   const [completed, setCompleted] = useState<CompletionState>({});
+  const activeUser = localUser === "tester" ? localUser : authProfile;
   const weekStart = getWeekStart(weekOffset);
-  const storageKey = progressStorageKey(activeUser, weekStart);
-  const currentUser = users.find((user) => user.id === activeUser) ?? users[0];
-  const isTester = currentUser.name === "Tester";
+  const storageKey = progressStorageKey(activeUser ?? "guest", weekStart);
   const todayKey = weekOffset === 0 ? getTodayKey() : "";
   const selectedDay = days.find((day) => day.key === selectedDayKey) ?? days[0];
   const [dismissedRewardKey, setDismissedRewardKey] = useState("");
 
   useEffect(() => {
+    if (!supabase) return;
+
+    let mounted = true;
+    supabase.auth.getSession().then(({ data }) => {
+      if (!mounted) return;
+      const savedProfile = window.localStorage.getItem(authProfileStorageKey);
+      setAuthProfile(
+        data.session && (savedProfile === "barca" || savedProfile === "terka")
+          ? savedProfile
+          : null,
+      );
+      setAuthReady(true);
+    });
+
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        if (!session) {
+          setAuthProfile(null);
+          window.localStorage.removeItem(authProfileStorageKey);
+        }
+      },
+    );
+
+    return () => {
+      mounted = false;
+      listener.subscription.unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!activeUser) return;
     const saved = window.localStorage.getItem(storageKey);
     const timeoutId = window.setTimeout(
       () => setCompleted(saved ? JSON.parse(saved) : {}),
       0,
     );
     return () => window.clearTimeout(timeoutId);
-  }, [storageKey]);
+  }, [activeUser, storageKey]);
+
+  function signInTester() {
+    window.localStorage.setItem(userStorageKey, "tester");
+    window.dispatchEvent(new Event("weekdashboard-user-change"));
+  }
+
+  async function signInAccount(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!supabase || !loginProfile) return;
+
+    setIsLoggingIn(true);
+    setLoginError("");
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password,
+    });
+
+    if (error || !data.session) {
+      setLoginError("Email nebo heslo není správně.");
+      setIsLoggingIn(false);
+      return;
+    }
+
+    const accountProfile = data.user.user_metadata?.profile;
+    if (accountProfile !== loginProfile) {
+      await supabase.auth.signOut();
+      setLoginError("Tento účet není přiřazený k vybranému profilu.");
+      setIsLoggingIn(false);
+      return;
+    }
+
+    window.localStorage.setItem(authProfileStorageKey, loginProfile);
+    setAuthProfile(loginProfile);
+    setIsLoggingIn(false);
+  }
+
+  function signOut() {
+    if (localUser === "tester") {
+      window.localStorage.removeItem(userStorageKey);
+      window.dispatchEvent(new Event("weekdashboard-user-change"));
+      return;
+    }
+    void supabase?.auth.signOut();
+  }
+
+  const currentUser = users.find((user) => user.id === activeUser);
+  if (!authReady) {
+    return <main className="login-shell" aria-busy="true" />;
+  }
+  if (!currentUser) {
+    return (
+      <main className="login-shell">
+        <section className="login-panel" aria-labelledby="login-title">
+          <p className="eyebrow">Můj týden</p>
+          <h1 id="login-title">Kdo se dnes přihlašuje?</h1>
+          <p className="login-intro">
+            Vyber svůj profil a otevři si svůj týden.
+          </p>
+          {!loginProfile ? (
+            <div className="login-options">
+              {users.map((user) => (
+                <button
+                  key={user.id}
+                  type="button"
+                  className={`login-option login-option-${user.id}`}
+                  onClick={() =>
+                    user.id === "tester"
+                      ? signInTester()
+                      : setLoginProfile(user.id as "barca" | "terka")
+                  }
+                >
+                  <span>{user.name}</span>
+                  <small>
+                    {user.id === "tester"
+                      ? "pro vyzkoušení aplikace"
+                      : "přihlášení emailem a heslem"}
+                  </small>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <form className="login-form" onSubmit={signInAccount}>
+              <p className="login-selected">
+                Přihlašuješ se jako{" "}
+                {loginProfile === "barca" ? "Barča" : "Terka"}
+              </p>
+              <label>
+                Email
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  required
+                />
+              </label>
+              <label>
+                Heslo
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  required
+                />
+              </label>
+              {loginError && <p className="login-error">{loginError}</p>}
+              <button
+                type="submit"
+                className="login-submit"
+                disabled={isLoggingIn}
+              >
+                {isLoggingIn ? "Přihlašuji…" : "Přihlásit se"}
+              </button>
+              <button
+                type="button"
+                className="login-back"
+                onClick={() => setLoginProfile(null)}
+              >
+                Zpět k výběru
+              </button>
+            </form>
+          )}
+        </section>
+      </main>
+    );
+  }
+
+  const isTester = currentUser.name === "Tester";
 
   async function toggleRoutine(day: string, routine: string) {
     const key = completionKey(day, routine);
@@ -209,21 +402,6 @@ export default function Home() {
         </div>
       )}
       <section className="dashboard" aria-labelledby="dashboard-title">
-        <div className="user-switcher" role="tablist" aria-label="Vyber dítě">
-          {users.map((user) => (
-            <button
-              key={user.id}
-              type="button"
-              role="tab"
-              aria-selected={user.id === activeUser}
-              className={`user-tab${user.id === activeUser ? " active" : ""}`}
-              onClick={() => setActiveUser(user.id)}
-            >
-              {user.name}
-            </button>
-          ))}
-        </div>
-
         <header className="dashboard-header">
           <div>
             <p className="eyebrow">Můj týden</p>
@@ -262,6 +440,9 @@ export default function Home() {
               {completedCount}/{totalCount}
             </strong>
           </div>
+          <button type="button" className="sign-out-button" onClick={signOut}>
+            Odhlásit se
+          </button>
         </header>
 
         <section className="progress-section" aria-label="Týdenní postup">
