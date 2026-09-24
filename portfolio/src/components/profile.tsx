@@ -7,6 +7,7 @@ type ProfileProps = {
   onTrips: () => void;
 };
 
+// Seznam dovedností zobrazených jako štítky v sekci Skills.
 const skills = [
   "JavaScript",
   "TypeScript",
@@ -19,6 +20,7 @@ const skills = [
   "Fortran",
 ];
 
+// Stránka "O mně": životopis s kontaktem, dovednostmi, praxi a vzděláním.
 const Profile = ({ onBack, onTrips }: ProfileProps) => {
   return (
     <main className="profile-page">
@@ -105,6 +107,7 @@ const Profile = ({ onBack, onTrips }: ProfileProps) => {
       <section className="profile-section">
         <h2>Experience</h2>
         <div className="profile-timeline">
+          {/* Každý řádek časové osy vykresluje sdílená komponenta ProfileItem níže. */}
           <ProfileItem
             year="2023"
             title="Junior Frontend Developer"
@@ -196,6 +199,7 @@ const Profile = ({ onBack, onTrips }: ProfileProps) => {
   );
 };
 
+// Jeden řádek v časové ose (praxe/vzdělání): rok, název, popis a místo.
 const ProfileItem = ({
   year,
   title,

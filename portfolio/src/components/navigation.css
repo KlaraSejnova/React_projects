@@ -1,3 +1,5 @@
+/* Postranní navigace, skrytá dokud uživatel neklikne na úvodní nadpis
+   (třída .show jí přidá startPorfolioFunction.tsx). */
 .container-navigation {
   display: none;
   align-self: flex-end;
@@ -30,6 +32,7 @@
   text-decoration: none;
 }
 
+/* Animace zjevení navigace zprava po přidání třídy .show. */
 .show {
   display: block;
   animation: opacityNav 5s forwards;

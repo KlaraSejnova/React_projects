@@ -104,6 +104,7 @@
   color: #70251b;
 }
 
+/* Formulář pro přihlášení, zobrazený jen když uživatel není přihlášený. */
 .auth-form {
   display: grid;
   max-width: 520px;
@@ -140,6 +141,7 @@
   margin-bottom: 12px;
 }
 
+/* Formulář pro přidání/editaci výletu, viditelný jen přihlášenému uživateli. */
 .trip-form {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -222,6 +224,7 @@
   line-height: 1.5;
 }
 
+/* Vložená mapa z Mapy.cz pro jeden výlet. */
 .trip-map {
   width: min(100%, 720px);
   margin-top: 18px;

@@ -28,6 +28,7 @@
   pointer-events: none;
 }
 
+/* Lišta připnutá nahoře se zůstává vidět i při scrollování (position: sticky). */
 .profile-sticky-navigation {
   position: sticky;
   top: 0;
@@ -158,6 +159,7 @@
   gap: 20px;
 }
 
+/* Jeden řádek časové osy (praxe/vzdělání): rok | popis | místo ve třech sloupcích. */
 .profile-item {
   display: grid;
   grid-template-columns: 135px minmax(0, 1fr) minmax(150px, 240px);
@@ -192,6 +194,7 @@
   gap: 60px;
 }
 
+/* Responzivní úprava: na malých obrazovkách se sloupce složí pod sebe. */
 @media (max-width: 700px) {
   .profile-page {
     width: calc(100% - 24px);

@@ -3,10 +3,12 @@ import Profile from "./components/profile";
 import Trips from "./components/trips";
 import { useState } from "react";
 
+// Kořenová komponenta portfolia: přepíná mezi úvodní stránkou, výlety a profilem.
 function App() {
   const [showTrips, setShowTrips] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
 
+  // Místo routeru se zde jednoduše přepínají tři obrazovky podle lokálního stavu.
   if (showTrips) {
     return (
       <Trips
@@ -33,6 +35,7 @@ function App() {
 
   return (
     <div className="App">
+      {/* SVG filtr dává pozadí akvarelový vzhled (šum + posun barev). */}
       <svg className="landscape-filters" aria-hidden="true">
         <defs>
           <filter id="watercolor" x="-8%" y="-8%" width="116%" height="116%">
@@ -64,6 +67,7 @@ function App() {
       <header className="App-header">
         <h1>Portfolio Klára Šejnová</h1>
         <p className="landscape-intro">Vyber si kopeček a objev další cestu.</p>
+        {/* Tři "kopečky": odkaz na externí projekt a dvě přepnutí lokálního stavu. */}
         <nav className="landscape-navigation" aria-label="Hlavní navigace">
           <a
             className="landscape-hill hill-projects"

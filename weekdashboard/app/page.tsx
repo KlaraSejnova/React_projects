@@ -1,4 +1,5 @@
 "use client";
+// Hlavní stránka aplikace: přihlášení profilu a týdenní přehled dětských úkolů.
 
 import {
   useEffect,
@@ -10,12 +11,14 @@ import {
 } from "react";
 import { supabase } from "../lib/supabase";
 
+// Profily, mezi kterými se lze přihlásit. "tester" obchází Supabase přihlášení.
 const users = [
   { id: "barca", name: "Barča", vocative: "Barčo" },
   { id: "terka", name: "Terka", vocative: "Terko" },
   { id: "tester", name: "Tester", vocative: "Testere" },
 ];
 
+// Dny týdne používané jako sloupce tabulky i jako klíče pro ukládání stavu.
 const days = [
   { key: "mon", label: "Po", fullLabel: "Pondělí" },
   { key: "tue", label: "Út", fullLabel: "Úterý" },
@@ -26,6 +29,7 @@ const days = [
   { key: "sun", label: "Ne", fullLabel: "Neděle" },
 ];
 
+// Obalí SVG cestu do jednotného stylu ikon (stejná velikost, tloušťka čáry).
 function OutlineIcon({ children }: { children: ReactNode }) {
   return (
     <svg
@@ -43,6 +47,7 @@ function OutlineIcon({ children }: { children: ReactNode }) {
   );
 }
 
+// Seznam denních úkolů (barva a ikona se používají i v mobilním zobrazení).
 const routines = [
   {
     id: "teeth",
@@ -106,27 +111,33 @@ const routines = [
   },
 ];
 
+// Stav dokončení jednoho úkolu v jednom dni, klíčovaný pomocí completionKey.
 type CompletionState = Record<string, boolean>;
 
+// Klíč pro "tester" profil (bez Supabase) a klíč pro přihlášeného Supabase uživatele.
 const userStorageKey = "weekdashboard-user";
 const authProfileStorageKey = "weekdashboard-auth-profile";
 
+// Přečte uloženého testera z localStorage; mimo prohlížeč (SSR) vrátí null.
 function getStoredUser() {
   if (typeof window === "undefined") return null;
   const savedUser = window.localStorage.getItem(userStorageKey);
   return users.some((user) => user.id === savedUser) ? savedUser : null;
 }
 
+// Umožňuje useSyncExternalStore reagovat na přihlášení/odhlášení testera v jiném tabu.
 function subscribeToStoredUser(onChange: () => void) {
   window.addEventListener("weekdashboard-user-change", onChange);
   return () =>
     window.removeEventListener("weekdashboard-user-change", onChange);
 }
 
+// Vytvoří jednoznačný klíč pro kombinaci dne a úkolu, např. "mon-teeth".
 function completionKey(day: string, routine: string) {
   return `${day}-${routine}`;
 }
 
+// Vrátí pondělí týdne posunutého o offset týdnů (offset 0 = aktuální týden).
 function getWeekStart(offset: number) {
   const date = new Date();
   const day = date.getDay();
@@ -137,6 +148,7 @@ function getWeekStart(offset: number) {
   return date;
 }
 
+// Zformátuje rozsah týdne (pondělí–neděle) do čitelného českého textu.
 function formatWeekLabel(weekStart: Date) {
   const weekEnd = new Date(weekStart);
   weekEnd.setDate(weekEnd.getDate() + 6);
@@ -150,6 +162,7 @@ function formatWeekLabel(weekStart: Date) {
   return `${formatter.format(weekStart)} – ${formatter.format(weekEnd)}`;
 }
 
+// Postup se ukládá zvlášť pro každého uživatele a pro každý týden.
 function progressStorageKey(userId: string, weekStart: Date) {
   const year = weekStart.getFullYear();
   const month = String(weekStart.getMonth() + 1).padStart(2, "0");
@@ -157,18 +170,22 @@ function progressStorageKey(userId: string, weekStart: Date) {
   return `weekdashboard-progress-${userId}-${year}-${month}-${day}`;
 }
 
+// JavaScript vrací neděli jako 0, proto ji převádíme na poslední den v poli days.
 function getTodayKey() {
   return days[(new Date().getDay() + 6) % 7].key;
 }
 
 export default function Home() {
+  // Tester profil žije jen v localStorage, ostatní profily jsou přihlášené přes Supabase.
   const localUser = useSyncExternalStore(
     subscribeToStoredUser,
     getStoredUser,
     () => null,
   );
   const [authProfile, setAuthProfile] = useState<string | null>(null);
+  // Dokud nevíme, jestli je Supabase session platná, nezobrazujeme obsah (kvůli blikání).
   const [authReady, setAuthReady] = useState(!supabase);
+  // Profil vybraný na přihlašovací obrazovce, než uživatel zadá email a heslo.
   const [loginProfile, setLoginProfile] = useState<"barca" | "terka" | null>(
     null,
   );
@@ -176,17 +193,23 @@ export default function Home() {
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  // Offset určuje, jestli prohlížíme minulý, aktuální, nebo následující týden.
   const [weekOffset, setWeekOffset] = useState(0);
+  // Vybraný den v mobilním zobrazení jednoho dne.
   const [selectedDayKey, setSelectedDayKey] = useState(getTodayKey());
   const [showMobileWeek, setShowMobileWeek] = useState(false);
   const [completed, setCompleted] = useState<CompletionState>({});
+  // Tester nepotřebuje Supabase přihlášení, ostatní profily ano.
   const activeUser = localUser === "tester" ? localUser : authProfile;
   const weekStart = getWeekStart(weekOffset);
   const storageKey = progressStorageKey(activeUser ?? "guest", weekStart);
   const todayKey = weekOffset === 0 ? getTodayKey() : "";
   const selectedDay = days.find((day) => day.key === selectedDayKey) ?? days[0];
+  // Klíč odmítnuté odměny za aktuální týden, aby se modál znovu neukazoval po zavření.
   const [dismissedRewardKey, setDismissedRewardKey] = useState("");
 
+  // Při načtení stránky zjistí, jestli je uživatel přihlášený přes Supabase,
+  // a dál sleduje odhlášení (např. z jiné záložky).
   useEffect(() => {
     if (!supabase) return;
 
@@ -217,6 +240,7 @@ export default function Home() {
     };
   }, []);
 
+  // Po přihlášení nebo změně týdne načte uložený postup daného uživatele a týdne.
   useEffect(() => {
     if (!activeUser) return;
     const saved = window.localStorage.getItem(storageKey);
@@ -227,11 +251,13 @@ export default function Home() {
     return () => window.clearTimeout(timeoutId);
   }, [activeUser, storageKey]);
 
+  // Přihlásí zkušební profil bez Supabase, jen uloží značku do localStorage.
   function signInTester() {
     window.localStorage.setItem(userStorageKey, "tester");
     window.dispatchEvent(new Event("weekdashboard-user-change"));
   }
 
+  // Ověří email a heslo přes Supabase a zkontroluje, že účet patří k vybranému profilu.
   async function signInAccount(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!supabase || !loginProfile) return;
@@ -262,6 +288,7 @@ export default function Home() {
     setIsLoggingIn(false);
   }
 
+  // Odhlásí testera z localStorage, nebo skutečného uživatele ze Supabase.
   function signOut() {
     if (localUser === "tester") {
       window.localStorage.removeItem(userStorageKey);
@@ -272,9 +299,11 @@ export default function Home() {
   }
 
   const currentUser = users.find((user) => user.id === activeUser);
+  // Zatímco ověřujeme Supabase session, nic nevykreslujeme (prázdná stránka).
   if (!authReady) {
     return <main className="login-shell" aria-busy="true" />;
   }
+  // Bez přihlášeného uživatele zobrazíme obrazovku výběru profilu a přihlašovací formulář.
   if (!currentUser) {
     return (
       <main className="login-shell">
@@ -352,8 +381,10 @@ export default function Home() {
     );
   }
 
+  // Tester má všechny dny odemčené, ostatní profily mohou odškrtávat jen dnešní den.
   const isTester = currentUser.name === "Tester";
 
+  // Přepne jeden úkol pro daný den a uloží nový stav do localStorage.
   async function toggleRoutine(day: string, routine: string) {
     const key = completionKey(day, routine);
     const nextValue = !completed[key];
@@ -362,19 +393,23 @@ export default function Home() {
     window.localStorage.setItem(storageKey, JSON.stringify(nextProgress));
   }
 
+  // Souhrnná procentuální hodnota postupu za celý zobrazený týden.
   const completedCount = Object.values(completed).filter(Boolean).length;
   const totalCount = days.length * routines.length;
   const progress = Math.round((completedCount / totalCount) * 100);
+  // Počet dnes dokončených úkolů, používá se pro povzbudivou hlášku pod tabulkou.
   const completedTodayCount = todayKey
     ? routines.filter(
         (routine) => completed[completionKey(todayKey, routine.id)],
       ).length
     : 0;
+  // Modál s odměnou se zobrazí jen jednou za týden, dokud ho uživatel nezavře.
   const rewardKey = `${activeUser}-${weekOffset}`;
   const showRewardModal = progress >= 75 && dismissedRewardKey !== rewardKey;
 
   return (
     <main className="dashboard-shell">
+      {/* Modál s malou odměnou, zobrazí se po dosažení 75 % postupu v týdnu. */}
       {showRewardModal && (
         <div className="reward-modal-backdrop">
           <section
@@ -402,6 +437,7 @@ export default function Home() {
         </div>
       )}
       <section className="dashboard" aria-labelledby="dashboard-title">
+        {/* Záhlaví: pozdrav, přepínání týdne, souhrn a tlačítko odhlášení. */}
         <header className="dashboard-header">
           <div>
             <p className="eyebrow">Můj týden</p>
@@ -445,6 +481,7 @@ export default function Home() {
           </button>
         </header>
 
+        {/* Lišta ukazuje poměr dokončených úkolů za celý týden. */}
         <section className="progress-section" aria-label="Týdenní postup">
           <div className="progress-copy">
             <span>Týdenní postup</span>
@@ -455,6 +492,7 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Mobilní zobrazení jednoho dne, na širších obrazovkách skryté přes CSS. */}
         <section
           className={`mobile-day-view${showMobileWeek ? " mobile-week-mode" : ""}`}
           aria-label="Úkoly pro vybraný den"
@@ -511,6 +549,7 @@ export default function Home() {
           </button>
           <div className="mobile-routine-list">
             {routines.map((routine) => {
+              // Karta úkolu jde otočit jako mince, přední strana je ikona, zadní barva úkolu.
               const key = completionKey(selectedDay.key, routine.id);
               const isCompleted = completed[key] ?? false;
               const isAvailable = isTester
@@ -562,6 +601,7 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Tabulka pro širší obrazovky vzniká ze seznamu dnů a seznamu úkolů. */}
         <section
           className={`week-grid${showMobileWeek ? " mobile-week-visible" : ""}`}
           aria-label="Úkoly pro tento týden"
@@ -591,6 +631,7 @@ export default function Home() {
                 </span>
               </div>
               {days.map((day) => {
+                // Každé políčko tabulky má vlastní stav a pravidlo, kdy jde odškrtnout.
                 const key = completionKey(day.key, routine.id);
                 const isCompleted = completed[key] ?? false;
                 const isAvailable = isTester

@@ -1,4 +1,5 @@
 import "./navigation.css";
+// Postranní navigace zobrazená po spuštění úvodní animace (třída "show" v CSS).
 const Navigation = ({ onTrips }: { onTrips: () => void }) => {
   return (
     <nav className="container-navigation">

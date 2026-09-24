@@ -1,3 +1,5 @@
+/* Úvodní obrazovka (kopečky) - zbytek layoutu obsahuí původní ilustraci krajiny,
+   která je níže přepsaná novým jednodušším pozadím (obrázek landscape.svg). */
 .App {
   position: relative;
   text-align: center;
@@ -62,6 +64,7 @@
   overflow: hidden;
 }
 
+/* Textové "ptáci" nad krajinou (dekorativní prvek, jen tračky znaků). */
 .landscape-birds {
   position: absolute;
   top: 18%;
@@ -73,6 +76,7 @@
   transform: rotate(-6deg);
 }
 
+/* Silueta lesů v pozadí ilustrace. */
 .landscape-trees {
   position: absolute;
   right: -8%;
@@ -131,6 +135,7 @@
   transform: rotate(-5deg);
 }
 
+/* Domek uprostřed ilustrace, složený ze tří vrstev (tělo, střecha, kořín). */
 .landscape-house {
   position: absolute;
   bottom: 40%;
@@ -268,6 +273,7 @@
   padding-top: 100px;
 }
 
+/* Každý "kopeček" je klikací odkaz/tlačítko, které přepíná obrazovky v App.tsx. */
 .landscape-hill {
   position: relative;
   display: flex;
@@ -386,6 +392,8 @@
   }
 } /*# sourceMappingURL=App.css.map */
 
+/* Novější pravidla níže přebíjí původní ilustraci: jediná viditelná vrstva je
+   obrázek pozadí (landscape.svg) vložený v App.tsx, ne CSS kresba. */
 /* The illustration is the single visual layer; navigation sits above it. */
 .App {
   display: block;
@@ -393,6 +401,7 @@
   background: #aeb6b5;
 }
 
+/* Skryje původní CSS vrstvy ilustrace (::before/::after) definované výše. */
 .App::before,
 .App::after {
   display: none;

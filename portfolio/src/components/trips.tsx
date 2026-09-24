@@ -3,6 +3,7 @@ import "./trips.css";
 import { supabase } from "../lib/supabase";
 import { User } from "@supabase/supabase-js";
 
+// Jeden výlet, jak je uložený v UI (mapUrl místo sloupce map_url z databáze).
 type Trip = {
   id: number;
   title: string;
@@ -14,6 +15,7 @@ type Trip = {
 const tripsStorageKey = "portfolio-trips";
 const defaultMapUrl = "https://mapy.com/s/bavadutama";
 
+// Převede řádek ze Supabase (snake_case) na tvar používaný v komponentě (camelCase).
 const toTrip = (row: {
   id: number;
   title: string;
@@ -30,6 +32,8 @@ const toTrip = (row: {
 
 const projectsUrl = "https://weekdashboard.netlify.app";
 
+// Stránka výletů: přihlášení přes Supabase umožňuje přidávat/upravovat/mazat výlety.
+// Bez Supabase konfigurace se použije jen čtení z localStorage (bez editace).
 const Trips = ({
   onBack,
   onProfile,
@@ -57,6 +61,7 @@ const Trips = ({
 
     const client = supabase;
     let mounted = true;
+    // Zjistí, jestli je uživatel už přihlášený, a dál poslouchá změny přihlášení.
     const loadSession = async () => {
       const { data } = await client.auth.getSession();
       if (mounted) {
@@ -80,6 +85,7 @@ const Trips = ({
   useEffect(() => {
     const loadTrips = async () => {
       if (supabase) {
+        // Při připojené Supabase se výlety načítají z databáze, seřazené od nejnovějšího.
         const { data, error } = await supabase
           .from("trips")
           .select("*")
@@ -110,6 +116,7 @@ const Trips = ({
     setFormError("");
     let updatedTrips: Trip[];
 
+    // Podle editingTripId se rozhodne, jestli se výlet vkládá jako nový, nebo aktualizuje.
     const result =
       editingTripId === null
         ? await supabase
@@ -155,6 +162,7 @@ const Trips = ({
   };
 
   const editTrip = (trip: Trip) => {
+    // Přednastaví formulář hodnotami vybraného výletu a odscrolluje nahořu k formuláři.
     setEditingTripId(trip.id);
     setTitle(trip.title);
     setDate(trip.date);
@@ -176,6 +184,7 @@ const Trips = ({
       return;
     }
 
+    // Potvrzovací dialog brání náhodnému smazání výletu.
     if (!window.confirm("Opravdu chceš tento výlet smazat?")) {
       return;
     }
@@ -252,6 +261,7 @@ const Trips = ({
       </div>
       <h2>Moje výlety</h2>
       <p className="trips-intro">Přidej místo, na které nechceš zapomenout.</p>
+      {/* Bez přihlášení se zobrazí jen přihlašovací formulář, ne editace výletů. */}
       {!authLoading && !user && supabase && (
         <form className="auth-form" onSubmit={signIn}>
           <h3>Přihlášení pro správu výletů</h3>
@@ -368,6 +378,7 @@ const Trips = ({
             </div>
             {trip.mapUrl && (
               <div className="trip-map">
+                {/* Vložená mapa z Mapy.cz pomocí odkazu "Vložit mapu". */}
                 <iframe
                   src={trip.mapUrl}
                   title={`Mapa výletu ${trip.title}`}
