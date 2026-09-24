@@ -2,3 +2,20 @@
   base = "."
   command = "npm install --prefix weekdashboard && npm run build --prefix weekdashboard"
   publish = "weekdashboard/out"
+
+# Hashed build assets can be cached forever...
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# ...but HTML/manifest must always be revalidated so it never points at stale hashed assets.
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
