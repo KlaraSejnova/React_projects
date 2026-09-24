@@ -87,7 +87,6 @@ const routines = [
     id: "reading",
     name: "Čtení",
     detail: "kniha nebo pohádka",
-    weekendOnly: true,
     color: "#f2a6d5",
     icon: (
       <OutlineIcon>
@@ -171,9 +170,7 @@ export default function Home() {
   }
 
   const completedCount = Object.values(completed).filter(Boolean).length;
-  const totalCount = isTester
-    ? days.length * routines.length
-    : days.length * (routines.length - 1) + 2;
+  const totalCount = days.length * routines.length;
   const progress = Math.round((completedCount / totalCount) * 100);
   const completedTodayCount = todayKey
     ? routines.filter(
@@ -337,9 +334,7 @@ export default function Home() {
               const isCompleted = completed[key] ?? false;
               const isAvailable = isTester
                 ? true
-                : routine.weekendOnly
-                  ? selectedDay.key === "sat" || selectedDay.key === "sun"
-                  : weekOffset === 0 && selectedDay.key === todayKey;
+                : weekOffset === 0 && selectedDay.key === todayKey;
 
               return (
                 <label
@@ -368,19 +363,17 @@ export default function Home() {
                       }
                       aria-label={`${routine.name}: ${selectedDay.fullLabel}`}
                     />
-                    {(!routine.weekendOnly || isAvailable) && (
-                      <span className="coin" aria-hidden="true">
-                        <span className="coin-face coin-front">
-                          {routine.icon}
-                        </span>
-                        <span
-                          className="coin-face coin-back"
-                          style={{ "--accent": routine.color } as CSSProperties}
-                        >
-                          {routine.icon}
-                        </span>
+                    <span className="coin" aria-hidden="true">
+                      <span className="coin-face coin-front">
+                        {routine.icon}
                       </span>
-                    )}
+                      <span
+                        className="coin-face coin-back"
+                        style={{ "--accent": routine.color } as CSSProperties}
+                      >
+                        {routine.icon}
+                      </span>
+                    </span>
                   </span>
                 </label>
               );
@@ -421,9 +414,7 @@ export default function Home() {
                 const isCompleted = completed[key] ?? false;
                 const isAvailable = isTester
                   ? true
-                  : routine.weekendOnly
-                    ? day.key === "sat" || day.key === "sun"
-                    : weekOffset === 0 && day.key === todayKey;
+                  : weekOffset === 0 && day.key === todayKey;
 
                 return (
                   <label
@@ -438,19 +429,17 @@ export default function Home() {
                       onChange={() => toggleRoutine(day.key, routine.id)}
                       aria-label={`${routine.name}: ${day.fullLabel}`}
                     />
-                    {(!routine.weekendOnly || isAvailable) && (
-                      <span className="coin" aria-hidden="true">
-                        <span className="coin-face coin-front">
-                          {routine.icon}
-                        </span>
-                        <span
-                          className="coin-face coin-back"
-                          style={{ "--accent": routine.color } as CSSProperties}
-                        >
-                          {routine.icon}
-                        </span>
+                    <span className="coin" aria-hidden="true">
+                      <span className="coin-face coin-front">
+                        {routine.icon}
                       </span>
-                    )}
+                      <span
+                        className="coin-face coin-back"
+                        style={{ "--accent": routine.color } as CSSProperties}
+                      >
+                        {routine.icon}
+                      </span>
+                    </span>
                   </label>
                 );
               })}
