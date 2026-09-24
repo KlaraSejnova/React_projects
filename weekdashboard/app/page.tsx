@@ -170,6 +170,13 @@ function progressStorageKey(userId: string, weekStart: Date) {
   return `weekdashboard-progress-${userId}-${year}-${month}-${day}`;
 }
 
+function weekDateKey(weekStart: Date) {
+  const year = weekStart.getFullYear();
+  const month = String(weekStart.getMonth() + 1).padStart(2, "0");
+  const day = String(weekStart.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 // JavaScript vrací neděli jako 0, proto ji převádíme na poslední den v poli days.
 function getTodayKey() {
   return days[(new Date().getDay() + 6) % 7].key;
@@ -183,6 +190,7 @@ export default function Home() {
     () => null,
   );
   const [authProfile, setAuthProfile] = useState<string | null>(null);
+  const [authUserId, setAuthUserId] = useState<string | null>(null);
   // Dokud nevíme, jestli je Supabase session platná, nezobrazujeme obsah (kvůli blikání).
   const [authReady, setAuthReady] = useState(!supabase);
   // Profil vybraný na přihlašovací obrazovce, než uživatel zadá email a heslo.
@@ -202,6 +210,7 @@ export default function Home() {
   // Tester nepotřebuje Supabase přihlášení, ostatní profily ano.
   const activeUser = localUser === "tester" ? localUser : authProfile;
   const weekStart = getWeekStart(weekOffset);
+  const currentWeekDate = weekDateKey(weekStart);
   const storageKey = progressStorageKey(activeUser ?? "guest", weekStart);
   const todayKey = weekOffset === 0 ? getTodayKey() : "";
   const selectedDay = days.find((day) => day.key === selectedDayKey) ?? days[0];
@@ -217,6 +226,7 @@ export default function Home() {
     supabase.auth.getSession().then(({ data }) => {
       if (!mounted) return;
       const savedProfile = window.localStorage.getItem(authProfileStorageKey);
+      setAuthUserId(data.session?.user.id ?? null);
       setAuthProfile(
         data.session && (savedProfile === "barca" || savedProfile === "terka")
           ? savedProfile
@@ -227,6 +237,7 @@ export default function Home() {
 
     const { data: listener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
+        setAuthUserId(session?.user.id ?? null);
         if (!session) {
           setAuthProfile(null);
           window.localStorage.removeItem(authProfileStorageKey);
@@ -240,7 +251,7 @@ export default function Home() {
     };
   }, []);
 
-  // Po přihlášení nebo změně týdne načte uložený postup daného uživatele a týdne.
+  // Po přihlášení nebo změně týdne načte postup z cloudu, případně z lokální zálohy.
   useEffect(() => {
     if (!activeUser) return;
     const saved = window.localStorage.getItem(storageKey);
@@ -248,8 +259,58 @@ export default function Home() {
       () => setCompleted(saved ? JSON.parse(saved) : {}),
       0,
     );
-    return () => window.clearTimeout(timeoutId);
-  }, [activeUser, storageKey]);
+
+    if (!authUserId || !supabase) {
+      return () => window.clearTimeout(timeoutId);
+    }
+
+    const client = supabase;
+    let cancelled = false;
+    const loadCloudProgress = async () => {
+      const { data, error } = await client
+        .from("dashboard_progress")
+        .select("completion_key, completed")
+        .eq("owner_id", authUserId)
+        .eq("week_start", currentWeekDate);
+
+      if (cancelled || error) return;
+
+      const localProgress = saved ? JSON.parse(saved) : {};
+      if (data.length === 0 && Object.keys(localProgress).length > 0) {
+        const rows = Object.entries(localProgress).map(
+          ([completionKey, completed]) => ({
+            owner_id: authUserId,
+            week_start: currentWeekDate,
+            completion_key: completionKey,
+            completed: Boolean(completed),
+          }),
+        );
+        const { error: migrationError } = await client
+          .from("dashboard_progress")
+          .upsert(rows, {
+            onConflict: "owner_id,week_start,completion_key",
+          });
+        if (!migrationError && !cancelled) {
+          setCompleted(localProgress);
+        }
+        return;
+      }
+
+      const cloudProgress = Object.fromEntries(
+        data
+          .filter((row) => row.completed)
+          .map((row) => [row.completion_key, true]),
+      );
+      setCompleted(cloudProgress);
+      window.localStorage.setItem(storageKey, JSON.stringify(cloudProgress));
+    };
+
+    void loadCloudProgress();
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timeoutId);
+    };
+  }, [activeUser, authUserId, currentWeekDate, storageKey]);
 
   // Přihlásí zkušební profil bez Supabase, jen uloží značku do localStorage.
   function signInTester() {
@@ -395,13 +456,29 @@ export default function Home() {
   // Tester má všechny dny odemčené, ostatní profily mohou odškrtávat jen dnešní den.
   const isTester = currentUser.name === "Tester";
 
-  // Přepne jeden úkol pro daný den a uloží nový stav do localStorage.
+  // Přepne jeden úkol a uloží nový stav lokálně i do cloudu pro přihlášený účet.
   async function toggleRoutine(day: string, routine: string) {
     const key = completionKey(day, routine);
     const nextValue = !completed[key];
     setCompleted((current) => ({ ...current, [key]: nextValue }));
     const nextProgress = { ...completed, [key]: nextValue };
     window.localStorage.setItem(storageKey, JSON.stringify(nextProgress));
+
+    if (authUserId && supabase) {
+      const { error } = await supabase.from("dashboard_progress").upsert(
+        {
+          owner_id: authUserId,
+          week_start: currentWeekDate,
+          completion_key: key,
+          completed: nextValue,
+        },
+        { onConflict: "owner_id,week_start,completion_key" },
+      );
+
+      if (error) {
+        console.error("Nepodařilo se uložit postup do cloudu.", error);
+      }
+    }
   }
 
   // Souhrnná procentuální hodnota postupu za celý zobrazený týden.
