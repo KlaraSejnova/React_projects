@@ -1,6 +1,6 @@
 import "./profile.css";
 
-const projectsUrl = "https://github.com/petrsynek/rodina";
+const projectsUrl = "https://weekdashboard.netlify.app";
 
 type ProfileProps = {
   onBack: () => void;
@@ -57,11 +57,11 @@ const Profile = ({ onBack, onTrips }: ProfileProps) => {
           <a href="tel:+420724969646">+420 724 969 646</a>
           <a href="mailto:k.sejnova@gmail.com">k.sejnova@gmail.com</a>
           <a
-            href="https://github.com/KlaraSejnova"
+            href="https://weekdashboard.netlify.app"
             target="_blank"
             rel="noopener noreferrer"
           >
-            github.com/KlaraSejnova
+            weekdashboard.netlify.app
           </a>
           <a
             href="https://www.linkedin.com/in/klara-sejnova"
