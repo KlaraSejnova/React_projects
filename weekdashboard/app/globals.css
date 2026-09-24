@@ -244,12 +244,16 @@ h1 {
   background: rgba(255, 103, 199, 0.14);
   color: #ffd6f2;
   cursor: pointer;
-  font-size: 1.2rem;
-  line-height: 1;
-  padding: 0 0 3px;
+  padding: 0;
   transition:
     background-color 160ms ease,
     transform 160ms ease;
+}
+
+.week-arrow svg {
+  display: block;
+  width: 19px;
+  height: 19px;
 }
 
 .week-arrow:hover {

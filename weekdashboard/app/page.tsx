@@ -239,7 +239,9 @@ export default function Home() {
                 onClick={() => setWeekOffset((offset) => offset - 1)}
                 aria-label="Předchozí týden"
               >
-                ←
+                <OutlineIcon>
+                  <path d="m14 18-6-6 6-6" />
+                </OutlineIcon>
               </button>
               <span className="week-label">{formatWeekLabel(weekStart)}</span>
               <button
@@ -248,7 +250,9 @@ export default function Home() {
                 onClick={() => setWeekOffset((offset) => offset + 1)}
                 aria-label="Následující týden"
               >
-                →
+                <OutlineIcon>
+                  <path d="m10 18 6-6-6-6" />
+                </OutlineIcon>
               </button>
             </div>
           </div>
@@ -293,7 +297,9 @@ export default function Home() {
                   }}
                   aria-label="Předchozí den"
                 >
-                  ←
+                  <OutlineIcon>
+                    <path d="m14 18-6-6 6-6" />
+                  </OutlineIcon>
                 </button>
                 <div className="mobile-day-heading">
                   <span>{selectedDay.fullLabel}</span>
@@ -310,7 +316,9 @@ export default function Home() {
                   }}
                   aria-label="Následující den"
                 >
-                  →
+                  <OutlineIcon>
+                    <path d="m10 18 6-6-6-6" />
+                  </OutlineIcon>
                 </button>
               </>
             )}
