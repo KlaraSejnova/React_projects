@@ -134,6 +134,8 @@ body {
 }
 
 .login-panel {
+  position: relative;
+  z-index: 1;
   width: min(100%, 540px);
   padding: clamp(28px, 7vw, 58px);
   border: 1px solid rgba(239, 181, 255, 0.32);
@@ -179,6 +181,8 @@ body {
   font-weight: 800;
   text-align: left;
   cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   transition:
     border-color 160ms ease,
     background-color 160ms ease,
@@ -247,11 +251,15 @@ body {
 
 .login-submit,
 .login-back {
+  min-height: 46px;
   padding: 11px 16px;
   border-radius: 10px;
   font: inherit;
   font-weight: 800;
   cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-appearance: none;
 }
 
 .login-submit {
