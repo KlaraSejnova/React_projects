@@ -28,7 +28,7 @@ const toTrip = (row: {
   mapUrl: row.map_url,
 });
 
-const projectsUrl = "https://github.com/petrsynek/rodina";
+const projectsUrl = "https://weekdashboard.netlify.app";
 
 const Trips = ({
   onBack,
