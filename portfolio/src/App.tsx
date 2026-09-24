@@ -57,7 +57,7 @@ function App() {
       </svg>
       <img
         className="landscape-background"
-        src="/landscape.svg"
+        src={`${process.env.PUBLIC_URL}/landscape.svg`}
         alt=""
         aria-hidden="true"
       />

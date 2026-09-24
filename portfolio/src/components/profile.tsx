@@ -24,7 +24,7 @@ const Profile = ({ onBack, onTrips }: ProfileProps) => {
     <main className="profile-page">
       <img
         className="profile-background"
-        src="/landscape.svg"
+        src={`${process.env.PUBLIC_URL}/landscape.svg`}
         alt=""
         aria-hidden="true"
       />
@@ -35,7 +35,11 @@ const Profile = ({ onBack, onTrips }: ProfileProps) => {
           onClick={onBack}
           aria-label="Zpět na úvodní stránku"
         >
-          <img src="/favicon.svg" alt="" aria-hidden="true" />
+          <img
+            src={`${process.env.PUBLIC_URL}/favicon.svg`}
+            alt=""
+            aria-hidden="true"
+          />
         </button>
         <div className="sticky-nav-links">
           <button type="button" onClick={onTrips}>

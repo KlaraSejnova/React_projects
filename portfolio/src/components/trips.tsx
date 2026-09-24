@@ -224,7 +224,7 @@ const Trips = ({
     <main className="trips-page">
       <img
         className="trips-background"
-        src="/landscape.svg"
+        src={`${process.env.PUBLIC_URL}/landscape.svg`}
         alt=""
         aria-hidden="true"
       />
@@ -235,7 +235,11 @@ const Trips = ({
           onClick={onBack}
           aria-label="Zpět na úvodní stránku"
         >
-          <img src="/favicon.svg" alt="" aria-hidden="true" />
+          <img
+            src={`${process.env.PUBLIC_URL}/favicon.svg`}
+            alt=""
+            aria-hidden="true"
+          />
         </button>
         <div className="sticky-nav-links">
           <button type="button" onClick={onProfile}>
