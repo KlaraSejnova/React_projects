@@ -1,50 +1,86 @@
-# Getting Started with Create React App
+# Portfolio Kláry Šejnové
 
-## Správa výletů
+Osobní portfolio postavené v Reactu a TypeScriptu. Slouží jako vizuální rozcestník mezi profilem, výlety a vlastními projekty. Design používá ilustraci krajiny jako hlavní navigaci a obrazovky se přepínají bez routeru pomocí lokálního React stavu.
 
-Formulář pro přidávání, úpravu a mazání výletů je dostupný pouze po přihlášení přes Supabase Auth. V Supabase vytvoř jeden účet pro správu, vypni veřejnou registraci a v SQL editoru spusť [supabase/policies.sql](supabase/policies.sql). Veřejnost může výlety číst, ale zápis je povolen jen přihlášeným uživatelům.
+## Co portfolio umí
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+- úvodní obrazovku s navigací mezi hlavními částmi,
+- stránku **O mně** s kontakty, dovednostmi, zkušenostmi a vzděláním,
+- stránku **Projekty** s prezentací Weekdashboardu, popisem a screenshotem,
+- stránku **Moje výlety** s veřejným přehledem uložených výletů,
+- přidávání, úpravu a mazání výletů po přihlášení přes Supabase Auth,
+- datum, popis a odkaz na mapu z Mapy.com u každého výletu,
+- responzivní rozložení pro desktop i mobil.
 
-## Available Scripts
+## Technologie
 
-In the project directory, you can run:
+- React 18
+- TypeScript
+- Create React App (`react-scripts`)
+- Supabase Auth a PostgreSQL
+- Sass/CSS
+- Testing Library a Jest
 
-### `npm start`
+## Spuštění lokálně
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+```bash
+npm install
+npm start
+```
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Vývojový server poběží na [http://localhost:3000](http://localhost:3000).
 
-### `npm test`
+## Proměnné prostředí
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+V adresáři `portfolio` vytvoř soubor `.env.local`:
 
-### `npm run build`
+```env
+REACT_APP_SUPABASE_URL=https://your-project.supabase.co
+REACT_APP_SUPABASE_ANON_KEY=your-anon-key
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Pokud hodnoty nejsou nastavené, portfolio se spustí, ale Supabase funkce nebudou dostupné.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Supabase a výlety
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Tabulka `public.trips` musí obsahovat sloupce `id`, `title`, `date`, `description`, `map_url` a `created_at`. Po vytvoření tabulky spusť v Supabase SQL editoru [supabase/policies.sql](supabase/policies.sql).
 
-### `npm run eject`
+Aktuální pravidla dovolují veřejné čtení a zápis pouze přihlášeným uživatelům. Pokud má být správa omezená jen na konkrétní účet, je potřeba policy zpřísnit podle `auth.uid()`.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Struktura
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```text
+src/
+├── App.tsx                 # přepínání hlavních obrazovek
+├── App.css                 # úvodní krajina a navigace
+├── components/
+│   ├── profile.tsx         # profil a životopis
+│   ├── trips.tsx           # seznam a správa výletů
+│   ├── projects.tsx        # přehled projektů
+│   └── *.css               # styly jednotlivých obrazovek
+├── function/               # pomocné funkce
+└── lib/supabase.ts         # volitelné připojení k Supabase
+public/
+└── ...                     # favicony, krajina, screenshot Weekdashboardu
+supabase/
+└── policies.sql            # RLS pravidla pro tabulku trips
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## Testování a build
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+```bash
+npm test -- --watchAll=false
+npm run build
+```
 
-## Learn More
+Produkční build vznikne ve složce `build`.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Nasazení na Netlify
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Kořenový [netlify.toml](../netlify.toml) nastavuje build v adresáři `portfolio` a publikuje `portfolio/build`. V Netlify je potřeba doplnit stejné `REACT_APP_*` proměnné prostředí jako při lokálním vývoji.
+
+## Známé limity
+
+- Navigace používá lokální stav místo URL rout. Po obnovení stránky se otevře úvodní obrazovka.
+- Bez Supabase konfigurace není možné přidávat ani upravovat výlety.
+- Lokální fallback neslouží jako plnohodnotná náhrada databáze.
