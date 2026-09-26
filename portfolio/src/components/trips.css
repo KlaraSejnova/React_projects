@@ -576,6 +576,22 @@
   .trips-sticky-navigation {
     margin: -25px -15px 0;
     padding: 8px 15px;
+    gap: 8px;
+  }
+
+  .trips-sticky-navigation .home-link {
+    width: 36px;
+    flex: 0 0 36px;
+  }
+
+  .trips-sticky-navigation .sticky-nav-links {
+    flex: 0 0 auto;
+    gap: 6px;
+  }
+
+  .trips-sticky-navigation .sticky-nav-links button {
+    padding: 6px 7px;
+    font-size: 0.9rem;
   }
 
   .trip-form {
@@ -583,7 +599,16 @@
   }
 
   .trips-sticky-navigation .walker-lane {
-    margin-right: 10px;
+    min-width: 64px;
+    margin-right: 6px;
+  }
+
+  .trips-sticky-navigation .trip-divider-walker {
+    animation-duration: 14s;
+  }
+
+  .trips-sticky-navigation .trip-divider-walker .walker-facing {
+    animation-duration: 28s;
   }
 
   .wide-field,
