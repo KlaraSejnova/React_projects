@@ -22,6 +22,69 @@ const formatTripDate = (value: string) => {
   return `${Number(day)}.${Number(month)}. ${year}`;
 };
 
+const TripWalker = () => (
+  <svg
+    className="trip-divider-walker"
+    viewBox="0 0 28 36"
+    focusable="false"
+    aria-hidden="true"
+  >
+    <g className="walker-facing">
+      <g className="walker-bob">
+        <circle cx="14" cy="5" r="4" />
+        <path
+          className="walker-hat"
+          d="M10 4c.2-2.4 1.5-3.8 4-3.8S18 1.7 18 4v1c-2-1-5.5-.9-8 .2z"
+        />
+        <path
+          className="walker-cap-brim"
+          d="M10 4.2c3-1 6.7-.7 8.8.4 1.2.6 2.1.6 2.8.3-.7 1.2-2.2 1.5-3.8 1-2.6-.9-5.3-.9-7.8-.3z"
+        />
+        <g className="walker-pack">
+          <path
+            className="walker-backpack"
+            d="M8.5 13.5q0-1 1-1h2.5q1 0 1 1v5.5h-4.5z"
+          />
+          <path className="walker-pack-pocket" d="M9.5 16h2.5v2h-2.5z" />
+        </g>
+        <path
+          className="walker-torso"
+          d="M12 10.5c1.1-.9 2.7-.2 3.3 1.1l1.1 6.3c.3 1.5-.8 2.8-2.2 3.1l-2.4-.8.3-7.2z"
+        />
+        <path className="walker-arm walker-arm-back" d="m14 12-1 5-3 3" />
+        <g className="walker-arm walker-arm-front">
+          <path d="m14 12 2 5 4 3" />
+          <g className="walker-map-group">
+            <path
+              className="walker-map"
+              d="m19 16 2-1 2 1 2-1v7l-2 1-2-1-2 1z"
+            />
+            <path className="walker-map-fold" d="M21 15v7m2-6v7" />
+          </g>
+        </g>
+        <g className="walker-leg walker-leg-back">
+          <path d="M14 21 12 26" />
+          <g className="walker-shin walker-shin-back">
+            <path d="M12 26 13 31" />
+            <g className="walker-foot walker-foot-back">
+              <path d="m13 31-2 1h5" />
+            </g>
+          </g>
+        </g>
+        <g className="walker-leg walker-leg-front">
+          <path d="M14 21 16 26" />
+          <g className="walker-shin walker-shin-front">
+            <path d="M16 26 17 31" />
+            <g className="walker-foot walker-foot-front">
+              <path d="m17 31-1 1h5" />
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+  </svg>
+);
+
 // Převede řádek ze Supabase (snake_case) na tvar používaný v komponentě (camelCase).
 const toTrip = (row: {
   id: number;
@@ -313,6 +376,9 @@ const Trips = ({
           <button type="button" onClick={onProjects}>
             Projekty
           </button>
+        </div>
+        <div className="walker-lane" aria-hidden="true">
+          <TripWalker />
         </div>
       </div>
       <h2>Moje výlety</h2>

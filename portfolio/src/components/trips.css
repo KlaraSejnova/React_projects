@@ -67,6 +67,15 @@
   gap: 10px;
 }
 
+.trips-sticky-navigation .walker-lane {
+  position: relative;
+  order: -1;
+  flex: 1;
+  align-self: stretch;
+  min-width: 32px;
+  margin-right: 24px;
+}
+
 .trips-sticky-navigation .sticky-nav-links button,
 .trips-sticky-navigation .sticky-nav-links a {
   border: 1px solid #263c34;
@@ -226,8 +235,285 @@
 }
 
 .trip-item {
-  border-top: 1px solid #c8c3bb;
+  border-top: 1px dashed #8e998e;
   padding: 20px 0;
+}
+
+.trips-sticky-navigation .trip-divider-walker {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 28px;
+  height: 36px;
+  overflow: visible;
+  fill: #263c34;
+  transform: translateY(-50%);
+  animation: walk-body 36s infinite alternate linear;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.trip-divider-walker path {
+  fill: none;
+  stroke: #263c34;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.7px;
+}
+
+.trip-divider-walker .walker-hat {
+  fill: #b83b32;
+  stroke: #263c34;
+  stroke-width: 0.8px;
+}
+
+.trip-divider-walker .walker-cap-brim {
+  fill: #a92f29;
+  stroke: #263c34;
+  stroke-width: 0.65px;
+}
+
+.trip-divider-walker .walker-backpack {
+  fill: #8a714a;
+  stroke: #263c34;
+  stroke-width: 1px;
+}
+
+.trip-divider-walker .walker-pack-pocket {
+  fill: #b49a68;
+  stroke: #263c34;
+  stroke-width: 0.7px;
+}
+
+.trip-divider-walker .walker-torso {
+  fill: #263c34;
+  stroke: none;
+}
+
+.trip-divider-walker .walker-map {
+  fill: #f1e5bd;
+  stroke: #263c34;
+  stroke-width: 0.8px;
+  stroke-linejoin: round;
+}
+
+.trip-divider-walker .walker-map-fold {
+  fill: none;
+  stroke: #8a714a;
+  stroke-width: 0.65px;
+}
+
+.trip-divider-walker .walker-facing {
+  transform-box: view-box;
+  transform-origin: 14px 18px;
+  animation: face-direction 72s steps(1, end) infinite;
+}
+
+.trip-divider-walker .walker-leg {
+  transform-box: view-box;
+  transform-origin: 14px 21px;
+}
+
+.trip-divider-walker .walker-leg-back {
+  animation: leg-step 0.8s ease-in-out infinite;
+}
+
+.trip-divider-walker .walker-leg-front {
+  animation: leg-step 0.8s ease-in-out infinite;
+  animation-delay: -0.4s;
+}
+
+.trip-divider-walker .walker-arm {
+  transform-box: view-box;
+  transform-origin: 14px 12px;
+}
+
+.trip-divider-walker .walker-arm-back {
+  animation: arm-back 0.8s ease-in-out infinite;
+}
+
+.trip-divider-walker .walker-arm-front {
+  animation: arm-front 0.8s ease-in-out infinite;
+}
+
+.trip-divider-walker .walker-leg-back path {
+  stroke: #171717;
+}
+
+.trip-divider-walker .walker-leg-front path {
+  stroke: #171717;
+}
+
+.trip-divider-walker .walker-shin {
+  transform-box: view-box;
+}
+
+.trip-divider-walker .walker-shin-back {
+  transform-origin: 12px 26px;
+  animation: shin-step 0.8s ease-in-out infinite;
+}
+
+.trip-divider-walker .walker-shin-front {
+  transform-origin: 16px 26px;
+  animation: shin-step 0.8s ease-in-out infinite;
+  animation-delay: -0.4s;
+}
+
+.trip-divider-walker .walker-foot {
+  transform-box: view-box;
+}
+
+.trip-divider-walker .walker-foot-back {
+  transform-origin: 13px 31px;
+  animation: foot-step 0.8s ease-in-out infinite;
+}
+
+.trip-divider-walker .walker-foot-front {
+  transform-origin: 17px 31px;
+  animation: foot-step 0.8s ease-in-out infinite;
+  animation-delay: -0.4s;
+}
+
+.trip-divider-walker .walker-pack {
+  transform-box: view-box;
+  transform-origin: 11px 13px;
+  animation: backpack 0.8s ease-in-out infinite;
+}
+
+.trip-divider-walker .walker-map-group {
+  transform-box: view-box;
+  transform-origin: 21px 19px;
+  animation: map-swing 0.8s ease-in-out infinite;
+}
+
+@keyframes walk-body {
+  from {
+    margin-left: 0;
+  }
+  to {
+    margin-left: calc(100% - 28px);
+  }
+}
+
+@keyframes face-direction {
+  0%,
+  49.99% {
+    transform: scaleX(1);
+  }
+  50%,
+  100% {
+    transform: scaleX(-1);
+  }
+}
+
+@keyframes leg-step {
+  0%,
+  100% {
+    transform: rotate(-18deg);
+  }
+  25% {
+    transform: rotate(-8deg);
+  }
+  50% {
+    transform: rotate(18deg);
+  }
+  75% {
+    transform: rotate(8deg);
+  }
+}
+
+@keyframes arm-back {
+  0%,
+  100% {
+    transform: rotate(-12deg);
+  }
+  50% {
+    transform: rotate(12deg);
+  }
+}
+
+@keyframes arm-front {
+  0%,
+  100% {
+    transform: rotate(12deg);
+  }
+  50% {
+    transform: rotate(-12deg);
+  }
+}
+
+@keyframes shin-step {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(4deg);
+  }
+  50% {
+    transform: rotate(18deg);
+  }
+  75% {
+    transform: rotate(4deg);
+  }
+}
+
+@keyframes foot-step {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(2deg);
+  }
+  50% {
+    transform: rotate(8deg);
+  }
+  75% {
+    transform: rotate(2deg);
+  }
+}
+
+.trip-divider-walker .walker-bob {
+  transform-box: view-box;
+  transform-origin: 50% 100%;
+  animation: body-bob 0.8s ease-in-out infinite;
+}
+
+@keyframes body-bob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1deg);
+  }
+  25% {
+    transform: translateY(-0.7px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-1.2px) rotate(1deg);
+  }
+  75% {
+    transform: translateY(-0.5px) rotate(0deg);
+  }
+}
+
+@keyframes map-swing {
+  0%,
+  100% {
+    transform: rotate(-2deg);
+  }
+  50% {
+    transform: rotate(5deg) translateX(0.4px);
+  }
+}
+
+@keyframes backpack {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1deg);
+  }
+  50% {
+    transform: translateY(0.3px) rotate(1deg);
+  }
 }
 
 .trip-content {
@@ -296,8 +582,26 @@
     grid-template-columns: 1fr;
   }
 
+  .trips-sticky-navigation .walker-lane {
+    margin-right: 10px;
+  }
+
   .wide-field,
   .submit-button {
     grid-column: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trip-divider-walker,
+  .trip-divider-walker .walker-facing,
+  .trip-divider-walker .walker-leg,
+  .trip-divider-walker .walker-shin,
+  .trip-divider-walker .walker-foot,
+  .trip-divider-walker .walker-arm,
+  .trip-divider-walker .walker-bob,
+  .trip-divider-walker .walker-pack,
+  .trip-divider-walker .walker-map-group {
+    animation: none;
   }
 }
