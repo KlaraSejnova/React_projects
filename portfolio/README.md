@@ -9,7 +9,7 @@ Osobní portfolio postavené v Reactu a TypeScriptu. Slouží jako vizuální ro
 - stránku **Projekty** s prezentací Weekdashboardu, popisem a screenshotem,
 - stránku **Moje výlety** s veřejným přehledem uložených výletů,
 - přidávání, úpravu a mazání výletů po přihlášení přes Supabase Auth,
-- datum, popis a odkaz na mapu z Mapy.com u každého výletu,
+- datum, popis, volitelnou mapu z Mapy.com a fotografii u každého výletu,
 - responzivní rozložení pro desktop i mobil.
 
 ## Technologie
@@ -43,7 +43,7 @@ Pokud hodnoty nejsou nastavené, portfolio se spustí, ale Supabase funkce nebud
 
 ## Supabase a výlety
 
-Tabulka `public.trips` musí obsahovat sloupce `id`, `title`, `date`, `description`, `map_url` a `created_at`. Po vytvoření tabulky spusť v Supabase SQL editoru [supabase/policies.sql](supabase/policies.sql).
+Tabulka `public.trips` musí obsahovat sloupce `id`, `title`, `date`, `description`, `map_url` a `created_at`. Pro fotky navíc spusť v Supabase SQL editoru [supabase/trip-photos.sql](supabase/trip-photos.sql); migrace přidá sloupec `photo_url` a vytvoří veřejný bucket `trip-photos` s limitem 5 MB. Základní pravidla pro tabulku výletů jsou v [supabase/policies.sql](supabase/policies.sql).
 
 Aktuální pravidla dovolují veřejné čtení a zápis pouze přihlášeným uživatelům. Pokud má být správa omezená jen na konkrétní účet, je potřeba policy zpřísnit podle `auth.uid()`.
 

@@ -10,10 +10,11 @@ type Trip = {
   date: string;
   description: string;
   mapUrl: string;
+  photoUrl: string | null;
 };
 
 const tripsStorageKey = "portfolio-trips";
-const defaultMapUrl = "https://mapy.com/s/bavadutama";
+const maxPhotoSize = 5 * 1024 * 1024;
 
 // Převede řádek ze Supabase (snake_case) na tvar používaný v komponentě (camelCase).
 const toTrip = (row: {
@@ -22,12 +23,14 @@ const toTrip = (row: {
   date: string | null;
   description: string;
   map_url: string;
+  photo_url: string | null;
 }): Trip => ({
   id: row.id,
   title: row.title,
   date: row.date ?? "",
   description: row.description,
   mapUrl: row.map_url,
+  photoUrl: row.photo_url,
 });
 
 // Stránka výletů: přihlášení přes Supabase umožňuje přidávat/upravovat/mazat výlety.
@@ -45,7 +48,11 @@ const Trips = ({
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
   const [description, setDescription] = useState("");
-  const [mapUrl, setMapUrl] = useState(defaultMapUrl);
+  const [mapUrl, setMapUrl] = useState("");
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [removePhoto, setRemovePhoto] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [editingTripId, setEditingTripId] = useState<number | null>(null);
   const [formError, setFormError] = useState("");
   const [user, setUser] = useState<User | null>(null);
@@ -115,51 +122,80 @@ const Trips = ({
       return;
     }
     setFormError("");
-    let updatedTrips: Trip[];
-
-    // Podle editingTripId se rozhodne, jestli se výlet vkládá jako nový, nebo aktualizuje.
-    const result =
-      editingTripId === null
-        ? await supabase
-            .from("trips")
-            .insert({
-              title,
-              date: date || null,
-              description,
-              map_url: mapUrl,
-            })
-            .select()
-            .single()
-        : await supabase
-            .from("trips")
-            .update({
-              title,
-              date: date || null,
-              description,
-              map_url: mapUrl,
-            })
-            .eq("id", editingTripId)
-            .select()
-            .single();
-
-    if (result.error) {
-      setFormError(`Výlet se nepodařilo uložit: ${result.error.message}`);
+    if (photoFile && photoFile.size > maxPhotoSize) {
+      setFormError("Fotka může mít maximálně 5 MB.");
       return;
     }
 
-    updatedTrips =
-      editingTripId === null
-        ? [toTrip(result.data), ...trips]
-        : trips.map((trip) =>
-            trip.id === editingTripId ? toTrip(result.data) : trip,
-          );
+    setIsSaving(true);
+    try {
+      let nextPhotoUrl = removePhoto ? null : photoUrl;
 
-    setTrips(updatedTrips);
-    setTitle("");
-    setDate("");
-    setDescription("");
-    setMapUrl(defaultMapUrl);
-    setEditingTripId(null);
+      if (photoFile) {
+        const extension =
+          photoFile.name.split(".").pop()?.toLowerCase() || "jpg";
+        const photoPath = `${user.id}/${Date.now()}-${Math.random()
+          .toString(36)
+          .slice(2)}.${extension}`;
+        const { error: uploadError } = await supabase.storage
+          .from("trip-photos")
+          .upload(photoPath, photoFile, { contentType: photoFile.type });
+
+        if (uploadError) {
+          setFormError(`Fotku se nepodařilo nahrát: ${uploadError.message}`);
+          return;
+        }
+
+        nextPhotoUrl = supabase.storage
+          .from("trip-photos")
+          .getPublicUrl(photoPath).data.publicUrl;
+      }
+
+      const tripValues = {
+        title,
+        date: date || null,
+        description,
+        map_url: mapUrl,
+        photo_url: nextPhotoUrl,
+      };
+
+      // Podle editingTripId se rozhodne, jestli se výlet vkládá jako nový, nebo aktualizuje.
+      const result =
+        editingTripId === null
+          ? await supabase.from("trips").insert(tripValues).select().single()
+          : await supabase
+              .from("trips")
+              .update(tripValues)
+              .eq("id", editingTripId)
+              .select()
+              .single();
+
+      if (result.error) {
+        setFormError(`Výlet se nepodařilo uložit: ${result.error.message}`);
+        return;
+      }
+
+      const updatedTrips =
+        editingTripId === null
+          ? [toTrip(result.data), ...trips]
+          : trips.map((trip) =>
+              trip.id === editingTripId ? toTrip(result.data) : trip,
+            );
+
+      setTrips(updatedTrips);
+      setTitle("");
+      setDate("");
+      setDescription("");
+      setMapUrl("");
+      setPhotoUrl(null);
+      setPhotoFile(null);
+      setRemovePhoto(false);
+      setEditingTripId(null);
+    } catch {
+      setFormError("Výlet se nepodařilo uložit. Zkus to prosím znovu.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const editTrip = (trip: Trip) => {
@@ -169,6 +205,9 @@ const Trips = ({
     setDate(trip.date);
     setDescription(trip.description);
     setMapUrl(trip.mapUrl);
+    setPhotoUrl(trip.photoUrl);
+    setPhotoFile(null);
+    setRemovePhoto(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -177,7 +216,10 @@ const Trips = ({
     setTitle("");
     setDate("");
     setDescription("");
-    setMapUrl(defaultMapUrl);
+    setMapUrl("");
+    setPhotoUrl(null);
+    setPhotoFile(null);
+    setRemovePhoto(false);
   };
 
   const deleteTrip = async (tripId: number) => {
@@ -348,7 +390,7 @@ const Trips = ({
               />
             </label>
             <label className="wide-field">
-              Vložit mapu z Mapy.cz
+              Mapa z Mapy.cz (volitelně)
               <input
                 type="url"
                 placeholder="URL z možnosti Vložit mapu"
@@ -360,9 +402,47 @@ const Trips = ({
                 Mapy.cz.
               </small>
             </label>
+            <div className="wide-field photo-field">
+              <label htmlFor="trip-photo">
+                Fotka výletu (volitelně, max. 5 MB)
+              </label>
+              <input
+                id="trip-photo"
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif"
+                onChange={(event) => {
+                  setPhotoFile(event.target.files?.[0] ?? null);
+                  setRemovePhoto(false);
+                }}
+              />
+              {photoFile && <small>Vybráno: {photoFile.name}</small>}
+              {!photoFile && photoUrl && !removePhoto && (
+                <small>
+                  Fotka je nahraná. Novým výběrem ji můžeš nahradit.
+                </small>
+              )}
+              {editingTripId !== null && photoUrl && (
+                <label className="photo-remove-option">
+                  <input
+                    type="checkbox"
+                    checked={removePhoto}
+                    onChange={(event) => setRemovePhoto(event.target.checked)}
+                  />
+                  Odebrat dosavadní fotku
+                </label>
+              )}
+            </div>
             <div className="form-actions">
-              <button className="submit-button" type="submit">
-                {editingTripId === null ? "Přidat výlet" : "Uložit úpravy"}
+              <button
+                className="submit-button"
+                type="submit"
+                disabled={isSaving}
+              >
+                {isSaving
+                  ? "Ukládám..."
+                  : editingTripId === null
+                    ? "Přidat výlet"
+                    : "Uložit úpravy"}
               </button>
               {editingTripId !== null && (
                 <button
@@ -386,6 +466,15 @@ const Trips = ({
               {trip.date && <time>{trip.date}</time>}
               <p>{trip.description}</p>
             </div>
+            {trip.photoUrl && (
+              <div className="trip-photo">
+                <img
+                  src={trip.photoUrl}
+                  alt={`Fotka z výletu ${trip.title}`}
+                  loading="lazy"
+                />
+              </div>
+            )}
             {trip.mapUrl && (
               <div className="trip-map">
                 {/* Vložená mapa z Mapy.cz pomocí odkazu "Vložit mapu". */}
