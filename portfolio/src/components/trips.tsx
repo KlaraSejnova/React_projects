@@ -16,6 +16,12 @@ type Trip = {
 const tripsStorageKey = "portfolio-trips";
 const maxPhotoSize = 5 * 1024 * 1024;
 
+// Zobrazí datum výletu v českém tvaru, například 26.9. 2026.
+const formatTripDate = (value: string) => {
+  const [year, month, day] = value.split("-");
+  return `${Number(day)}.${Number(month)}. ${year}`;
+};
+
 // Převede řádek ze Supabase (snake_case) na tvar používaný v komponentě (camelCase).
 const toTrip = (row: {
   id: number;
@@ -463,7 +469,9 @@ const Trips = ({
           <article className="trip-item" key={trip.id}>
             <div className="trip-content">
               <h3>{trip.title}</h3>
-              {trip.date && <time>{trip.date}</time>}
+              {trip.date && (
+                <time dateTime={trip.date}>{formatTripDate(trip.date)}</time>
+              )}
               <p>{trip.description}</p>
             </div>
             {trip.photoUrl && (
