@@ -481,9 +481,6 @@ export default function Home() {
     );
   }
 
-  // Tester má všechny dny odemčené, ostatní profily mohou odškrtávat jen dnešní den.
-  const isTester = currentUser.name === "Tester";
-
   // Přepne jeden úkol a uloží nový stav lokálně i do cloudu pro přihlášený účet.
   async function toggleRoutine(day: string, routine: string) {
     const key = completionKey(day, routine);
@@ -688,13 +685,9 @@ export default function Home() {
               // Karta úkolu jde otočit jako mince, přední strana je ikona, zadní barva úkolu.
               const key = completionKey(selectedDay.key, routine.id);
               const isCompleted = completed[key] ?? false;
-              const isAvailable = isTester
-                ? true
-                : weekOffset === 0 && selectedDay.key === todayKey;
-
               return (
                 <label
-                  className={`mobile-routine${isAvailable ? " available-cell" : ""}${isCompleted ? " completed" : ""}`}
+                  className={`mobile-routine available-cell${isCompleted ? " completed" : ""}`}
                   style={{ "--routine-color": routine.color } as CSSProperties}
                   key={routine.id}
                 >
@@ -708,12 +701,11 @@ export default function Home() {
                     </span>
                   </span>
                   <span
-                    className={`check-cell${isAvailable ? " available-cell" : ""}${isCompleted ? " completed" : ""}`}
+                    className={`check-cell available-cell${isCompleted ? " completed" : ""}`}
                   >
                     <input
                       type="checkbox"
                       checked={isCompleted}
-                      disabled={!isAvailable}
                       onChange={() =>
                         toggleRoutine(selectedDay.key, routine.id)
                       }
@@ -770,20 +762,15 @@ export default function Home() {
                 // Každé políčko tabulky má vlastní stav a pravidlo, kdy jde odškrtnout.
                 const key = completionKey(day.key, routine.id);
                 const isCompleted = completed[key] ?? false;
-                const isAvailable = isTester
-                  ? true
-                  : weekOffset === 0 && day.key === todayKey;
-
                 return (
                   <label
-                    className={`check-cell${day.key === todayKey ? " current-day" : ""}${isAvailable ? " available-cell" : ""}`}
+                    className={`check-cell${day.key === todayKey ? " current-day" : ""} available-cell`}
                     key={key}
                     title={`${routine.name}: ${day.fullLabel}`}
                   >
                     <input
                       type="checkbox"
                       checked={isCompleted}
-                      disabled={!isAvailable}
                       onChange={() => toggleRoutine(day.key, routine.id)}
                       aria-label={`${routine.name}: ${day.fullLabel}`}
                     />
