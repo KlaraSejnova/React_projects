@@ -3,6 +3,7 @@
 
 import {
   useEffect,
+  useRef,
   useState,
   useSyncExternalStore,
   type SubmitEvent,
@@ -111,6 +112,11 @@ export default function Home() {
   const [selectedDayKey, setSelectedDayKey] = useState(getTodayKey());
   const [showMobileWeek, setShowMobileWeek] = useState(false);
   const [completed, setCompleted] = useState<CompletionState>({});
+  const completedRef = useRef<CompletionState>({});
+  const progressRevisionRef = useRef(0);
+  const pendingWritesRef = useRef<
+    Record<string, { value: boolean; revision: number; storageKey: string }>
+  >({});
   const [progressError, setProgressError] = useState("");
   // Tester nepotřebuje Supabase přihlášení, ostatní profily ano.
   const activeUser = localUser === "tester" ? localUser : authProfile;
@@ -158,14 +164,23 @@ export default function Home() {
   // Po přihlášení nebo změně týdne načte postup z cloudu, případně z lokální zálohy.
   useEffect(() => {
     if (!activeUser) return;
+    const revisionAtStart = progressRevisionRef.current;
     const saved = window.localStorage.getItem(storageKey);
-    const timeoutId = window.setTimeout(
-      () => setCompleted(saved ? JSON.parse(saved) : {}),
-      0,
-    );
+    const timeoutId = window.setTimeout(() => {
+      if (progressRevisionRef.current !== revisionAtStart) return;
+      const localProgress: CompletionState = saved ? JSON.parse(saved) : {};
+      completedRef.current = localProgress;
+      setCompleted(localProgress);
+    }, 0);
 
     const isCloudTester = localUser === "tester";
-    if ((!authUserId && !isCloudTester) || !supabase) {
+    if (!supabase) {
+      setProgressError(
+        "Synchronizace mezi zařízeními není nastavená. Data se ukládají jen do tohoto zařízení.",
+      );
+      return () => window.clearTimeout(timeoutId);
+    }
+    if (!authUserId && !isCloudTester) {
       return () => window.clearTimeout(timeoutId);
     }
 
@@ -175,6 +190,7 @@ export default function Home() {
       : "dashboard_progress";
     let cancelled = false;
     const loadCloudProgress = async () => {
+      const requestRevision = progressRevisionRef.current;
       let progressQuery = client
         .from(progressTable)
         .select("completion_key, completed")
@@ -184,7 +200,7 @@ export default function Home() {
         : progressQuery.eq("owner_id", authUserId);
       const { data, error } = await progressQuery;
 
-      if (cancelled) return;
+      if (cancelled || requestRevision !== progressRevisionRef.current) return;
       if (error) {
         setProgressError(
           `Postup se nepodařilo načíst z cloudu: ${error.message}`,
@@ -192,7 +208,10 @@ export default function Home() {
         return;
       }
 
-      const localProgress = saved ? JSON.parse(saved) : {};
+      const savedProgress = window.localStorage.getItem(storageKey);
+      const localProgress: CompletionState = savedProgress
+        ? JSON.parse(savedProgress)
+        : {};
       if (data.length === 0 && Object.keys(localProgress).length > 0) {
         const rows = Object.entries(localProgress).map(
           ([completionKey, completed]) =>
@@ -221,8 +240,13 @@ export default function Home() {
           setProgressError(
             `Postup se nepodařilo uložit do cloudu: ${migrationError.message}`,
           );
-        } else if (!cancelled) {
+        } else if (
+          !cancelled &&
+          requestRevision === progressRevisionRef.current
+        ) {
+          completedRef.current = localProgress;
           setCompleted(localProgress);
+          setProgressError("");
         }
         return;
       }
@@ -232,14 +256,51 @@ export default function Home() {
           .filter((row) => row.completed)
           .map((row) => [row.completion_key, true]),
       );
-      setCompleted(cloudProgress);
-      window.localStorage.setItem(storageKey, JSON.stringify(cloudProgress));
+      const pendingProgress = Object.fromEntries(
+        Object.entries(pendingWritesRef.current)
+          .filter(([, write]) => write.storageKey === storageKey)
+          .map(([key, write]) => [key, write.value]),
+      );
+      const mergedProgress = { ...cloudProgress, ...pendingProgress };
+      completedRef.current = mergedProgress;
+      setCompleted(mergedProgress);
+      window.localStorage.setItem(storageKey, JSON.stringify(mergedProgress));
+      setProgressError("");
     };
 
     void loadCloudProgress();
+
+    const filter = isCloudTester
+      ? "profile_key=eq.tester"
+      : `owner_id=eq.${authUserId}`;
+    const channel = client
+      .channel(`dashboard-progress-${activeUser}-${currentWeekDate}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: progressTable,
+          filter,
+        },
+        () => void loadCloudProgress(),
+      )
+      .subscribe();
+
+    const refreshWhenVisible = () => {
+      if (document.visibilityState === "visible") void loadCloudProgress();
+    };
+    const refreshInterval = window.setInterval(refreshWhenVisible, 30_000);
+    window.addEventListener("focus", refreshWhenVisible);
+    document.addEventListener("visibilitychange", refreshWhenVisible);
+
     return () => {
       cancelled = true;
       window.clearTimeout(timeoutId);
+      window.clearInterval(refreshInterval);
+      window.removeEventListener("focus", refreshWhenVisible);
+      document.removeEventListener("visibilitychange", refreshWhenVisible);
+      void client.removeChannel(channel);
     };
   }, [activeUser, authUserId, currentWeekDate, localUser, storageKey]);
 
@@ -330,9 +391,12 @@ export default function Home() {
   // Přepne jeden úkol a uloží nový stav lokálně i do cloudu pro přihlášený účet.
   async function toggleRoutine(day: string, routine: string) {
     const key = completionKey(day, routine);
-    const nextValue = !completed[key];
-    setCompleted((current) => ({ ...current, [key]: nextValue }));
-    const nextProgress = { ...completed, [key]: nextValue };
+    const nextValue = !completedRef.current[key];
+    const revision = ++progressRevisionRef.current;
+    pendingWritesRef.current[key] = { value: nextValue, revision, storageKey };
+    const nextProgress = { ...completedRef.current, [key]: nextValue };
+    completedRef.current = nextProgress;
+    setCompleted(nextProgress);
     window.localStorage.setItem(storageKey, JSON.stringify(nextProgress));
 
     const isCloudTester = localUser === "tester";
@@ -362,6 +426,10 @@ export default function Home() {
           `Postup se nepodařilo uložit do cloudu: ${result.error.message}`,
         );
       } else {
+        if (pendingWritesRef.current[key]?.revision === revision) {
+          delete pendingWritesRef.current[key];
+        }
+        progressRevisionRef.current += 1;
         setProgressError("");
       }
     }
