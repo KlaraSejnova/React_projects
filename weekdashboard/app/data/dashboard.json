@@ -1,0 +1,53 @@
+{
+  "users": [
+    { "id": "barca", "name": "Barča", "vocative": "Barčo" },
+    { "id": "terka", "name": "Terka", "vocative": "Terko" },
+    { "id": "tester", "name": "Tester", "vocative": "Testere" }
+  ],
+  "days": [
+    { "key": "mon", "label": "Po", "fullLabel": "Pondělí" },
+    { "key": "tue", "label": "Út", "fullLabel": "Úterý" },
+    { "key": "wed", "label": "St", "fullLabel": "Středa" },
+    { "key": "thu", "label": "Čt", "fullLabel": "Čtvrtek" },
+    { "key": "fri", "label": "Pá", "fullLabel": "Pátek" },
+    { "key": "sat", "label": "So", "fullLabel": "Sobota" },
+    { "key": "sun", "label": "Ne", "fullLabel": "Neděle" }
+  ],
+  "routines": [
+    {
+      "id": "teeth",
+      "icon": "teeth",
+      "name": "Vyčistit zuby",
+      "detail": "ráno a večer",
+      "color": "#3aa0d1"
+    },
+    {
+      "id": "room",
+      "icon": "room",
+      "name": "Uklidit pokoj",
+      "detail": "hračky na své místo",
+      "color": "#e08a3e"
+    },
+    {
+      "id": "homework",
+      "icon": "homework",
+      "name": "Domácí úkol",
+      "detail": "škola hotová",
+      "color": "#8b6fd1"
+    },
+    {
+      "id": "kindness",
+      "icon": "kindness",
+      "name": "Pomoc doma",
+      "detail": "malá dobrá věc",
+      "color": "#d75d7a"
+    },
+    {
+      "id": "reading",
+      "icon": "reading",
+      "name": "Čtení",
+      "detail": "kniha nebo pohádka",
+      "color": "#f2a6d5"
+    }
+  ]
+}

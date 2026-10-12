@@ -5,114 +5,20 @@ import {
   useEffect,
   useState,
   useSyncExternalStore,
-  type FormEvent,
-  type ReactNode,
-  type CSSProperties,
+  type SubmitEvent,
 } from "react";
-import { supabase } from "../lib/supabase";
-
-// Profily, mezi kterými se lze přihlásit. "tester" obchází Supabase přihlášení.
-const users = [
-  { id: "barca", name: "Barča", vocative: "Barčo" },
-  { id: "terka", name: "Terka", vocative: "Terko" },
-  { id: "tester", name: "Tester", vocative: "Testere" },
-];
-
-// Dny týdne používané jako sloupce tabulky i jako klíče pro ukládání stavu.
-const days = [
-  { key: "mon", label: "Po", fullLabel: "Pondělí" },
-  { key: "tue", label: "Út", fullLabel: "Úterý" },
-  { key: "wed", label: "St", fullLabel: "Středa" },
-  { key: "thu", label: "Čt", fullLabel: "Čtvrtek" },
-  { key: "fri", label: "Pá", fullLabel: "Pátek" },
-  { key: "sat", label: "So", fullLabel: "Sobota" },
-  { key: "sun", label: "Ne", fullLabel: "Neděle" },
-];
-
-// Obalí SVG cestu do jednotného stylu ikon (stejná velikost, tloušťka čáry).
-function OutlineIcon({ children }: { children: ReactNode }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      width="19"
-      height="19"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.7"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      {children}
-    </svg>
-  );
-}
-
-// Seznam denních úkolů (barva a ikona se používají i v mobilním zobrazení).
-const routines = [
-  {
-    id: "teeth",
-    name: "Vyčistit zuby",
-    detail: "ráno a večer",
-    color: "#3aa0d1",
-    icon: (
-      <OutlineIcon>
-        <path d="M12 3c-2.2 0-3.3 1.1-5 1.1C5.3 4.1 4 5.6 4 7.6c0 2.1.9 4.5 1.6 6.8.6 2 1 4.2 1.9 5.7.5.9 1.2 1.4 1.9 1.4.9 0 1.3-1.1 1.6-2.4.3-1.2.5-2.5 1-2.5s.7 1.3 1 2.5c.3 1.3.7 2.4 1.6 2.4.7 0 1.4-.5 1.9-1.4.9-1.5 1.3-3.7 1.9-5.7.7-2.3 1.6-4.7 1.6-6.8 0-2-1.3-3.5-3-3.5-1.7 0-2.8-1.1-5-1.1z" />
-      </OutlineIcon>
-    ),
-  },
-  {
-    id: "room",
-    name: "Uklidit pokoj",
-    detail: "hračky na své místo",
-    color: "#e08a3e",
-    icon: (
-      <OutlineIcon>
-        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-        <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-        <line x1="12" y1="22.08" x2="12" y2="12" />
-      </OutlineIcon>
-    ),
-  },
-  {
-    id: "homework",
-    name: "Domácí úkol",
-    detail: "škola hotová",
-    color: "#8b6fd1",
-    icon: (
-      <OutlineIcon>
-        <path d="M12 20h9" />
-        <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
-      </OutlineIcon>
-    ),
-  },
-  {
-    id: "kindness",
-    name: "Pomoc doma",
-    detail: "malá dobrá věc",
-    color: "#d75d7a",
-    icon: (
-      <OutlineIcon>
-        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-      </OutlineIcon>
-    ),
-  },
-  {
-    id: "reading",
-    name: "Čtení",
-    detail: "kniha nebo pohádka",
-    color: "#f2a6d5",
-    icon: (
-      <OutlineIcon>
-        <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5z" />
-        <path d="M4 5.5v16" />
-        <path d="M8 7h8" />
-      </OutlineIcon>
-    ),
-  },
-];
-
-// Stav dokončení jednoho úkolu v jednom dni, klíčovaný pomocí completionKey.
-type CompletionState = Record<string, boolean>;
+import { supabase } from "@/lib/supabase";
+import DashboardHeader from "@/app/components/DashboardHeader";
+import LoginPanel, { type LoginProfile } from "@/app/components/LoginPanel";
+import ProgressSection from "@/app/components/ProgressSection";
+import RewardModal from "@/app/components/RewardModal";
+import RoutineGrid from "@/app/components/RoutineGrid";
+import {
+  days,
+  routines,
+  users,
+  type CompletionState,
+} from "@/app/data/dashboard-data";
 
 // Klíč pro "tester" profil (bez Supabase) a klíč pro přihlášeného Supabase uživatele.
 const userStorageKey = "weekdashboard-user";
@@ -194,9 +100,7 @@ export default function Home() {
   // Dokud nevíme, jestli je Supabase session platná, nezobrazujeme obsah (kvůli blikání).
   const [authReady, setAuthReady] = useState(!supabase);
   // Profil vybraný na přihlašovací obrazovce, než uživatel zadá email a heslo.
-  const [loginProfile, setLoginProfile] = useState<"barca" | "terka" | null>(
-    null,
-  );
+  const [loginProfile, setLoginProfile] = useState<LoginProfile>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
@@ -214,7 +118,6 @@ export default function Home() {
   const currentWeekDate = weekDateKey(weekStart);
   const storageKey = progressStorageKey(activeUser ?? "guest", weekStart);
   const todayKey = weekOffset === 0 ? getTodayKey() : "";
-  const selectedDay = days.find((day) => day.key === selectedDayKey) ?? days[0];
   // Klíč odmítnuté odměny za aktuální týden, aby se modál znovu neukazoval po zavření.
   const [dismissedRewardKey, setDismissedRewardKey] = useState("");
 
@@ -347,7 +250,7 @@ export default function Home() {
   }
 
   // Ověří email a heslo přes Supabase a zkontroluje, že účet patří k vybranému profilu.
-  async function signInAccount(event: FormEvent<HTMLFormElement>) {
+  async function signInAccount(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!loginProfile) return;
 
@@ -408,76 +311,19 @@ export default function Home() {
   // Bez přihlášeného uživatele zobrazíme obrazovku výběru profilu a přihlašovací formulář.
   if (!currentUser) {
     return (
-      <main className="login-shell">
-        <section className="login-panel" aria-labelledby="login-title">
-          <p className="eyebrow">Můj týden</p>
-          <h1 id="login-title">Kdo se dnes přihlašuje?</h1>
-          <p className="login-intro">
-            Vyber svůj profil a otevři si svůj týden.
-          </p>
-          {!loginProfile ? (
-            <div className="login-options">
-              {users.map((user) => (
-                <button
-                  key={user.id}
-                  type="button"
-                  className={`login-option login-option-${user.id}`}
-                  onClick={() =>
-                    user.id === "tester"
-                      ? signInTester()
-                      : setLoginProfile(user.id as "barca" | "terka")
-                  }
-                >
-                  <span>{user.name}</span>
-                  <small>
-                    {user.id === "tester"
-                      ? "pro vyzkoušení aplikace"
-                      : "přihlášení emailem a heslem"}
-                  </small>
-                </button>
-              ))}
-            </div>
-          ) : (
-            <form className="login-form" onSubmit={signInAccount} noValidate>
-              <p className="login-selected">
-                Přihlašuješ se jako{" "}
-                {loginProfile === "barca" ? "Barča" : "Terka"}
-              </p>
-              <label>
-                Email
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                />
-              </label>
-              <label>
-                Heslo
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
-                />
-              </label>
-              {loginError && <p className="login-error">{loginError}</p>}
-              <button
-                type="submit"
-                className="login-submit"
-                disabled={isLoggingIn}
-              >
-                {isLoggingIn ? "Přihlašuji…" : "Přihlásit se"}
-              </button>
-              <button
-                type="button"
-                className="login-back"
-                onClick={() => setLoginProfile(null)}
-              >
-                Zpět k výběru
-              </button>
-            </form>
-          )}
-        </section>
-      </main>
+      <LoginPanel
+        loginProfile={loginProfile}
+        email={email}
+        password={password}
+        loginError={loginError}
+        isLoggingIn={isLoggingIn}
+        onTesterLogin={signInTester}
+        onSelectProfile={setLoginProfile}
+        onEmailChange={setEmail}
+        onPasswordChange={setPassword}
+        onSubmit={signInAccount}
+        onBack={() => setLoginProfile(null)}
+      />
     );
   }
 
@@ -539,258 +385,36 @@ export default function Home() {
     <main className="dashboard-shell">
       {/* Modál s malou odměnou, zobrazí se po dosažení 75 % postupu v týdnu. */}
       {showRewardModal && (
-        <div className="reward-modal-backdrop">
-          <section
-            className="reward-modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="reward-modal-title"
-          >
-            <span className="reward-modal-star" aria-hidden="true">
-              ★
-            </span>
-            <p className="eyebrow">Malá odměna</p>
-            <h2 id="reward-modal-title">Skvělá práce, {currentUser.name}!</h2>
-            <p>
-              Máš hotovo {progress} %. Běž si říct o odměnu, zasloužíš si ji!
-            </p>
-            <button
-              type="button"
-              className="reward-modal-button"
-              onClick={() => setDismissedRewardKey(rewardKey)}
-            >
-              Super, děkuju!
-            </button>
-          </section>
-        </div>
+        <RewardModal
+          userName={currentUser.name}
+          progress={progress}
+          onDismiss={() => setDismissedRewardKey(rewardKey)}
+        />
       )}
       <section className="dashboard" aria-labelledby="dashboard-title">
         {/* Záhlaví: pozdrav, přepínání týdne, souhrn a tlačítko odhlášení. */}
-        <header className="dashboard-header">
-          <div>
-            <p className="eyebrow">Můj týden</p>
-            <h1 id="dashboard-title">Ahoj, {currentUser.vocative}!</h1>
-            <p className="intro">Každý hotový úkol je malá výhra.</p>
-            <div className="week-controls" aria-label="Přepínání týdne">
-              <button
-                type="button"
-                className="week-arrow"
-                onClick={() => setWeekOffset((offset) => offset - 1)}
-                aria-label="Předchozí týden"
-              >
-                <OutlineIcon>
-                  <path d="m14 18-6-6 6-6" />
-                </OutlineIcon>
-              </button>
-              <span className="week-label">{formatWeekLabel(weekStart)}</span>
-              <button
-                type="button"
-                className="week-arrow"
-                onClick={() => setWeekOffset((offset) => offset + 1)}
-                aria-label="Následující týden"
-              >
-                <OutlineIcon>
-                  <path d="m10 18 6-6-6-6" />
-                </OutlineIcon>
-              </button>
-            </div>
-          </div>
-          <div
-            className="weekly-score"
-            aria-label={`${completedCount} z ${totalCount} úkolů hotovo`}
-          >
-            <span>Hotovo</span>
-            <strong>
-              {completedCount}/{totalCount}
-            </strong>
-          </div>
-          <button type="button" className="sign-out-button" onClick={signOut}>
-            Odhlásit se
-          </button>
-        </header>
+        <DashboardHeader
+          vocative={currentUser.vocative}
+          weekLabel={formatWeekLabel(weekStart)}
+          completedCount={completedCount}
+          totalCount={totalCount}
+          onPreviousWeek={() => setWeekOffset((offset) => offset - 1)}
+          onNextWeek={() => setWeekOffset((offset) => offset + 1)}
+          onSignOut={signOut}
+        />
 
         {/* Lišta ukazuje poměr dokončených úkolů za celý týden. */}
-        <section className="progress-section" aria-label="Týdenní postup">
-          <div className="progress-copy">
-            <span>Týdenní postup</span>
-            <strong>{progress} %</strong>
-          </div>
-          <div className="progress-track" aria-hidden="true">
-            <div className="progress-fill" style={{ width: `${progress}%` }} />
-          </div>
-          {progressError && (
-            <p className="progress-error" role="alert">
-              {progressError}
-            </p>
-          )}
-        </section>
+        <ProgressSection progress={progress} error={progressError} />
 
-        {/* Mobilní zobrazení jednoho dne, na širších obrazovkách skryté přes CSS. */}
-        <section
-          className={`mobile-day-view${showMobileWeek ? " mobile-week-mode" : ""}`}
-          aria-label="Úkoly pro vybraný den"
-        >
-          <div className="mobile-day-controls">
-            {!showMobileWeek && (
-              <>
-                <button
-                  type="button"
-                  className="week-arrow"
-                  onClick={() => {
-                    const index = days.findIndex(
-                      (day) => day.key === selectedDayKey,
-                    );
-                    setSelectedDayKey(
-                      days[(index + days.length - 1) % days.length].key,
-                    );
-                  }}
-                  aria-label="Předchozí den"
-                >
-                  <OutlineIcon>
-                    <path d="m14 18-6-6 6-6" />
-                  </OutlineIcon>
-                </button>
-                <div className="mobile-day-heading">
-                  <span>{selectedDay.fullLabel}</span>
-                  {selectedDay.key === todayKey && <small>Dnes</small>}
-                </div>
-                <button
-                  type="button"
-                  className="week-arrow"
-                  onClick={() => {
-                    const index = days.findIndex(
-                      (day) => day.key === selectedDayKey,
-                    );
-                    setSelectedDayKey(days[(index + 1) % days.length].key);
-                  }}
-                  aria-label="Následující den"
-                >
-                  <OutlineIcon>
-                    <path d="m10 18 6-6-6-6" />
-                  </OutlineIcon>
-                </button>
-              </>
-            )}
-          </div>
-          <button
-            type="button"
-            className="mobile-view-toggle"
-            onClick={() => setShowMobileWeek((visible) => !visible)}
-            aria-expanded={showMobileWeek}
-          >
-            {showMobileWeek ? "Zobrazit jeden den" : "Zobrazit celý týden"}
-          </button>
-          <div className="mobile-routine-list">
-            {routines.map((routine) => {
-              // Karta úkolu jde otočit jako mince, přední strana je ikona, zadní barva úkolu.
-              const key = completionKey(selectedDay.key, routine.id);
-              const isCompleted = completed[key] ?? false;
-              return (
-                <label
-                  className={`mobile-routine available-cell${isCompleted ? " completed" : ""}`}
-                  style={{ "--routine-color": routine.color } as CSSProperties}
-                  key={routine.id}
-                >
-                  <span className="routine-info">
-                    <span className="routine-icon" aria-hidden="true">
-                      {routine.icon}
-                    </span>
-                    <span>
-                      <strong>{routine.name}</strong>
-                      <small>{routine.detail}</small>
-                    </span>
-                  </span>
-                  <span
-                    className={`check-cell available-cell${isCompleted ? " completed" : ""}`}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={isCompleted}
-                      onChange={() =>
-                        toggleRoutine(selectedDay.key, routine.id)
-                      }
-                      aria-label={`${routine.name}: ${selectedDay.fullLabel}`}
-                    />
-                    <span className="coin" aria-hidden="true">
-                      <span className="coin-face coin-front">
-                        {routine.icon}
-                      </span>
-                      <span
-                        className="coin-face coin-back"
-                        style={{ "--accent": routine.color } as CSSProperties}
-                      >
-                        {routine.icon}
-                      </span>
-                    </span>
-                  </span>
-                </label>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* Tabulka pro širší obrazovky vzniká ze seznamu dnů a seznamu úkolů. */}
-        <section
-          className={`week-grid${showMobileWeek ? " mobile-week-visible" : ""}`}
-          aria-label="Úkoly pro tento týden"
-        >
-          <div className="grid-corner" aria-hidden="true">
-            Úkoly
-          </div>
-          {days.map((day) => (
-            <div
-              className={`day-heading${day.key === todayKey ? " current-day" : ""}`}
-              key={day.key}
-              title={day.fullLabel}
-            >
-              {day.label}
-            </div>
-          ))}
-
-          {routines.map((routine) => (
-            <div className="routine-row" key={routine.id}>
-              <div className="routine-info">
-                <span className="routine-icon" aria-hidden="true">
-                  {routine.icon}
-                </span>
-                <span>
-                  <strong>{routine.name}</strong>
-                  <small>{routine.detail}</small>
-                </span>
-              </div>
-              {days.map((day) => {
-                // Každé políčko tabulky má vlastní stav a pravidlo, kdy jde odškrtnout.
-                const key = completionKey(day.key, routine.id);
-                const isCompleted = completed[key] ?? false;
-                return (
-                  <label
-                    className={`check-cell${day.key === todayKey ? " current-day" : ""} available-cell`}
-                    key={key}
-                    title={`${routine.name}: ${day.fullLabel}`}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={isCompleted}
-                      onChange={() => toggleRoutine(day.key, routine.id)}
-                      aria-label={`${routine.name}: ${day.fullLabel}`}
-                    />
-                    <span className="coin" aria-hidden="true">
-                      <span className="coin-face coin-front">
-                        {routine.icon}
-                      </span>
-                      <span
-                        className="coin-face coin-back"
-                        style={{ "--accent": routine.color } as CSSProperties}
-                      >
-                        {routine.icon}
-                      </span>
-                    </span>
-                  </label>
-                );
-              })}
-            </div>
-          ))}
-        </section>
+        <RoutineGrid
+          todayKey={todayKey}
+          selectedDayKey={selectedDayKey}
+          showMobileWeek={showMobileWeek}
+          completed={completed}
+          onSelectDay={setSelectedDayKey}
+          onToggleMobileWeek={() => setShowMobileWeek((visible) => !visible)}
+          onToggleRoutine={toggleRoutine}
+        />
 
         {completedTodayCount >= 2 && (
           <p className="footer-note">Dnes to jde skvěle. Jen tak dál!</p>
