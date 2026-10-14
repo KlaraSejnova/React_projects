@@ -1,0 +1,4 @@
+[build]
+  base = "klubrodicu"
+  command = "npm run build"
+  publish = ".next"

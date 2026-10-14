@@ -15,6 +15,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Klub rodičů při MZŠ a MŠ Brno",
   description: "Klub rodičů při MZŠ a MŠ Brno, Zemědělská",
+  icons: {
+    icon: "/icon.svg",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

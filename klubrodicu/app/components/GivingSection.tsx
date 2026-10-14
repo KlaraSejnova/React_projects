@@ -1,7 +1,10 @@
+import { QRCodeSVG } from "qrcode.react";
 import { givingByYear, givingItems } from "@/app/data/home-data";
 import { Reveal, Wave } from "@/app/components/Visuals";
 
 const headingClass = "text-4xl font-black tracking-tight sm:text-6xl";
+const paymentQrValue =
+  "SPD*1.0*ACC:CZ1703000000000277061076*AM:200*CC:CZK*MSG:DAR [jm%C3%A9no d%C3%ADt%C4%9Bte a t%C5%99%C3%ADda]";
 
 export default function GivingSection() {
   return (
@@ -88,18 +91,34 @@ export default function GivingSection() {
           </div>
         </div>
 
-        <div className="mt-8 rounded-[2.5rem] bg-indigo-950 p-8 text-center text-white">
-          <p>
-            Prosíme o příspěvek min. 200 Kč za rodinu. Hotově třídnímu učiteli
-            nebo na klubový účet:
-          </p>
-          <p
-            id="klubovy-ucet"
-            className="mt-2 scroll-mt-24 text-4xl font-black text-yellow-300"
-          >
-            277061076/0300
-          </p>
-          <p className="text-sm">Uveďte DAR + jméno žáka a třídu.</p>
+        <div className="mt-8 flex flex-col items-center gap-6 rounded-[2.5rem] bg-indigo-950 p-6 text-center text-white sm:p-8 md:flex-row md:justify-center md:gap-10 md:text-left">
+          <div className="max-w-md">
+            <p>
+              Prosíme o příspěvek min. 200 Kč za rodinu. Hotově třídnímu učiteli
+              nebo na klubový účet:
+            </p>
+            <p
+              id="klubovy-ucet"
+              className="mt-2 scroll-mt-24 text-3xl font-black text-yellow-300 sm:text-4xl"
+            >
+              277061076/0300
+            </p>
+            <p className="text-sm">Uveďte DAR + jméno žáka a třídu.</p>
+          </div>
+          <figure className="shrink-0 rounded-2xl bg-indigo-950 p-3 text-center text-yellow-300 shadow-lg">
+            <QRCodeSVG
+              value={paymentQrValue}
+              size={208}
+              level="M"
+              marginSize={4}
+              fgColor="#fde047"
+              bgColor="#1e1b4b"
+              title="QR kód pro platbu příspěvku na účet Klubu rodičů"
+            />
+            <figcaption className="mt-1 text-sm font-bold">
+              Naskenujte v bankovní aplikaci
+            </figcaption>
+          </figure>
         </div>
       </div>
       <Wave fill="fill-indigo-950" />
