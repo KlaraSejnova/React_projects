@@ -86,31 +86,6 @@ export function Counter({
   );
 }
 
-export function KineticWord({
-  text,
-  offset = 0,
-}: {
-  text: string;
-  offset?: number;
-}) {
-  return (
-    <span
-      className="block hover:[&>span]:[animation-play-state:paused]"
-      aria-hidden
-    >
-      {text.split("").map((character, index) => (
-        <span
-          key={index}
-          className="inline-block animate-[wave_3s_ease-in-out_infinite]"
-          style={{ animationDelay: `${(index + offset) * 0.15}s` }}
-        >
-          {character}
-        </span>
-      ))}
-    </span>
-  );
-}
-
 export function Wave({ fill, top = false }: { fill: string; top?: boolean }) {
   return (
     <svg

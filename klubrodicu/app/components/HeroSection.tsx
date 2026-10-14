@@ -1,4 +1,5 @@
-import { KineticWord, Wave } from "@/app/components/Visuals";
+import KineticWord from "./KineticWord";
+import { Wave } from "@/app/components/Visuals";
 
 export default function HeroSection() {
   return (
