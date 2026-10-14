@@ -119,6 +119,15 @@
   box-shadow: 12px 14px 0 rgba(91, 73, 52, 0.12);
 }
 
+.project-card:nth-child(even) .project-preview {
+  order: 2;
+}
+
+.project-card:nth-child(even) .project-details {
+  order: 1;
+  padding: 24px 0 24px 22px;
+}
+
 .project-preview {
   align-self: start;
   overflow: hidden;
@@ -211,7 +220,16 @@
     padding: 12px;
   }
 
+  .project-card:nth-child(even) .project-preview,
+  .project-card:nth-child(even) .project-details {
+    order: initial;
+  }
+
   .project-details {
+    padding: 4px 10px 18px;
+  }
+
+  .project-card:nth-child(even) .project-details {
     padding: 4px 10px 18px;
   }
 }
