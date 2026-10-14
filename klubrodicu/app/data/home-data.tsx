@@ -44,7 +44,7 @@ export const gallerySlides = [
 
 export const newsItems = [
   {
-    title: "Shůzka klubu: Sklad + nováčci",
+    title: "Schůzka klubu: Sklad + nováčci",
     date: "20. 10. 2026, 17:00 (nováčci 17:45)",
     color: "bg-lime-300 text-indigo-950",
   },
