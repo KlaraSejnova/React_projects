@@ -114,7 +114,7 @@
   grid-template-areas: "preview details";
   gap: 36px;
   align-items: stretch;
-  padding: 18px;
+  padding: 28px;
   background: rgba(247, 244, 232, 0.86);
   border: 1px solid rgba(38, 60, 52, 0.22);
   box-shadow: 12px 14px 0 rgba(91, 73, 52, 0.12);
@@ -223,7 +223,7 @@
       "preview"
       "details";
     gap: 24px;
-    padding: 12px;
+    padding: 18px;
   }
 
   .project-card:nth-child(even) {
