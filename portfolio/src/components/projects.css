@@ -110,7 +110,8 @@
 
 .project-card {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-areas: "preview details";
   gap: 36px;
   align-items: stretch;
   padding: 18px;
@@ -119,32 +120,34 @@
   box-shadow: 12px 14px 0 rgba(91, 73, 52, 0.12);
 }
 
-.project-card:nth-child(even) .project-preview {
-  order: 2;
+.project-card:nth-child(even) {
+  grid-template-areas: "details preview";
 }
 
 .project-card:nth-child(even) .project-details {
-  order: 1;
-  padding: 24px 0 24px 22px;
+  padding: 24px 22px 24px 0;
 }
 
 .project-preview {
-  align-self: start;
+  grid-area: preview;
+  aspect-ratio: 4 / 3;
+  align-self: stretch;
   overflow: hidden;
-  background: #19251f;
-  border: 8px solid #263c34;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+  box-sizing: border-box;
 }
 
 .project-preview img {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
   border: 0;
   background: #f7f4e8;
 }
 
 .project-details {
+  grid-area: details;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -216,13 +219,17 @@
 
   .project-card {
     grid-template-columns: 1fr;
+    grid-template-areas:
+      "preview"
+      "details";
     gap: 24px;
     padding: 12px;
   }
 
-  .project-card:nth-child(even) .project-preview,
-  .project-card:nth-child(even) .project-details {
-    order: initial;
+  .project-card:nth-child(even) {
+    grid-template-areas:
+      "preview"
+      "details";
   }
 
   .project-details {
