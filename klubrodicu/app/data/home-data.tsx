@@ -44,6 +44,11 @@ export const gallerySlides = [
 
 export const newsItems = [
   {
+    title: "Sklad + nováčci",
+    date: "20. 10. 2026, 17:00 (nováčci 17:45)",
+    color: "bg-lime-300 text-indigo-950",
+  },
+  {
     title: "Velikonoční tvoření",
     date: "24. 3. 2026, 16:00",
     color: "bg-pink-500 text-white",
