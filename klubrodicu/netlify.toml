@@ -1,4 +1,4 @@
 [build]
   base = "klubrodicu"
-  command = "npm install && npm run build"
-  publish = ".next"
+  command = "npm run build"
+  publish = "out"

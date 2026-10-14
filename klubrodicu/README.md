@@ -33,8 +33,7 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 The Netlify configuration for this app is in `netlify.toml`. When importing this
 repository in Netlify, set the base directory to `klubrodicu` and leave the
-package directory unset. The build and publish paths are configured in the
-file. Netlify's Next.js adapter is detected automatically; no extra environment
-variables are needed.
+package directory unset. This app is built as a static Next.js export into
+`out`, which Netlify publishes directly.
 
 For more details, see the [Netlify Next.js documentation](https://docs.netlify.com/frameworks/next-js/overview/).
