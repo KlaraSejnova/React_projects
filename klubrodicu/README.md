@@ -32,8 +32,9 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 ## Deploy on Netlify
 
 The Netlify configuration for this app is in `netlify.toml`. When importing this
-repository in Netlify, select the `klubrodicu` app from the detected monorepo
-projects (or set the package directory to `klubrodicu`). Netlify's Next.js
-adapter is detected automatically; no extra environment variables are needed.
+repository in Netlify, leave the base directory empty and set the package
+directory to `klubrodicu`. The build and publish paths are configured in the
+file. Netlify's Next.js adapter is detected automatically; no extra environment
+variables are needed.
 
 For more details, see the [Netlify Next.js documentation](https://docs.netlify.com/frameworks/next-js/overview/).
