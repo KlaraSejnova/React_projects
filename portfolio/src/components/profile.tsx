@@ -62,11 +62,11 @@ const Profile = ({ onBack, onTrips, onProjects }: ProfileProps) => {
           <a href="tel:+420724969646">+420 724 969 646</a>
           <a href="mailto:k.sejnova@gmail.com">k.sejnova@gmail.com</a>
           <a
-            href="https://weekdashboard.netlify.app"
+            href="https://klarasejnova.netlify.app"
             target="_blank"
             rel="noopener noreferrer"
           >
-            weekdashboard.netlify.app
+            klarasejnova.netlify.app
           </a>
           <a
             href="https://www.linkedin.com/in/klara-sejnova"
