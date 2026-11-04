@@ -3,7 +3,7 @@ import ContactFooter from "@/app/components/ContactFooter";
 import GallerySection from "@/app/components/GallerySection";
 import GivingSection from "@/app/components/GivingSection";
 import HeroSection from "@/app/components/HeroSection";
-import NewsSection from "@/app/components/NewsSection";
+import UpcomingEventsSection from "@/app/components/UpcomingEvents";
 import SiteNavigation from "@/app/components/SiteNavigation";
 
 export default function HomePage() {
@@ -19,7 +19,7 @@ export default function HomePage() {
       <main id="obsah">
         <HeroSection />
         <AboutSection />
-        <NewsSection />
+        <UpcomingEventsSection />
         <GallerySection />
         <GivingSection />
       </main>

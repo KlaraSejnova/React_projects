@@ -37,3 +37,30 @@ package directory unset. This app is built as a static Next.js export into
 `out`, which Netlify publishes directly.
 
 For more details, see the [Netlify Next.js documentation](https://docs.netlify.com/frameworks/next-js/overview/).
+
+## Správa akcí
+
+Akce se ukládají do Supabase. Veřejná část webu zobrazuje publikované
+nadcházející akce v kalendáři a nejbližší z nich v úvodní hero sekci.
+Administrace je dostupná na `/administrace-akci`.
+
+1. V Supabase SQL Editoru spusťte `supabase/events.sql`.
+2. V Supabase vytvořte uživatelský účet pro správce (bez veřejné registrace).
+   Jeho UUID najdete v přehledu uživatelů v Authentication a přidejte ho do
+   `event_admins`:
+
+   ```sql
+   insert into public.event_admins (user_id)
+   values ('UUID_UZIVATELE');
+   ```
+
+3. Do `klubrodicu/.env.local` pro lokální vývoj a do proměnných prostředí
+   Netlify pro produkci nastavte `NEXT_PUBLIC_SUPABASE_URL` a
+   `NEXT_PUBLIC_SUPABASE_ANON_KEY`. Vzor je v `.env.example`. Po změně
+   proměnných je nutné web znovu sestavit.
+4. Přihlaste se na `/administrace-akci`, kde lze akce přidávat, upravovat,
+   zveřejňovat, skrývat a mazat.
+
+Používá se pouze veřejný anon/publishable klíč; oprávnění ke čtení a změnám
+vynucuje Row Level Security v Supabase. Nikdy do webu nevkládejte `service_role`
+klíč.

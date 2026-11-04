@@ -3,8 +3,8 @@ import type { ReactNode } from "react";
 export const menuItems = [
   { label: "Úvod", href: "#uvod" },
   { label: "O klubu", href: "#o-klubu" },
+  { label: "Kalendář akcí", href: "#akce" },
   { label: "Fotogalerie", href: "/galerie" },
-  { label: "Aktuality", href: "#aktuality" },
   { label: "Přispíváme", href: "#prispivame" },
   { label: "Kontakt", href: "#kontakt" },
 ];
@@ -39,29 +39,6 @@ export const gallerySlides = [
     title: "Vánoční vystoupení",
     src: "/photos/gallery/2023-2024_vanocni-vystoupeni/01.jpg",
     pos: "center 45%",
-  },
-];
-
-export const newsItems = [
-  {
-    title: "Schůzka klubu: Sklad + nováčci",
-    date: "20. 10. 2026, 17:00 (nováčci 17:45)",
-    color: "bg-lime-300 text-indigo-950",
-  },
-  {
-    title: "Velikonoční tvoření",
-    date: "24. 3. 2026, 16:00",
-    color: "bg-pink-500 text-white",
-  },
-  {
-    title: "Úvodní schůzka",
-    date: "13. 10. 2025, 17:30",
-    color: "bg-sky-300 text-indigo-950",
-  },
-  {
-    title: "Schůzka + sklad",
-    date: "14. 5. 2025, 16:30",
-    color: "bg-orange-300 text-indigo-950",
   },
 ];
 

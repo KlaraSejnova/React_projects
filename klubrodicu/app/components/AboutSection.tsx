@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Counter, Reveal } from "@/app/components/Visuals";
-import { newsItems } from "@/app/data/home-data";
 
 const aboutTabs = {
   Členství: (
@@ -35,7 +34,6 @@ const headingClass = "text-4xl font-black tracking-tight sm:text-6xl";
 
 export default function AboutSection() {
   const [tab, setTab] = useState<keyof typeof aboutTabs>("Členství");
-  const featuredNews = newsItems[0];
 
   return (
     <section id="o-klubu" className="mx-auto max-w-5xl px-4 py-16">
@@ -43,13 +41,13 @@ export default function AboutSection() {
       <div className="grid auto-rows-[9.5rem] grid-cols-2 gap-4 md:grid-cols-4">
         <Reveal className="col-span-2 row-span-2 flex flex-col justify-center rounded-[3rem] rounded-tr-[7rem] bg-pink-500 p-8 text-white">
           <p className="text-sm font-bold uppercase tracking-widest">
-            {featuredNews ? "Nejbližší akce" : "Aktuality"}
+            Společně pro školu
           </p>
           <p className="mt-2 text-4xl font-black leading-tight sm:text-5xl">
-            {featuredNews?.title ?? "Sledujte novinky"}
+            Pomáháme škole růst
           </p>
-          <p className="mt-2 text-xl font-semibold">
-            {featuredNews?.date ?? "Brzy přidáme další informace."}
+          <p className="mt-2 text-lg font-semibold">
+            Podporujeme vzdělávání, školní akce a spolupráci rodičů s učiteli.
           </p>
         </Reveal>
         <Counter

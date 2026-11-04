@@ -1,5 +1,6 @@
 import KineticWord from "./KineticWord";
 import { Wave } from "@/app/components/Visuals";
+import { HeroUpcomingEvent } from "@/app/components/UpcomingEvents";
 
 export default function HeroSection() {
   return (
@@ -23,6 +24,7 @@ export default function HeroSection() {
       >
         při MZŠ a MŠ Brno, Zemědělská
       </p>
+      <HeroUpcomingEvent />
       <Wave fill="fill-[#fff4e0]" />
     </section>
   );
