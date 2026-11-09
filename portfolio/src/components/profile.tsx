@@ -107,11 +107,14 @@ const Profile = ({ onBack, onTrips, onProjects }: ProfileProps) => {
             scope, estimate workloads, and deliver tailored solutions.
           </li>
           <li>
-            Maintained and managed multiple Bitbucket repositories while
-            working in a collaborative development team, with tasks and
-            workflows tracked in Jira.
+            Maintained and managed multiple Bitbucket repositories while working
+            in a collaborative development team, with tasks and workflows
+            tracked in Jira.
           </li>
-          <li>Designed and implemented data schemas to support project requirements.</li>
+          <li>
+            Designed and implemented data schemas to support project
+            requirements.
+          </li>
           <li>
             Conducted thorough peer code reviews to ensure code quality,
             consistency, and maintainability.
@@ -138,7 +141,7 @@ const Profile = ({ onBack, onTrips, onProjects }: ProfileProps) => {
           {/* Každý řádek časové osy vykresluje sdílená komponenta ProfileItem níže. */}
           <ProfileItem
             year="2023"
-            title="Junior Frontend Developer"
+            title="Frontend Developer"
             place="Papirfly"
             detail="TypeScript / HTML / SASS / Bitbucket / Template Development / npm / Jira / FogBugz / After Effect / Adobe Illustrator"
           />
