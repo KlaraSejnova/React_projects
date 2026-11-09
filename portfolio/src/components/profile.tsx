@@ -92,6 +92,35 @@ const Profile = ({ onBack, onTrips, onProjects }: ProfileProps) => {
           TypeScript and as a Frontend Developer creating banners with HTML,
           SASS and JavaScript.
         </p>
+        <ul className="profile-highlights">
+          <li>
+            Contributed to the development of a global SaaS platform and a
+            custom TypeScript-based frontend SDK (Papirfly JS), built on a
+            React-style framework.
+          </li>
+          <li>
+            Delivered client projects based on technical specifications and
+            Figma designs, following Scrum and Agile methodologies.
+          </li>
+          <li>
+            Collaborated with clients and project managers to define project
+            scope, estimate workloads, and deliver tailored solutions.
+          </li>
+          <li>
+            Maintained and managed multiple Bitbucket repositories while
+            working in a collaborative development team, with tasks and
+            workflows tracked in Jira.
+          </li>
+          <li>Designed and implemented data schemas to support project requirements.</li>
+          <li>
+            Conducted thorough peer code reviews to ensure code quality,
+            consistency, and maintainability.
+          </li>
+          <li>
+            Worked with a range of design tools, including Figma, Adobe
+            Photoshop, Illustrator, and InDesign.
+          </li>
+        </ul>
       </section>
 
       <section className="profile-section">

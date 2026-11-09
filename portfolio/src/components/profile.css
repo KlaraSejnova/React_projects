@@ -141,6 +141,17 @@
   max-width: 640px;
 }
 
+.profile-highlights {
+  max-width: 640px;
+  margin: 14px 0 0;
+  padding-left: 22px;
+  line-height: 1.5;
+}
+
+.profile-highlights li {
+  margin-bottom: 8px;
+}
+
 .skill-list {
   display: flex;
   flex-wrap: wrap;
