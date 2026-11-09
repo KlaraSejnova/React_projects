@@ -81,49 +81,26 @@ const Profile = ({ onBack, onTrips, onProjects }: ProfileProps) => {
       <section className="profile-introduction profile-section">
         <h2>Who am I?</h2>
         <p>
-          After graduating my PhD studies in Astrophysics I became a web
-          developer. As an intern in SolarWinds I learned new things and worked
-          my way up from content development to WordPress development, creating
-          new blocks and components. I am familiar with Jira and Confluence, and
-          use GitHub and Bitbucket for collaboration.
+          After completing my PhD in Astrophysics, I moved into web development.
+          During my internship at SolarWinds, I started as a content developer
+          and grew into a web developer, creating new blocks and components in
+          WordPress. I am familiar with Jira and Confluence, and use GitHub and
+          Bitbucket to collaborate with colleagues. I enjoy learning new things
+          and have recently started exploring React.
         </p>
         <p>
-          Recently I have been working at Papirfly as a Template Developer using
-          TypeScript and as a Frontend Developer creating banners with HTML,
-          SASS and JavaScript.
+          At Papirfly, I worked in two roles: as a Template Developer using the
+          company’s framework and TypeScript, and as a Frontend Developer
+          creating banners with HTML, Sass, and JavaScript.
         </p>
-        <ul className="profile-highlights">
-          <li>
-            Contributed to the development of a global SaaS platform and a
-            custom TypeScript-based frontend SDK (Papirfly JS), built on a
-            React-style framework.
-          </li>
-          <li>
-            Delivered client projects based on technical specifications and
-            Figma designs, following Scrum and Agile methodologies.
-          </li>
-          <li>
-            Collaborated with clients and project managers to define project
-            scope, estimate workloads, and deliver tailored solutions.
-          </li>
-          <li>
-            Maintained and managed multiple Bitbucket repositories while working
-            in a collaborative development team, with tasks and workflows
-            tracked in Jira.
-          </li>
-          <li>
-            Designed and implemented data schemas to support project
-            requirements.
-          </li>
-          <li>
-            Conducted thorough peer code reviews to ensure code quality,
-            consistency, and maintainability.
-          </li>
-          <li>
-            Worked with a range of design tools, including Figma, Adobe
-            Photoshop, Illustrator, and InDesign.
-          </li>
-        </ul>
+        <p>
+          My day-to-day work included coordinating with clients and project
+          managers to build custom solutions using Agile methods, collaborating
+          with the team across multiple Bitbucket repositories, and developing
+          projects from specifications and design files. I also reviewed code,
+          estimated project timelines, and worked with design tools such as
+          Adobe InDesign, Adobe Illustrator, Adobe Photoshop, and Figma.
+        </p>
       </section>
 
       <section className="profile-section">
