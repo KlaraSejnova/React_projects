@@ -14,6 +14,8 @@
   --surface-soft: #111a23;
   --text-soft: #b1c1cf;
   --text-muted: #788a9a;
+  --rainbow-border: linear-gradient(120deg, #a987ffb3, #68c8e4a6, #82d6b8a6, #f6b88ca6, #e99fc8b3);
+  --rainbow-border-soft: linear-gradient(120deg, #a987ff70, #68c8e470, #82d6b870, #f6b88c70, #e99fc870);
 }
 
 @theme inline {
@@ -1151,9 +1153,17 @@ button {
 .metric-card,
 .panel,
 .run-row {
-  border-color: #293846;
-  background: var(--surface);
+  border-color: transparent;
+  background:
+    linear-gradient(var(--surface), var(--surface)) padding-box,
+    var(--rainbow-border) border-box;
   box-shadow: 0 4px 16px #00000014;
+}
+
+.run-row {
+  background:
+    linear-gradient(var(--surface), var(--surface)) padding-box,
+    var(--rainbow-border-soft) border-box;
 }
 
 .metric-icon,
@@ -1192,8 +1202,20 @@ button {
 }
 
 .run-row:hover {
-  border-color: #47728e;
+  border-color: transparent;
+  background:
+    linear-gradient(var(--surface), var(--surface)) padding-box,
+    var(--rainbow-border) border-box;
   box-shadow: 0 0 16px #4000ff20;
+}
+
+@media (forced-colors: active) {
+  .metric-card,
+  .panel,
+  .run-row,
+  .run-row:hover {
+    border-color: CanvasText;
+  }
 }
 
 .run-data strong {
