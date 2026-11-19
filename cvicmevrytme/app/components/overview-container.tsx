@@ -7,11 +7,11 @@ import RunList from "./run-list";
 import type { Page, Period } from "./types";
 import WeekDistanceChart from "./week-distance-chart";
 
-export default function OverviewContainer({ runs, visibleRuns, sortedRuns, now, period, setPeriod, setActivePage, deleteRun }: {
-  runs: Run[];
+export default function OverviewContainer({ visibleRuns, sortedRuns, now, cutoff, period, setPeriod, setActivePage, deleteRun }: {
   visibleRuns: Run[];
   sortedRuns: Run[];
   now: number;
+  cutoff: number | null;
   period: Period;
   setPeriod: (period: Period) => void;
   setActivePage: (page: Page) => void;
@@ -48,14 +48,14 @@ export default function OverviewContainer({ runs, visibleRuns, sortedRuns, now, 
       <div className="panel-heading">
         <div>
           <h2>Týdenní kilometry</h2>
-          <p>Jak se ti dařilo posledních 5 týdnů</p>
+          <p>{period === "all" ? "Všechny zaznamenané týdny" : `Týdny za posledních ${period} dní`}</p>
         </div>
         <div className="week-legend" aria-label="Legenda týdenního grafu">
           <span className="chart-legend"><span aria-hidden="true" className="legend-dot week-legend-current" /> Tento týden</span>
           <span className="chart-legend"><span aria-hidden="true" className="legend-dot week-legend-selected" /> Vybraný týden</span>
         </div>
       </div>
-      <WeekDistanceChart runs={runs} now={now} />
+      <WeekDistanceChart key={period} runs={visibleRuns} now={now} cutoff={cutoff} />
     </section>
 
     <section>

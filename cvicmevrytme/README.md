@@ -24,7 +24,7 @@ Deník zobrazuje a importuje pouze běhy delší než 3 km; hranice se posuzuje 
 
 Grafy pro lepší čitelnost jemně zaoblují spojnice mezi jednotlivými body, aniž by měnily uložené hodnoty. Průběh mezi body je pouze interpolace; pokud je k dispozici jen souhrnná hodnota, graf zůstane rovný.
 
-V přehledu lze kliknutím na sloupec týdenních kilometrů zobrazit vzdálenost a jednotlivé běhy daného týdne. Současný týden je fialový a vybraný tyrkysový; při výběru současného týdne jej označuje fialový okraj. Dalším kliknutím na stejný sloupec se detail zavře.
+V přehledu graf týdenních kilometrů odpovídá zvolenému období 30 dní, 90 dní nebo celé historii, zobrazuje jen týdny se zaznamenanými běhy a lze jej posouvat vodorovně. První týden omezeného období může obsahovat jen část týdne; detail uvádí začátek období. Při více než 260 týdnech s běhy lze procházet další části tlačítky. Kliknutím na sloupec se zobrazí vzdálenost a jednotlivé běhy daného týdne. Současný týden je fialový a vybraný tyrkysový; při výběru současného týdne jej označuje fialový okraj. Dalším kliknutím na stejný sloupec se detail zavře.
 
 V části **Moje běhy** se kliknutím na běh rozbalí jeho vzdálenost, průměrné tempo, čas a převýšení spolu s grafy tempa a nadmořské výšky podle vzdálenosti. Výškový profil se zobrazí jen při dostatku zaznamenaných výškových bodů; samotné souhrnné převýšení neurčuje průběh výšky.
 

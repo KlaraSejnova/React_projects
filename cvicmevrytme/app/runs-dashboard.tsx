@@ -135,11 +135,11 @@ export default function RunsDashboard() {
     () => [...runs].sort((a, b) => Date.parse(b.date) - Date.parse(a.date)),
     [runs],
   );
+  const cutoff = period === "all" ? null : now - Number(period) * 24 * 60 * 60 * 1000;
   const visibleRuns = useMemo(() => {
-    if (period === "all") return sortedRuns;
-    const cutoff = now - Number(period) * 24 * 60 * 60 * 1000;
+    if (cutoff === null) return sortedRuns;
     return sortedRuns.filter((run) => Date.parse(run.date) >= cutoff);
-  }, [now, period, sortedRuns]);
+  }, [cutoff, sortedRuns]);
   const availableRunIds = new Set(runs.map((run) => run.id));
   const effectiveSelectedIds = selectionCustomized
     ? selectedIds.filter((id) => availableRunIds.has(id))
@@ -420,8 +420,8 @@ export default function RunsDashboard() {
 
           {activePage === "overview" && (
             <OverviewContainer
-              runs={runs}
               visibleRuns={visibleRuns}
+              cutoff={cutoff}
               sortedRuns={sortedRuns}
               now={now}
               period={period}

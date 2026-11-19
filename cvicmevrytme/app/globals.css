@@ -485,13 +485,47 @@ button {
   font-size: 10px;
 }
 
+.week-page-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.week-page-controls .secondary-button {
+  min-height: 34px;
+}
+
+.week-page-controls button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.week-page-controls span {
+  color: var(--text-soft);
+  font-size: 10px;
+}
+
+.week-scroll {
+  overflow-x: auto;
+  margin-top: 14px;
+  padding: 3px 2px 6px;
+}
+
+.week-scroll:focus-visible {
+  outline: 2px solid #b7a4ff;
+  outline-offset: 2px;
+}
+
 .week-bars {
   display: flex;
+  width: max-content;
+  min-width: 100%;
   height: 120px;
   align-items: flex-end;
   justify-content: space-between;
   gap: 8px;
-  margin-top: 17px;
   border-bottom: 1px solid #edf0eb;
 }
 
@@ -499,7 +533,7 @@ button {
   display: flex;
   min-width: 0;
   height: 100%;
-  flex: 1;
+  flex: 1 0 74px;
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
@@ -549,6 +583,7 @@ button {
   padding-bottom: 8px;
   color: #969e95;
   font-size: 9px;
+  white-space: nowrap;
 }
 
 .week-detail {
