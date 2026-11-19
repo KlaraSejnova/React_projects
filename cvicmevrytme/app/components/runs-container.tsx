@@ -28,7 +28,7 @@ export default function RunsContainer({ visibleRuns, period, setPeriod, deleteRu
     </div>
     {visibleRuns.length ? (
       <>
-        <div className="table-head"><span>Běh</span><span>Vzdálenost</span><span>Tempo</span><span>Zdroj</span></div>
+        <div className="table-head"><span>Běh</span><span>Vzdálenost</span><span>Tempo</span></div>
         <RunList runs={visibleRuns} onDelete={deleteRun} expandable />
         <p className="import-hint">Pro porovnání označ běhy v části <strong>Porovnání</strong>.</p>
       </>

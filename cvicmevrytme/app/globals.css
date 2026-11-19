@@ -14,8 +14,8 @@
   --surface-soft: #111a23;
   --text-soft: #b1c1cf;
   --text-muted: #788a9a;
-  --rainbow-border: linear-gradient(120deg, #a987ffb3, #68c8e4a6, #82d6b8a6, #f6b88ca6, #e99fc8b3);
-  --rainbow-border-soft: linear-gradient(120deg, #a987ff70, #68c8e470, #82d6b870, #f6b88c70, #e99fc870);
+  --week-current: #a987ff;
+  --week-selected: #4aeec3;
 }
 
 @theme inline {
@@ -346,10 +346,7 @@ button {
   font-size: 10px;
 }
 
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.62fr) minmax(270px, 0.88fr);
-  gap: 15px;
+.weekly-panel {
   margin-top: 16px;
 }
 
@@ -392,6 +389,21 @@ button {
   height: 7px;
   border-radius: 50%;
   background: var(--green);
+}
+
+.week-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px 12px;
+}
+
+.week-legend-current {
+  background: var(--week-current);
+}
+
+.week-legend-selected {
+  background: var(--week-selected);
 }
 
 .chart-wrap {
@@ -467,6 +479,12 @@ button {
   font-size: 10px;
 }
 
+.week-hint {
+  margin: 8px 0 0;
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
 .week-bars {
   display: flex;
   height: 120px;
@@ -479,12 +497,22 @@ button {
 
 .week-column {
   display: flex;
+  min-width: 0;
   height: 100%;
   flex: 1;
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
   gap: 8px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  padding: 0;
+}
+
+.week-column:focus-visible {
+  outline: 2px solid #b7a4ff;
+  outline-offset: 2px;
 }
 
 .week-bar {
@@ -495,15 +523,96 @@ button {
   transition: background 150ms ease;
 }
 
-.week-bar:hover,
+.week-column:hover .week-bar {
+  filter: brightness(1.15);
+}
+
 .week-bar.current {
-  background: var(--green);
+  background: var(--week-current);
+}
+
+.week-column[aria-expanded="true"] span {
+  color: var(--week-selected);
+  font-weight: 700;
+}
+
+.week-column[aria-expanded="true"] .week-bar {
+  background: var(--week-selected);
+  box-shadow: 0 0 12px #4aeec355;
+}
+
+.week-column[aria-expanded="true"] .week-bar.current {
+  box-shadow: 0 0 0 2px var(--week-current), 0 0 12px #4aeec355;
 }
 
 .week-column span {
   padding-bottom: 8px;
   color: #969e95;
   font-size: 9px;
+}
+
+.week-detail {
+  margin-top: 16px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+
+.week-detail-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 12px;
+}
+
+.week-detail-heading h3 {
+  margin: 0;
+  color: var(--foreground);
+  font-size: 12px;
+}
+
+.week-detail-heading span,
+.week-detail-empty {
+  color: var(--text-soft);
+  font-size: 11px;
+}
+
+.week-detail-runs {
+  display: grid;
+  gap: 10px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.week-detail-runs li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--foreground);
+  font-size: 11px;
+}
+
+.week-detail-runs li > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.week-detail-runs li > strong {
+  flex: none;
+  white-space: nowrap;
+}
+
+.week-detail-runs small {
+  display: block;
+  margin-top: 3px;
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.week-detail-empty {
+  margin: 12px 0 0;
 }
 
 .section-row {
@@ -540,7 +649,7 @@ button {
   border-radius: 11px;
   background: #fff;
   padding: 12px 15px;
-  transition: border-color 150ms ease, transform 150ms ease;
+  transition: border-color 150ms ease, transform 150ms ease, box-shadow 150ms ease;
 }
 
 .run-row:hover {
@@ -550,7 +659,7 @@ button {
 .run-row-header {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(150px, 1.5fr) repeat(2, minmax(75px, 0.7fr)) minmax(70px, 0.7fr) 24px;
+  grid-template-columns: minmax(150px, 1.5fr) repeat(2, minmax(75px, 0.7fr)) 24px;
   align-items: center;
   gap: 12px;
 }
@@ -663,22 +772,6 @@ button {
   color: #465148;
   font-size: 11px;
   font-weight: 600;
-}
-
-.source-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  color: #879087;
-  font-size: 9px;
-}
-
-.source-label::before {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #9bb9a0;
-  content: "";
 }
 
 .comparison-panel {
@@ -866,7 +959,7 @@ button {
 
 .table-head {
   display: grid;
-  grid-template-columns: minmax(150px, 1.5fr) repeat(2, minmax(75px, 0.7fr)) minmax(70px, 0.7fr) 24px;
+  grid-template-columns: minmax(150px, 1.5fr) repeat(2, minmax(75px, 0.7fr)) 24px;
   gap: 12px;
   padding: 0 16px 9px;
   color: #939b92;
@@ -962,21 +1055,9 @@ button {
     width: 100%;
   }
 
-  .dashboard-grid {
-    grid-template-columns: 1fr;
-  }
-
   .run-row-header,
   .table-head {
     grid-template-columns: minmax(130px, 1.4fr) repeat(2, minmax(65px, 0.7fr)) 20px;
-  }
-
-  .table-head span:nth-of-type(4) {
-    display: none;
-  }
-
-  .run-row .source-label {
-    display: none;
   }
 
   .run-detail-charts {
@@ -1097,7 +1178,6 @@ button {
 .week-column span,
 .run-name span,
 .run-data span,
-.source-label,
 .import-hint,
 .compare-empty {
   color: #8c9cad;
@@ -1153,17 +1233,16 @@ button {
 .metric-card,
 .panel,
 .run-row {
-  border-color: transparent;
-  background:
-    linear-gradient(var(--surface), var(--surface)) padding-box,
-    var(--rainbow-border) border-box;
+  border-width: 2px;
+  border-color: #6f5d9c;
+  background: var(--surface);
   box-shadow: 0 4px 16px #00000014;
 }
 
-.run-row {
-  background:
-    linear-gradient(var(--surface), var(--surface)) padding-box,
-    var(--rainbow-border-soft) border-box;
+.panel .panel,
+.panel .run-row {
+  border-width: 1px;
+  border-color: #3a4855;
 }
 
 .metric-icon,
@@ -1202,28 +1281,28 @@ button {
 }
 
 .run-row:hover {
-  border-color: transparent;
-  background:
-    linear-gradient(var(--surface), var(--surface)) padding-box,
-    var(--rainbow-border) border-box;
+  border-color: #9c87cd;
   box-shadow: 0 0 16px #4000ff20;
+}
+
+.panel .run-row:hover {
+  border-color: #687887;
 }
 
 @media (forced-colors: active) {
   .metric-card,
   .panel,
   .run-row,
-  .run-row:hover {
+  .run-row:hover,
+  .panel .panel,
+  .panel .run-row,
+  .panel .run-row:hover {
     border-color: CanvasText;
   }
 }
 
 .run-data strong {
   color: #c1cfdb;
-}
-
-.source-label::before {
-  background: var(--green);
 }
 
 .route-start {

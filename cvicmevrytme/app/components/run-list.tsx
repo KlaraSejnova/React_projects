@@ -55,7 +55,6 @@ function RunRow({ run, onDelete, expandable, color }: {
           </div>
           <div className="run-data"><strong>{run.distanceKm.toFixed(2)} km</strong><span>{formatDuration(run.durationSeconds)}</span></div>
           <div className="run-data"><strong>{formatPace(run.averagePaceSecondsPerKm)} /km</strong><span>tempo</span></div>
-          <span className="source-label" title={`Importováno z ${run.source}`}>{run.source}</span>
           <button aria-label={`Odebrat běh ${run.title}`} className="delete-button" onClick={() => onDelete(run.id)}>
             <Icon name="trash" size={14} />
           </button>

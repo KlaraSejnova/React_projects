@@ -1,19 +1,16 @@
 import type { Run } from "@/lib/runs";
-import { getCompareColor } from "@/lib/chart";
 import EmptyState from "./empty-state";
 import { formatPace } from "./format";
 import Icon from "./app-icon";
-import LineChart from "./line-chart";
 import MetricCard from "./metric-card";
 import RunList from "./run-list";
 import type { Page, Period } from "./types";
 import WeekDistanceChart from "./week-distance-chart";
 
-export default function OverviewContainer({ runs, visibleRuns, sortedRuns, comparedRuns, now, period, setPeriod, setActivePage, deleteRun }: {
+export default function OverviewContainer({ runs, visibleRuns, sortedRuns, now, period, setPeriod, setActivePage, deleteRun }: {
   runs: Run[];
   visibleRuns: Run[];
   sortedRuns: Run[];
-  comparedRuns: Run[];
   now: number;
   period: Period;
   setPeriod: (period: Period) => void;
@@ -47,36 +44,19 @@ export default function OverviewContainer({ runs, visibleRuns, sortedRuns, compa
       <MetricCard icon="pace" label="Průměrné tempo" value={averagePace ? `${formatPace(averagePace)} /km` : "—"} foot="Vážené podle vzdálenosti" />
     </div>
 
-    <div className="dashboard-grid">
-      <section className="panel">
-        <div className="panel-heading">
-          <div>
-            <h2>Týdenní kilometry</h2>
-            <p>Jak se ti dařilo posledních 5 týdnů</p>
-          </div>
-          <span className="chart-legend"><span className="legend-dot" /> Vzdálenost</span>
+    <section className="panel weekly-panel">
+      <div className="panel-heading">
+        <div>
+          <h2>Týdenní kilometry</h2>
+          <p>Jak se ti dařilo posledních 5 týdnů</p>
         </div>
-        <WeekDistanceChart runs={runs} now={now} />
-      </section>
-      <section className="panel">
-        <div className="panel-heading">
-          <div>
-            <h2>Rychlé srovnání</h2>
-            <p>Průběh tempa podle vzdálenosti</p>
-          </div>
-          <button className="text-button" onClick={() => setActivePage("compare")}>Porovnat <Icon name="arrow" size={12} /></button>
+        <div className="week-legend" aria-label="Legenda týdenního grafu">
+          <span className="chart-legend"><span aria-hidden="true" className="legend-dot week-legend-current" /> Tento týden</span>
+          <span className="chart-legend"><span aria-hidden="true" className="legend-dot week-legend-selected" /> Vybraný týden</span>
         </div>
-        <LineChart runs={comparedRuns.slice(0, 2)} metric="pace" />
-        <div className="chart-legend">
-          {comparedRuns.slice(0, 2).map((run, index) => (
-            <span key={run.id} style={{ display: "inline-flex", alignItems: "center", gap: 5, marginRight: 12 }}>
-              <span className="compare-color" style={{ background: getCompareColor(index) }} />
-              {run.title}
-            </span>
-          ))}
-        </div>
-      </section>
-    </div>
+      </div>
+      <WeekDistanceChart runs={runs} now={now} />
+    </section>
 
     <section>
       <div className="section-row">

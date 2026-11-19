@@ -144,8 +144,6 @@ export default function RunsDashboard() {
   const effectiveSelectedIds = selectionCustomized
     ? selectedIds.filter((id) => availableRunIds.has(id))
     : sortedRuns.slice(0, 3).map((run) => run.id);
-  const selectedIdSet = new Set(effectiveSelectedIds);
-  const comparedRuns = sortedRuns.filter((run) => selectedIdSet.has(run.id));
   const gpsRoutes = useMemo(() => getGpsRoutes(sortedRuns), [sortedRuns]);
   const gpsIds = new Set(gpsRoutes.map(({ run }) => run.id));
   const compareIds = selectionCustomized
@@ -425,7 +423,6 @@ export default function RunsDashboard() {
               runs={runs}
               visibleRuns={visibleRuns}
               sortedRuns={sortedRuns}
-              comparedRuns={comparedRuns}
               now={now}
               period={period}
               setPeriod={setPeriod}
