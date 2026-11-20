@@ -19,10 +19,13 @@ export default function ComparisonContainer({ gpsRoutes, comparedRuns, routeRun,
   deleteRun: (id: string) => void;
 }) {
   const selectedColors = new Map(comparedRuns.map((run, index) => [run.id, getCompareColor(index)]));
-  const groups = useMemo(() => groupGpsRoutes(gpsRoutes).map((group) => ({
-    ...group,
-    preview: projectGpsRoutes([group.routes[0]])[0],
-  })), [gpsRoutes]);
+  const groups = useMemo(() => groupGpsRoutes(gpsRoutes).map((group) => {
+    const previewRoute = group.routes.find(({ run }) => run.id === routeRun?.id) ?? group.routes[0];
+    return {
+      ...group,
+      preview: projectGpsRoutes([previewRoute])[0],
+    };
+  }), [gpsRoutes, routeRun]);
   return (
   <section className="panel comparison-panel">
     <div className="panel-heading">

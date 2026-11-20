@@ -246,7 +246,7 @@ button {
   padding: 0 15px;
   font-size: 12px;
   font-weight: 650;
-  transition: transform 160ms ease, background 160ms ease;
+  transition: transform 160ms ease, background 160ms ease, box-shadow 160ms ease;
 }
 
 .primary-button {
@@ -436,6 +436,7 @@ button {
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 2.4;
+  filter: drop-shadow(0 0 6px #4000ff) drop-shadow(0 0 13px #4000ffb3);
 }
 
 .chart-area {
@@ -446,6 +447,7 @@ button {
   fill: #fff;
   stroke: var(--green);
   stroke-width: 2;
+  filter: drop-shadow(0 0 7px #4000ff) drop-shadow(0 0 14px #4000ffb3);
 }
 
 .chart-tooltip {
@@ -666,12 +668,21 @@ button {
 }
 
 .text-button {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 4px;
   border: 0;
   background: transparent;
   padding: 5px 0;
   color: var(--green);
   font-size: 11px;
   font-weight: 650;
+  white-space: nowrap;
+}
+
+.text-button svg {
+  flex: none;
 }
 
 .run-list {
@@ -795,7 +806,7 @@ button {
   white-space: nowrap;
 }
 
-.run-name span,
+.run-name > div > span,
 .run-data span {
   display: block;
   margin-top: 4px;
@@ -896,9 +907,10 @@ button {
 
 .route-svg {
   display: block;
-  width: 100%;
-  height: 170px;
-  margin-top: 12px;
+  width: min(100%, 460px);
+  height: auto;
+  aspect-ratio: 2 / 1;
+  margin: 12px auto 0;
 }
 
 .route-path {
@@ -907,6 +919,7 @@ button {
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 4;
+  filter: drop-shadow(0 0 7px #4000ff) drop-shadow(0 0 15px #4000ffb3);
 }
 
 .route-start {
@@ -1160,7 +1173,13 @@ button {
 }
 
 .sidebar {
-  background: #141a24;
+  background-color: #141a24;
+  background-image:
+    linear-gradient(180deg, #141a24bf, #141a24bf),
+    url("/auth-topographic-map.svg");
+  background-position: center, center top;
+  background-repeat: no-repeat, repeat-y;
+  background-size: 100% 100%, 520px 230px;
 }
 
 .brand {
@@ -1230,12 +1249,12 @@ button {
 
 .primary-button {
   color: #ffffff;
-  box-shadow: 0 0 18px #4000ff30;
+  box-shadow: 0 0 24px #4000ff99, 0 0 42px #4000ff55;
 }
 
 .primary-button:hover {
   background: #5a28ff;
-  box-shadow: 0 0 22px #4000ff55;
+  box-shadow: 0 0 28px #4000ffcc, 0 0 50px #4000ff88;
 }
 
 .secondary-button,
@@ -1248,6 +1267,14 @@ button {
 
 .secondary-button:hover {
   background: #253744;
+}
+
+.secondary-button {
+  box-shadow: 0 0 14px #4000ff55, 0 0 25px #4000ff30;
+}
+
+.secondary-button:hover {
+  box-shadow: 0 0 20px #4000ff88, 0 0 34px #4000ff55;
 }
 
 .text-button {
@@ -1263,6 +1290,7 @@ button {
   border-color: #3b6c89;
   background: #192c3c;
   color: #b7a4ff;
+  box-shadow: 0 0 12px #4000ff35;
 }
 
 .metric-card,
@@ -1303,7 +1331,7 @@ button {
 }
 
 .week-bar.current {
-  box-shadow: 0 0 12px #4000ff55;
+  box-shadow: 0 0 14px #4000ffcc, 0 0 25px #4000ff70;
 }
 
 .chart-tooltip {

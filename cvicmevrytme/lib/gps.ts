@@ -2,7 +2,12 @@ import type { Run, TrackPoint } from "./runs";
 
 type GpsPoint = TrackPoint & { latitude: number; longitude: number };
 export type GpsRoute = { run: Run; points: GpsPoint[] };
-export type ProjectedRoute = { id: string; path: string; start: { x: number; y: number } };
+export type ProjectedRoute = {
+  id: string;
+  path: string;
+  start: { x: number; y: number };
+  end: { x: number; y: number };
+};
 export type GpsRouteGroup = { routes: GpsRoute[]; insufficientGps: boolean };
 
 const EARTH_RADIUS_M = 6_371_000;
@@ -125,14 +130,15 @@ export function getGpsRoutes(runs: Run[]): GpsRoute[] {
 }
 
 export function projectGpsRoutes(routes: GpsRoute[]): ProjectedRoute[] {
-  if (!routes.length) return [];
+  const routesWithPoints = routes.filter(({ points }) => points.length > 0);
+  if (!routesWithPoints.length) return [];
   let minLat = Infinity;
   let maxLat = -Infinity;
   let minLon = Infinity;
   let maxLon = -Infinity;
   let minWrappedLon = Infinity;
   let maxWrappedLon = -Infinity;
-  for (const { points } of routes) {
+  for (const { points } of routesWithPoints) {
     for (const point of points) {
       minLat = Math.min(minLat, point.latitude);
       maxLat = Math.max(maxLat, point.latitude);
@@ -158,11 +164,14 @@ export function projectGpsRoutes(routes: GpsRoute[]): ProjectedRoute[] {
     x: offsetX + (longitude(point) - longitudeMin) * longitudeFactor * scale,
     y: offsetY + (maxLat - point.latitude) * scale,
   });
-  return routes.map(({ run, points }) => {
+  return routesWithPoints.map(({ run, points }) => {
     const coordinates = points.map(project);
+    const start = coordinates[0]!;
+    const end = coordinates.at(-1)!;
     return {
       id: run.id,
-      start: coordinates[0],
+      start,
+      end,
       path: coordinates.map(({ x, y }, index) => `${index ? "L" : "M"} ${x.toFixed(2)} ${y.toFixed(2)}`).join(" "),
     };
   });

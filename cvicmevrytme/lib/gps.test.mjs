@@ -43,6 +43,10 @@ test("routes share one projection with north up and east right", () => {
   const coords = [...projected[0].path.matchAll(/[ML] ([\d.]+) ([\d.]+)/g)].map((match) => [Number(match[1]), Number(match[2])]);
   assert.ok(coords[1][0] > coords[0][0]);
   assert.ok(coords[1][1] < coords[0][1]);
+  assert.ok(Math.abs(projected[0].start.x - coords[0][0]) < 0.01);
+  assert.ok(Math.abs(projected[0].start.y - coords[0][1]) < 0.01);
+  assert.ok(Math.abs(projected[0].end.x - coords.at(-1)[0]) < 0.01);
+  assert.ok(Math.abs(projected[0].end.y - coords.at(-1)[1]) < 0.01);
 });
 
 test("projection handles antimeridian and large or degenerate tracks", () => {
