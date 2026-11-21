@@ -151,11 +151,12 @@
   display: grid;
   place-items: center;
   aspect-ratio: 1054 / 504;
-  padding: 1% 1.5%;
   background: #090d0e;
 }
 
 .running-preview img {
+  width: 90%;
+  height: 90%;
   object-fit: contain;
   background: #090d0e;
 }
