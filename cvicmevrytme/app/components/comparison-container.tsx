@@ -16,7 +16,7 @@ export default function ComparisonContainer({ gpsRoutes, comparedRuns, routeRun,
   setMetric: (metric: ChartMetric) => void;
   toggleComparison: (id: string) => void;
   toggleGroup: (ids: string[]) => void;
-  deleteRun: (id: string) => void;
+  deleteRun?: (id: string) => void;
 }) {
   const selectedColors = new Map(comparedRuns.map((run, index) => [run.id, getCompareColor(index)]));
   const groups = useMemo(() => groupGpsRoutes(gpsRoutes).map((group) => {

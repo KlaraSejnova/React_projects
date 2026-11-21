@@ -3,8 +3,10 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/database.types";
 import Icon from "./app-icon";
 
-export default function AuthScreen({ client }: { client: SupabaseClient<Database> | null }) {
-  const [mode, setMode] = useState<"signIn" | "signUp">("signIn");
+export default function AuthScreen({ client, onDemo }: {
+  client: SupabaseClient<Database> | null;
+  onDemo: () => void;
+}) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
@@ -18,19 +20,12 @@ export default function AuthScreen({ client }: { client: SupabaseClient<Database
     setMessage("");
     setSuccess(false);
     try {
-      const result =
-        mode === "signIn"
-          ? await client.auth.signInWithPassword({ email, password })
-          : await client.auth.signUp({ email, password });
+      const result = await client.auth.signInWithPassword({ email, password });
       if (result.error) {
         setMessage(result.error.message);
       } else {
         setSuccess(true);
-        setMessage(
-          mode === "signUp" && !result.data.session
-            ? "Účet je vytvořený. Potvrď registraci odkazem v e-mailu a pak se přihlas."
-            : "Přihlášení probíhá…",
-        );
+        setMessage("Přihlášení probíhá…");
       }
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Přihlášení se nepodařilo.");
@@ -82,13 +77,11 @@ export default function AuthScreen({ client }: { client: SupabaseClient<Database
           <div className="auth-card-icon"><Icon name="runs" size={21} /></div>
           <p className="eyebrow">Tvůj běžecký deník</p>
           <h1 id="auth-heading">
-            {!client ? "Ještě chybí nastavení připojení" : mode === "signIn" ? "Vítej zpátky." : "Vytvoř si účet."}
+            {!client ? "Ještě chybí nastavení připojení" : "Vítej zpátky."}
           </h1>
           <p className="auth-description">
             {client
-              ? mode === "signIn"
-                ? "Přihlas se a pokračuj tam, kde jsi skončila."
-                : "Založ si svůj prostor pro všechny další běhy."
+              ? "Přihlas se a pokračuj tam, kde jsi skončila."
               : "Doplň Supabase URL a veřejný klíč do souboru .env.local a restartuj vývojový server."}
           </p>
           {client && (
@@ -108,7 +101,7 @@ export default function AuthScreen({ client }: { client: SupabaseClient<Database
                 <label>
                   Heslo
                   <input
-                    autoComplete={mode === "signIn" ? "current-password" : "new-password"}
+                    autoComplete="current-password"
                     minLength={6}
                     onChange={(event) => setPassword(event.target.value)}
                     placeholder="Zadej heslo"
@@ -118,7 +111,7 @@ export default function AuthScreen({ client }: { client: SupabaseClient<Database
                   />
                 </label>
                 <button className="primary-button auth-submit" disabled={busy} type="submit">
-                  {busy ? "Pracuji…" : mode === "signIn" ? "Přihlásit se" : "Vytvořit účet"}
+                  {busy ? "Přihlašuji…" : "Přihlásit se"}
                   <Icon name="arrow" size={17} />
                 </button>
               </form>
@@ -127,21 +120,18 @@ export default function AuthScreen({ client }: { client: SupabaseClient<Database
                   {message}
                 </p>
               )}
-              <div className="auth-switch">
-                <span>{mode === "signIn" ? "Ještě nemáš účet?" : "Už máš účet?"}</span>
-                <button
-                  className="text-button auth-mode-button"
-                  onClick={() => {
-                    setMode(mode === "signIn" ? "signUp" : "signIn");
-                    setMessage("");
-                  }}
-                  type="button"
-                >
-                  {mode === "signIn" ? "Vytvoř si ho" : "Přihlas se"}
-                </button>
-              </div>
             </>
           )}
+          <div className="auth-demo">
+            <div className="auth-demo-copy">
+              <p>Nejdřív se chceš jen podívat?</p>
+              <small>Reálné běhy · jen pro čtení</small>
+            </div>
+            <button className="text-button auth-demo-button" onClick={onDemo} type="button">
+              Vyzkoušet demo
+              <Icon name="arrow" size={16} />
+            </button>
+          </div>
         </section>
       </div>
     </main>

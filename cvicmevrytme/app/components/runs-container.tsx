@@ -7,7 +7,7 @@ export default function RunsContainer({ visibleRuns, period, setPeriod, deleteRu
   visibleRuns: Run[];
   period: Period;
   setPeriod: (period: Period) => void;
-  deleteRun: (id: string) => void;
+  deleteRun?: (id: string) => void;
 }) {
   return (
   <section>

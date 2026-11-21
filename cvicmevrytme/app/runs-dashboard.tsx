@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type ChangeEvent } from "react";
-import { importRuns, isLongRun, isRun, prepareTcxImport, type Run } from "@/lib/runs";
+import { importRuns, isLongRun, isRun, type Run } from "@/lib/runs";
+import { DEMO_RUNS } from "@/lib/demo-runs";
 import { removeShortRuns } from "@/lib/remove-short-runs";
 import { toggleRunGroup, toggleRunSelection } from "@/lib/chart";
 import { getGpsRoutes } from "@/lib/gps";
@@ -39,6 +40,7 @@ function getServerClockSnapshot(): number {
 
 export default function RunsDashboard() {
   const [storedRuns, setStoredRuns] = useState<Run[]>([]);
+  const [demoMode, setDemoMode] = useState(false);
   const [dataError, setDataError] = useState("");
   const [session, setSession] = useState<Session | null>(null);
   const [authLoading, setAuthLoading] = useState(Boolean(supabase));
@@ -57,8 +59,9 @@ export default function RunsDashboard() {
   const [importProgress, setImportProgress] = useState("");
   const [deletingShortRuns, setDeletingShortRuns] = useState(false);
   const folderInput = useRef<HTMLInputElement>(null);
-  const runs = useMemo(() => storedRuns.filter(isLongRun), [storedRuns]);
-  const shortRuns = useMemo(() => storedRuns.filter((run) => !isLongRun(run)), [storedRuns]);
+  const sourceRuns = demoMode ? DEMO_RUNS : storedRuns;
+  const runs = useMemo(() => sourceRuns.filter(isLongRun), [sourceRuns]);
+  const shortRuns = useMemo(() => sourceRuns.filter((run) => !isLongRun(run)), [sourceRuns]);
 
   const setNotice = (text: string) => {
     setNoticeState(text ? {
@@ -162,6 +165,7 @@ export default function RunsDashboard() {
         : "Každý běh tě posouvá o kousek dál.";
 
   const saveImportedRuns = async (imported: Run[], warnings: string[]) => {
+    if (demoMode) return;
     const saved: Run[] = [];
     let persistenceError: string | undefined;
     if (imported.length && supabase && session) {
@@ -218,6 +222,7 @@ export default function RunsDashboard() {
   };
 
   const handleFiles = async (event: ChangeEvent<HTMLInputElement>) => {
+    if (demoMode) return;
     const input = event.currentTarget;
     const selected = Array.from(input.files ?? []);
     input.value = "";
@@ -257,12 +262,7 @@ export default function RunsDashboard() {
         }
       }
       if (shortCount) warnings.push(`Vynecháno ${shortCount} běhů o vzdálenosti 3 km nebo méně.`);
-      const { ready, skipped } = prepareTcxImport(imported, storedRuns);
-      if (skipped) {
-        const description = skipped === 1 ? "běh nebyl importován" : skipped < 5 ? "běhy nebyly importovány" : "běhů nebylo importováno";
-        warnings.push(`${skipped} ${description} kvůli možné shodě s již uloženými běhy.`);
-      }
-      await saveImportedRuns(ready, warnings);
+      await saveImportedRuns(imported, warnings);
     } finally {
       setImportProgress("");
       setImporting(false);
@@ -280,6 +280,7 @@ export default function RunsDashboard() {
   };
 
   const deleteRun = async (id: string) => {
+    if (demoMode) return;
     const run = runs.find((item) => item.id === id);
     if (!run || !supabase || !session) return;
     try {
@@ -302,7 +303,7 @@ export default function RunsDashboard() {
   };
 
   const deleteShortRuns = async () => {
-    if (!supabase || !session || !shortRuns.length || deletingShortRuns) return;
+    if (demoMode || !supabase || !session || !shortRuns.length || deletingShortRuns) return;
     if (!window.confirm(`Trvale odstranit ${shortRuns.length} uložených běhů o vzdálenosti 3 km nebo méně z tohoto účtu?`)) return;
     setDeletingShortRuns(true);
     setNotice("");
@@ -321,7 +322,7 @@ export default function RunsDashboard() {
   };
 
   const signOut = async () => {
-    if (!supabase) return;
+    if (demoMode || !supabase) return;
     try {
       const { error } = await supabase.auth.signOut();
       if (error) setNotice(`Odhlášení se nepodařilo: ${error.message}`);
@@ -331,6 +332,7 @@ export default function RunsDashboard() {
   };
 
   const openTcxFolder = () => {
+    if (demoMode) return;
     const input = folderInput.current;
     if (!input || !("webkitdirectory" in input)) {
       setNotice("Tento prohlížeč neumí vybrat složku. Použij pro import prohlížeč, který výběr složek podporuje, například Chrome na počítači.");
@@ -339,13 +341,33 @@ export default function RunsDashboard() {
     input.click();
   };
 
-  if (authLoading) {
+  const startDemo = () => {
+    setDemoMode(true);
+    setActivePage("overview");
+    setPeriod("30");
+    setMetric("pace");
+    setSelectedIds([]);
+    setSelectionCustomized(false);
+    setNoticeState(null);
+  };
+
+  const leaveDemo = () => {
+    setDemoMode(false);
+    setActivePage("overview");
+    setSelectedIds([]);
+    setSelectionCustomized(false);
+    setNoticeState(null);
+  };
+
+  if (authLoading && !demoMode) {
     return <main className="auth-page"><p className="auth-loading">Připojuji běžecký deník…</p></main>;
   }
-  if (!session) return <AuthScreen client={supabase} />;
+  if (!session && !demoMode) return <AuthScreen client={supabase} onDemo={startDemo} />;
+
+  const onDelete = demoMode ? undefined : deleteRun;
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell${demoMode ? " demo-mode" : ""}`}>
       <aside className="sidebar">
         <div className="brand">
           <span className="brand-mark"><Icon name="brand" size={19} /></span>
@@ -354,8 +376,12 @@ export default function RunsDashboard() {
         <p className="nav-label">Trénink</p>
         <Navigation activePage={activePage} onNavigate={setActivePage} />
         <div className="sidebar-note">
-          <strong>Tvůj osobní přehled</strong>
-          <p>Data se synchronizují s tvým účtem a zůstávají dostupná na přihlášených zařízeních.</p>
+          <strong>{demoMode ? "Veřejné demo" : "Tvůj osobní přehled"}</strong>
+          <p>
+            {demoMode
+              ? "Obsahuje vybrané reálné běhy a GPS trasy. Data jsou jen pro prohlížení."
+              : "Data se synchronizují s tvým účtem a zůstávají dostupná na přihlášených zařízeních."}
+          </p>
         </div>
       </aside>
 
@@ -363,40 +389,53 @@ export default function RunsDashboard() {
         <header className="topbar">
           <div className="breadcrumbs">Běžecký deník <span aria-hidden="true">/</span> <strong>{pageTitle}</strong></div>
           <div className="topbar-right">
-            <span className="sync-pill"><span className="status-dot" /> {dataError ? "Chyba synchronizace" : "Synchronizováno se Supabase"}</span>
-            <span className="avatar" aria-label="Přihlášený účet">{session.user.email?.slice(0, 2).toUpperCase() ?? "?"}</span>
-            <button className="text-button" onClick={signOut} type="button">Odhlásit</button>
+            <span className={`sync-pill${demoMode ? " demo-sync-pill" : ""}`}>
+              <span className="status-dot" />
+              {demoMode ? "Reálná data · jen pro čtení" : dataError ? "Chyba synchronizace" : "Synchronizováno se Supabase"}
+            </span>
+            <span className="avatar" aria-label={demoMode ? "Demo s reálnými běhy" : "Přihlášený účet"}>
+              {demoMode ? "DE" : session?.user.email?.slice(0, 2).toUpperCase() ?? "?"}
+            </span>
+            <button className="text-button" onClick={demoMode ? leaveDemo : signOut} type="button">
+              {demoMode ? "Ukončit demo" : "Odhlásit"}
+            </button>
           </div>
         </header>
 
         <div className="content">
           <section className="page-heading">
             <div>
-              <p className="eyebrow">{activePage === "overview" ? "Tvoje běžecká cesta" : "Tréninkový deník"}</p>
+              <p className="eyebrow">
+                {demoMode ? "Reálné běhy · jen pro čtení" : activePage === "overview" ? "Tvoje běžecká cesta" : "Tréninkový deník"}
+              </p>
               <h1>{pageTitle}</h1>
               <p>{pageDescription}</p>
             </div>
-            <div className="import-actions">
-              <button className="primary-button" disabled={importing} onClick={openTcxFolder}>
-                <Icon name="upload" size={15} />
-                {importing ? "Pracuji…" : "Importovat běh"}
-              </button>
-            </div>
-            <input
-              aria-label="Vybrat složku se soubory TCX"
-              hidden
-              multiple
-              onChange={handleFiles}
-              ref={(input) => {
-                folderInput.current = input;
-                if (input && "webkitdirectory" in input) input.webkitdirectory = true;
-              }}
-              type="file"
-            />
+            {!demoMode && (
+              <>
+                <div className="import-actions">
+                  <button className="primary-button" disabled={importing} onClick={openTcxFolder}>
+                    <Icon name="upload" size={15} />
+                    {importing ? "Pracuji…" : "Importovat běh"}
+                  </button>
+                </div>
+                <input
+                  aria-label="Vybrat složku se soubory TCX"
+                  hidden
+                  multiple
+                  onChange={handleFiles}
+                  ref={(input) => {
+                    folderInput.current = input;
+                    if (input && "webkitdirectory" in input) input.webkitdirectory = true;
+                  }}
+                  type="file"
+                />
+              </>
+            )}
           </section>
 
           {importProgress && <p className="import-hint" role="status">{importProgress}</p>}
-          {dataError && <div className="notice" role="status">{dataError}</div>}
+          {!demoMode && dataError && <div className="notice" role="status">{dataError}</div>}
           {notice && (
             <div className={notice.success ? "notice success-notice" : "notice"} role="status">
               {notice.text}
@@ -408,7 +447,7 @@ export default function RunsDashboard() {
               )}
             </div>
           )}
-          {shortRuns.length > 0 && (
+          {!demoMode && shortRuns.length > 0 && (
             <div className="notice" role="status">
               {shortRuns.length} uložených běhů o vzdálenosti 3 km nebo méně je skryto z přehledů.
               {" "}
@@ -427,12 +466,12 @@ export default function RunsDashboard() {
               period={period}
               setPeriod={setPeriod}
               setActivePage={setActivePage}
-              deleteRun={deleteRun}
+              deleteRun={onDelete}
             />
           )}
 
           {activePage === "runs" && (
-            <RunsContainer visibleRuns={visibleRuns} period={period} setPeriod={setPeriod} deleteRun={deleteRun} />
+            <RunsContainer visibleRuns={visibleRuns} period={period} setPeriod={setPeriod} deleteRun={onDelete} />
           )}
 
           {activePage === "compare" && (
@@ -444,7 +483,7 @@ export default function RunsDashboard() {
               setMetric={setMetric}
               toggleComparison={toggleComparison}
               toggleGroup={toggleComparisonGroup}
-              deleteRun={deleteRun}
+              deleteRun={onDelete}
             />
           )}
         </div>

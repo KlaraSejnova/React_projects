@@ -15,7 +15,7 @@ export default function OverviewContainer({ visibleRuns, sortedRuns, now, cutoff
   period: Period;
   setPeriod: (period: Period) => void;
   setActivePage: (page: Page) => void;
-  deleteRun: (id: string) => void;
+  deleteRun?: (id: string) => void;
 }) {
   const totalDistance = visibleRuns.reduce((total, run) => total + run.distanceKm, 0);
   const totalDuration = visibleRuns.reduce((total, run) => total + run.durationSeconds, 0);

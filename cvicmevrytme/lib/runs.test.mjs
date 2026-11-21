@@ -1,73 +1,15 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { DOMParser } from "@xmldom/xmldom";
-import { importRuns, isLongRun, matchTcxRuns, prepareTcxImport, preserveTcxDetails } from "./runs.ts";
+import { importRuns, isLongRun } from "./runs.ts";
 
 globalThis.DOMParser = DOMParser;
 globalThis.Element = new DOMParser().parseFromString("<root/>", "application/xml").documentElement.constructor;
-
-const header = "Date,Source(s),Timezone,Steps,Distance (m),Elevation (m),Start Date/Time,Exercise Name,Duration (min),Exercise Distance (m)";
 
 test("the distance limit excludes 3 km and shorter runs without rounding", () => {
   assert.equal(isLongRun({ distanceKm: 2.999 }), false);
   assert.equal(isLongRun({ distanceKm: 3 }), false);
   assert.equal(isLongRun({ distanceKm: 3.001 }), true);
-});
-
-function activityFile(...rows) {
-  return new File([[header, ...rows].join("\n")], "Activity.csv", { type: "text/csv" });
-}
-
-test("Health Connect export imports separate runs with exercise metrics and correct time zones", async () => {
-  const file = activityFile(
-    "2026-01-15,example.app,Europe/Prague,12000,10000,300,2026-01-15 08:15:00,Ranní běh,30,5000",
-    "2026-07-15,example.app,Europe/Prague,10000,8000,200,2026-07-15 18:30:00,56 - Running,1.5,42",
-    "2026-07-15,example.app,Europe/Prague,10000,8000,200,2026-07-15 10:00:00,79 - Walking,20,900",
-    "2026-07-15,example.app,Europe/Prague,10000,8000,200,,,,",
-  );
-  const result = await importRuns(file);
-  assert.equal(result.runs.length, 2);
-  assert.deepEqual(result.warnings, []);
-  assert.equal(result.runs[0].date, "2026-01-15T07:15:00.000Z");
-  assert.equal(result.runs[0].durationSeconds, 1800);
-  assert.equal(result.runs[0].distanceKm, 5);
-  assert.equal(result.runs[0].averagePaceSecondsPerKm, 360);
-  assert.equal(result.runs[0].source, "Health Connect");
-  assert.equal(result.runs[0].elevationM, undefined);
-  assert.equal(result.runs[0].averageHeartRate, undefined);
-  assert.equal(result.runs[1].date, "2026-07-15T16:30:00.000Z");
-  assert.equal(result.runs[1].distanceKm, 0.042);
-  assert.equal(result.runs[1].durationSeconds, 90);
-  assert.deepEqual(result.runs.map((run) => run.id), (await importRuns(file)).runs.map((run) => run.id));
-});
-
-test("invalid runs and unrecognized activity names are reported without fabricating data", async () => {
-  const result = await importRuns(activityFile(
-    "2026-01-15,example.app,Europe/Prague,1000,900,20,2026-01-15 08:15:00,Ranní běh,30,",
-    "2026-01-15,example.app,Europe/Prague,1000,900,20,2026-01-15 10:00:00,Trénink,30,5000",
-    "2026-01-15,example.app,Europe/Prague,1000,900,20,2026-01-15 11:00:00,56 - Running,30,5000",
-  ));
-  assert.equal(result.runs.length, 1);
-  assert.equal(result.warnings.length, 2);
-  assert.match(result.warnings[0], /Řádek 2/);
-  assert.match(result.warnings[1], /nerozpoznaným názvem/);
-});
-
-test("ambiguous and nonexistent daylight-saving times are reported", async () => {
-  const result = await importRuns(activityFile(
-    "2026-03-29,example.app,Europe/Prague,,,,2026-03-29 02:30:00,56 - Running,30,5000",
-    "2026-10-25,example.app,Europe/Prague,,,,2026-10-25 02:30:00,56 - Running,30,5000",
-  ));
-  assert.equal(result.runs.length, 0);
-  assert.equal(result.warnings.length, 2);
-  assert.ok(result.warnings.every((warning) => warning.includes("jednoznačně")));
-});
-
-test("duplicate activity rows are not silently imported twice", async () => {
-  const row = "2026-01-15,example.app,Europe/Prague,,,,2026-01-15 08:15:00,56 - Running,30,5000";
-  const result = await importRuns(activityFile(row, row));
-  assert.equal(result.runs.length, 1);
-  assert.match(result.warnings[0], /stejný zdroj, čas a název/);
 });
 
 test("regular CSV imports still produce a single run", async () => {
@@ -192,44 +134,4 @@ test("TCX does not interpolate stationary GPS points", async () => {
   const result = await importRuns(tcxFile(tcxActivity("2026-01-01T10:00:00Z", "Running", points.join(""), 300, 180)));
   assert.equal(result.runs[0].estimatedTrack, false);
   assert.equal(result.runs[0].track.filter((point) => point.elevationM !== undefined)[1].km, 0);
-});
-
-test("TCX matching requires unique time, distance and duration agreement", () => {
-  const run = { id: "health-export:old", title: "Test", date: "2026-01-01T10:00:00Z", distanceKm: 5, durationSeconds: 1800, averagePaceSecondsPerKm: 360, source: "Health Connect", track: [] };
-  const incoming = { ...run, id: "tcx:new", source: "TCX", date: "2026-01-01T10:01:00Z" };
-  const result = matchTcxRuns([incoming], [run]);
-  assert.equal(result.matches.length, 1);
-  assert.equal(result.ready.length, 0);
-  assert.equal(matchTcxRuns([incoming], [run, { ...run, id: "health-export:other" }]).ambiguous, 1);
-  assert.equal(matchTcxRuns([incoming, { ...incoming, id: "tcx:other" }], [run]).ambiguous, 2);
-  assert.equal(matchTcxRuns([incoming], [{ ...run, distanceKm: 20 }]).ready.length, 1);
-  assert.equal(matchTcxRuns([incoming], [{ ...incoming }]).ready.length, 1);
-});
-
-test("reimporting a Health Connect CSV preserves confirmed TCX details", () => {
-  const csv = { id: "health-export:old", title: "Test", date: "2026-01-01T10:00:00Z", distanceKm: 5, durationSeconds: 1800, averagePaceSecondsPerKm: 360, source: "Health Connect", track: [] };
-  const detailed = { ...csv, source: "TCX", track: [{ km: 1, paceSecondsPerKm: 350 }] };
-  assert.deepEqual(preserveTcxDetails([csv], [detailed]), [detailed]);
-  assert.deepEqual(preserveTcxDetails([csv], [{ ...csv, distanceKm: 4 }]), [csv]);
-});
-
-test("automatic TCX import updates existing TCX records including legacy IDs", () => {
-  const incoming = { id: "tcx:new", title: "Google Fit", date: "2026-01-01T10:00:00.000Z", distanceKm: 5, durationSeconds: 1800, averagePaceSecondsPerKm: 360, source: "TCX", track: [] };
-  const legacy = { ...incoming, id: "health-export:old", title: "Original", date: "2026-01-01T10:00:00Z", distanceKm: 4 };
-  assert.deepEqual(prepareTcxImport([incoming], [legacy]), {
-    ready: [{ ...incoming, id: legacy.id, title: legacy.title }],
-    skipped: 0,
-  });
-  assert.deepEqual(prepareTcxImport([incoming], [incoming]), { ready: [incoming], skipped: 0 });
-  assert.deepEqual(prepareTcxImport([incoming], []), { ready: [incoming], skipped: 0 });
-});
-
-test("automatic TCX import skips uncertain matches without replacing existing runs", () => {
-  const incoming = { id: "tcx:new", title: "Google Fit", date: "2026-01-01T10:00:00Z", distanceKm: 5, durationSeconds: 1800, averagePaceSecondsPerKm: 360, source: "TCX", track: [] };
-  const legacy = { ...incoming, id: "health-export:old" };
-  const health = { ...legacy, source: "Health Connect" };
-  assert.deepEqual(prepareTcxImport([incoming], [health]), { ready: [], skipped: 1 });
-  assert.deepEqual(prepareTcxImport([incoming], [legacy, { ...legacy, id: "health-export:other" }]), { ready: [], skipped: 1 });
-  const nearby = { ...legacy, date: "2026-01-01T10:01:00Z" };
-  assert.deepEqual(prepareTcxImport([incoming], [nearby]), { ready: [], skipped: 1 });
 });

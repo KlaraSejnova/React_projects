@@ -17,7 +17,7 @@ export type Run = {
   averageHeartRate?: number;
   maxHeartRate?: number;
   elevationM?: number;
-  source: "Ukázkový běh" | "CSV" | "GPX" | "FIT" | "TCX" | "Health Connect";
+  source: "Ukázkový běh" | "CSV" | "GPX" | "FIT" | "TCX";
   track: TrackPoint[];
   estimatedTrack?: boolean;
 };
@@ -27,90 +27,8 @@ export type RunImportResult = {
   warnings: string[];
 };
 
-export type TcxMatch = {
-  incoming: Run;
-  existing: Run;
-};
-
 export function isLongRun(run: Run): boolean {
   return run.distanceKm > 3;
-}
-
-export function preserveTcxDetails(imported: Run[], existing: Run[]): Run[] {
-  const existingById = new Map(existing.map((run) => [run.id, run]));
-  return imported.map((run) => {
-    const previous = existingById.get(run.id);
-    return run.source === "Health Connect" && previous?.source === "TCX" ? previous : run;
-  });
-}
-
-export function matchTcxRuns(imported: Run[], existing: Run[]): {
-  ready: Run[];
-  matches: TcxMatch[];
-  ambiguous: number;
-} {
-  const existingIds = new Set(existing.map((run) => run.id));
-  const candidates = imported.map((incoming) => {
-    if (incoming.source !== "TCX" || existingIds.has(incoming.id)) return [];
-    return existing.filter((run) =>
-      run.id.startsWith("health-export:") &&
-      Math.abs(Date.parse(run.date) - Date.parse(incoming.date)) <= 300_000 &&
-      Math.abs(run.distanceKm - incoming.distanceKm) <= Math.max(0.2, run.distanceKm * 0.1) &&
-      Math.abs(run.durationSeconds - incoming.durationSeconds) <= Math.max(120, run.durationSeconds * 0.1),
-    );
-  });
-  const useCounts = new Map<string, number>();
-  for (const options of candidates) {
-    for (const run of options) useCounts.set(run.id, (useCounts.get(run.id) ?? 0) + 1);
-  }
-  const ready: Run[] = [];
-  const matches: TcxMatch[] = [];
-  let ambiguous = 0;
-  imported.forEach((incoming, index) => {
-    const options = candidates[index];
-    if (!options.length) ready.push(incoming);
-    else if (options.length === 1 && useCounts.get(options[0].id) === 1) {
-      matches.push({ incoming, existing: options[0] });
-    } else {
-      ambiguous += 1;
-    }
-  });
-  return { ready, matches, ambiguous };
-}
-
-export function prepareTcxImport(imported: Run[], existing: Run[]): {
-  ready: Run[];
-  skipped: number;
-} {
-  const existingIds = new Set(existing.map((run) => run.id));
-  const legacyTcxByTime = new Map<number, Run[]>();
-  for (const run of existing) {
-    if (run.source !== "TCX" || !run.id.startsWith("health-export:")) continue;
-    const time = Date.parse(run.date);
-    const matches = legacyTcxByTime.get(time) ?? [];
-    matches.push(run);
-    legacyTcxByTime.set(time, matches);
-  }
-
-  const reconciled: Run[] = [];
-  let ambiguousLegacy = 0;
-  for (const incoming of imported) {
-    if (existingIds.has(incoming.id)) {
-      reconciled.push(incoming);
-      continue;
-    }
-    const matches = legacyTcxByTime.get(Date.parse(incoming.date)) ?? [];
-    if (matches.length > 1) {
-      ambiguousLegacy += 1;
-    } else if (matches.length === 1) {
-      reconciled.push({ ...incoming, id: matches[0].id, title: matches[0].title });
-    } else {
-      reconciled.push(incoming);
-    }
-  }
-
-  const result = matchTcxRuns(reconciled, existing);
-  return { ready: result.ready, skipped: ambiguousLegacy + result.ambiguous + result.matches.length };
 }
 
 export function isRun(value: unknown): value is Run {
@@ -199,125 +117,6 @@ function validRun(run: Run): Run {
     throw new Error("Z importovaných údajů nelze určit tempo běhu.");
   }
   return run;
-}
-
-function parseZonedDateTime(value: string, timeZone: string): string {
-  const match = /^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})(?::(\d{2}))?$/.exec(value);
-  if (!match || !timeZone) throw new Error("Chybí platný čas začátku nebo časové pásmo.");
-  const [, year, month, day, hour, minute, second = "0"] = match;
-  const parts = [year, month, day, hour, minute, second].map(Number);
-  const [y, m, d, h, min, s] = parts;
-  const localMillis = Date.UTC(y, m - 1, d, h, min, s);
-  const localDate = new Date(localMillis);
-  if (
-    localDate.getUTCFullYear() !== y || localDate.getUTCMonth() !== m - 1 ||
-    localDate.getUTCDate() !== d || localDate.getUTCHours() !== h ||
-    localDate.getUTCMinutes() !== min || localDate.getUTCSeconds() !== s
-  ) {
-    throw new Error("Čas začátku není platné datum.");
-  }
-
-  let formatter: Intl.DateTimeFormat;
-  try {
-    formatter = new Intl.DateTimeFormat("en-GB", {
-      timeZone, year: "numeric", month: "2-digit", day: "2-digit",
-      hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23",
-    });
-  } catch (error) {
-    if (error instanceof RangeError) throw new Error("Časové pásmo není platné.");
-    throw error;
-  }
-  const localParts = (timestamp: number) => {
-    const formatted = formatter.formatToParts(timestamp);
-    const get = (type: Intl.DateTimeFormatPartTypes) =>
-      Number(formatted.find((part) => part.type === type)?.value);
-    return [get("year"), get("month"), get("day"), get("hour"), get("minute"), get("second")];
-  };
-  const offsets = [-48, 0, 48].map((hours) => {
-    const timestamp = localMillis + hours * 3_600_000;
-    const [fy, fm, fd, fh, fmin, fs] = localParts(timestamp);
-    return Date.UTC(fy, fm - 1, fd, fh, fmin, fs) - timestamp;
-  });
-  const candidates = [...new Set(offsets.map((offset) => localMillis - offset))]
-    .filter((timestamp) => localParts(timestamp).every((part, index) => part === parts[index]));
-  if (candidates.length !== 1) {
-    throw new Error("Čas začátku nelze jednoznačně určit v uvedeném časovém pásmu.");
-  }
-  return new Date(candidates[0]).toISOString();
-}
-
-async function healthExportId(source: string, date: string, title: string): Promise<string> {
-  const input = JSON.stringify([source, date, title]);
-  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(input));
-  const hash = Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
-  return `health-export:${hash}`;
-}
-
-async function parseHealthExport(rows: string[][]): Promise<RunImportResult> {
-  const headers = rows[0].map(normalizeHeader);
-  const column = (name: string) => headers.indexOf(normalizeHeader(name));
-  const indexes = {
-    name: column("Exercise Name"),
-    start: column("Start Date/Time"),
-    timezone: column("Timezone"),
-    source: column("Source(s)"),
-    duration: column("Duration (min)"),
-    distance: column("Exercise Distance (m)"),
-  };
-  if (Object.values(indexes).some((index) => index < 0)) {
-    throw new Error("Export Health Data Export neobsahuje všechny potřebné sloupce aktivit.");
-  }
-
-  const runs: Run[] = [];
-  const warnings: string[] = [];
-  const ids = new Set<string>();
-  let unknownActivities = 0;
-  for (const [index, row] of rows.slice(1).entries()) {
-    const title = row[indexes.name]?.trim() ?? "";
-    if (!title) continue;
-    const type = /^(\d+)\s*-\s*/.exec(title)?.[1];
-    const isRunning = type
-      ? type === "56" || type === "57"
-      : /(?:^|[^\p{L}])(?:běh|běžecký|running|run)(?=$|[^\p{L}])/iu.test(title);
-    if (!isRunning) {
-      if (!type && !/\bwalking\b/i.test(title) && !/chůze/i.test(title)) unknownActivities += 1;
-      continue;
-    }
-
-    try {
-      const date = parseZonedDateTime(row[indexes.start] ?? "", row[indexes.timezone] ?? "");
-      const source = row[indexes.source]?.trim();
-      if (!source) throw new Error("Chybí zdroj aktivity.");
-      const durationMinutes = numericValue(row[indexes.duration]);
-      const distanceMeters = numericValue(row[indexes.distance]);
-      const durationSeconds = (durationMinutes ?? 0) * 60;
-      const distanceKm = (distanceMeters ?? 0) / 1000;
-      const id = await healthExportId(source, date, title);
-      if (ids.has(id)) throw new Error("Dva běhy mají stejný zdroj, čas a název.");
-      const run = validRun({
-        id,
-        title: title.replace(/^(56|57)\s*-\s*/i, "") || "Běh",
-        date,
-        distanceKm,
-        durationSeconds,
-        averagePaceSecondsPerKm: durationSeconds / distanceKm,
-        source: "Health Connect",
-        track: [],
-      });
-      ids.add(id);
-      runs.push(run);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Neznámá chyba.";
-      warnings.push(`Řádek ${index + 2}: ${message}`);
-    }
-  }
-  if (unknownActivities) {
-    warnings.push(`${unknownActivities} aktivit s nerozpoznaným názvem nebylo zahrnuto.`);
-  }
-  if (!runs.length && !warnings.length) {
-    throw new Error("V exportu nebyl nalezen žádný rozpoznaný běh.");
-  }
-  return { runs, warnings };
 }
 
 function parseCsv(text: string, fileName: string): Run {
@@ -802,14 +601,6 @@ export async function importRuns(file: File): Promise<RunImportResult> {
   if (extension === "fit") return { runs: [await parseFit(file)], warnings: [] };
   if (extension === "gpx") return { runs: [await parseGpx(await file.text(), file.name)], warnings: [] };
   if (extension === "tcx") return parseTcx(await file.text());
-  if (extension === "csv") {
-    const text = await file.text();
-    const rows = parseCsvRows(text);
-    const headers = rows[0]?.map(normalizeHeader) ?? [];
-    if (headers.includes("exercisename") && headers.includes("exercisedistancem")) {
-      return parseHealthExport(rows);
-    }
-    return { runs: [parseCsv(text, file.name)], warnings: [] };
-  }
+  if (extension === "csv") return { runs: [parseCsv(await file.text(), file.name)], warnings: [] };
   throw new Error("Nepodporovaný formát. Vyber soubor GPX, CSV, FIT nebo TCX.");
 }

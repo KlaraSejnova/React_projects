@@ -1,6 +1,6 @@
 # Běžecký deník
 
-Webový dashboard pro přehled a porovnávání běžeckých tréninků. Po přihlášení se běhy ukládají do Supabase pod účtem uživatele a jsou dostupné na dalších přihlášených zařízeních.
+Webový dashboard pro přehled a porovnávání běžeckých tréninků. Po přihlášení se běhy ukládají do Supabase pod účtem uživatele a jsou dostupné na dalších přihlášených zařízeních. Přihlašovací obrazovka nabízí také read-only demo bez účtu.
 
 Dashboard spravuje stav a synchronizaci v `app/runs-dashboard.tsx`. Jednotlivé obrazovky a sdílené komponenty jsou oddělené v `app/components/`.
 
@@ -14,7 +14,9 @@ npm run dev
 
 Do `.env.local` doplň `NEXT_PUBLIC_SUPABASE_URL` a veřejný `NEXT_PUBLIC_SUPABASE_ANON_KEY` z nastavení projektu Supabase. Nepoužívej `service_role` ani secret klíč v klientské aplikaci.
 
-Před prvním přihlášením spusť SQL migraci [`supabase/migrations/20261119150000_create_runs.sql`](./supabase/migrations/20261119150000_create_runs.sql) v Supabase SQL Editoru. Tabulka používá Row Level Security; přihlášený uživatel může číst a měnit pouze vlastní běhy. Poté otevři [http://localhost:3000](http://localhost:3000) a vytvoř účet nebo se přihlas.
+Pro prohlédnutí aplikace bez Supabase klikni na přihlašovací obrazovce na **Vyzkoušet demo**. Demo obsahuje čtyři vybrané skutečné běhy včetně statistik a GPS tras. Je dostupné bez přihlášení všem návštěvníkům a dovoluje pouze prohlížení; nic se neukládá ani neupravuje. Běhy do 3 km nejsou v přehledech zobrazeny.
+
+Před prvním přihlášením spusť SQL migraci [`supabase/migrations/20261119150000_create_runs.sql`](./supabase/migrations/20261119150000_create_runs.sql) v Supabase SQL Editoru. Tabulka používá Row Level Security; přihlášený uživatel může číst a měnit pouze vlastní běhy. Poté otevři [http://localhost:3000](http://localhost:3000) a přihlas se existujícím účtem. Aplikace registraci nových účtů nenabízí.
 
 ## Import aktivit
 
@@ -24,7 +26,7 @@ Deník zobrazuje a importuje pouze běhy delší než 3 km; hranice se posuzuje 
 
 Grafy pro lepší čitelnost jemně zaoblují spojnice mezi jednotlivými body, aniž by měnily uložené hodnoty. Průběh mezi body je pouze interpolace; pokud je k dispozici jen souhrnná hodnota, graf zůstane rovný.
 
-V přehledu graf týdenních kilometrů odpovídá zvolenému období 30 dní, 90 dní nebo celé historii, zobrazuje jen týdny se zaznamenanými běhy a lze jej posouvat vodorovně. První týden omezeného období může obsahovat jen část týdne; detail uvádí začátek období. Při více než 260 týdnech s běhy lze procházet další části tlačítky. Kliknutím na sloupec se zobrazí vzdálenost a jednotlivé běhy daného týdne. Současný týden je fialový a vybraný tyrkysový; při výběru současného týdne jej označuje fialový okraj. Dalším kliknutím na stejný sloupec se detail zavře.
+V přehledu graf týdenních kilometrů odpovídá zvolenému období 30 dní, 90 dní nebo celé historii, zobrazuje jen týdny se zaznamenanými běhy a lze jej posouvat vodorovně. První týden omezeného období může obsahovat jen část týdne; detail uvádí začátek období. Při více než 260 týdnech s běhy lze procházet další části tlačítky. Kliknutím na sloupec se zobrazí vzdálenost a jednotlivé běhy daného týdne. Současný týden je zlatý a vybraný modrý; při výběru současného týdne jej zvýrazní zlatý okraj. Dalším kliknutím na stejný sloupec se detail zavře.
 
 V části **Moje běhy** se kliknutím na běh rozbalí jeho vzdálenost, průměrné tempo, čas a převýšení spolu s grafy tempa a nadmořské výšky podle vzdálenosti. Výškový profil se zobrazí jen při dostatku zaznamenaných výškových bodů; samotné souhrnné převýšení neurčuje průběh výšky.
 
@@ -40,12 +42,4 @@ Po výběru složky se běhy automaticky uloží nebo aktualizují bez potvrzova
 
 Průběh tempa se odhaduje z časů a vzdáleností bodů, obvykle po 100 m; při dlouhých mezerách jsou hodnoty mezi body interpolované a nejsou přesným měřením okamžitého tempa. Pokud se vzdálenost aktualizuje skokově, ale GPS body mezi aktualizacemi ukazují pohyb, deník odhadne vzdálenost mezi nimi podle času a tempo zprůměruje přibližně po 500 m. Výškový profil je pak také orientační a grafy na to upozorňují. Pro použití tohoto zpracování je nutné starší běh znovu importovat. Souhrnný čas a vzdálenost pocházejí ze souboru TCX a mohou se lišit od údajů v Google Fit. Když je pohybových bodů málo, graf zobrazí jen souhrnné tempo. GPS se zobrazí pouze tehdy, když je v záznamu. Nové záznamy TCX mají stabilní ID podle času aktivity, takže opakovaný import stejného souboru je aktualizuje; dva různé běhy s úplně stejným časem začátku nelze takto rozlišit. Při ztrátě spojení během ukládání většího importu aplikace nahlásí počet uložených a neuložených běhů; import lze zopakovat.
 
-Testy importu, grafů, GPS a odstraňování běhů lze spustit příkazem `node --test lib/runs.test.mjs lib/chart.test.mjs lib/gps.test.mjs lib/remove-short-runs.test.mjs` v adresáři projektu s Node.js 24.
-
-## Health Connect pro Android
-
-Webový prohlížeč nemá přímý přístup k Health Connectu. Doprovodná aplikace v [`android/`](./android/) proto synchronizuje běhy do stejného účtu Supabase. Je určená pro Android; aplikace Health Connect musí být na telefonu dostupná.
-
-V Android Studiu otevři složku `android`. Pro sestavení je potřeba Android SDK s API 37 a stejné proměnné `NEXT_PUBLIC_SUPABASE_URL` a `NEXT_PUBLIC_SUPABASE_ANON_KEY` ve webovém `.env.local` nebo v prostředí Gradlu. Používej výhradně veřejný klíč. Příkazem `./gradlew :app:assembleDebug` v `android/` lze sestavit testovací APK. Vytvoř si účet přes web a v Android aplikaci se přihlas stejným e-mailem a heslem. Přihlášení v aplikaci zůstává jen v paměti.
-
-Synchronizace probíhá pouze po stisknutí tlačítka. Při prvním použití potvrď v Health Connectu přístup ke cvičení a vzdálenosti; tep je volitelný. Aplikace načítá běhy a běhy na pásu z posledních 30 dní, započítává vzdálenost a tep ze stejného zdroje jako aktivita a vynechává aktivity bez platné vzdálenosti, doby či identifikátoru i běhy o délce 3 km nebo méně. Pro použití tohoto omezení je nutné Android aplikaci znovu sestavit a nainstalovat. Zaznamenává souhrn, nikoli GPS trasu nebo podrobný průběh. Opakovaná synchronizace aktualizuje stejný záznam, nevytváří další kopii. Pokud máš webový deník otevřený během synchronizace, pro načtení nových běhů stránku obnov. Smazaný běh delší než 3 km se může při další synchronizaci z Health Connectu znovu objevit. Odebrání oprávnění nesmaže již synchronizované běhy; lze je smazat ve webu.
+Testy importu, grafů, ukázkových dat, GPS a odstraňování běhů lze spustit příkazem `node --test lib/runs.test.mjs lib/chart.test.mjs lib/demo-runs.test.mjs lib/gps.test.mjs lib/remove-short-runs.test.mjs` v adresáři projektu s Node.js 24.

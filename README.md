@@ -6,7 +6,7 @@ Repozitář obsahuje pět samostatných aplikací. Každá má vlastní `package
 
 | Projekt | Technologie | Popis |
 | --- | --- | --- |
-| [Běžecký deník](./cvicmevrytme/README.md) | Next.js, React, TypeScript, Supabase; doprovodná aplikace pro Android | Import a přehled běhů, porovnávání GPS tras a synchronizace s Health Connectem. |
+| [Běžecký deník](./cvicmevrytme/README.md) | Next.js, React, TypeScript, Supabase | Import běhů z Google Fit (TCX), přehled aktivit a porovnávání GPS tras. |
 | [Klub rodičů](./klubrodicu/README.md) | Next.js, React, TypeScript, Supabase | Web klubu s galerií, přehledem akcí a jejich administrací. |
 | [Portfolio](./portfolio/README.md) | React, TypeScript, Create React App, Supabase | Osobní portfolio, profil, projekty a správa výletů. |
 | [Rybicky](./rybicky/README.md) | Next.js, React, Three.js, React Three Fiber | Interaktivní 3D scéna s rybami a možností je krmit kliknutím. |

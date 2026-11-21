@@ -11,7 +11,7 @@ export default function RunList({
   colors,
 }: {
   runs: Run[];
-  onDelete: (id: string) => void;
+  onDelete?: (id: string) => void;
   expandable?: boolean;
   colors?: ReadonlyMap<string, string>;
 }) {
@@ -24,7 +24,7 @@ export default function RunList({
 
 function RunRow({ run, onDelete, expandable, color }: {
   run: Run;
-  onDelete: (id: string) => void;
+  onDelete?: (id: string) => void;
   expandable: boolean;
   color?: string;
 }) {
@@ -55,9 +55,11 @@ function RunRow({ run, onDelete, expandable, color }: {
           </div>
           <div className="run-data"><strong>{run.distanceKm.toFixed(2)} km</strong><span>{formatDuration(run.durationSeconds)}</span></div>
           <div className="run-data"><strong>{formatPace(run.averagePaceSecondsPerKm)} /km</strong><span>tempo</span></div>
-          <button aria-label={`Odebrat běh ${run.title}`} className="delete-button" onClick={() => onDelete(run.id)}>
-            <Icon name="trash" size={14} />
-          </button>
+          {onDelete && (
+            <button aria-label={`Odebrat běh ${run.title}`} className="delete-button" onClick={() => onDelete(run.id)}>
+              <Icon name="trash" size={14} />
+            </button>
+          )}
       </div>
       {expandable && (
         <div className="run-detail" hidden={!expanded} id={detailId}>

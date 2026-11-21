@@ -179,6 +179,15 @@ button {
   font-size: 11px;
 }
 
+.demo-sync-pill .status-dot {
+  background: var(--orange);
+  box-shadow: 0 0 10px #f2bf4b99;
+}
+
+.demo-mode .page-heading .eyebrow {
+  color: #ffd05b;
+}
+
 .status-dot {
   width: 7px;
   height: 7px;
@@ -1643,7 +1652,7 @@ button {
   border: 1px solid #ffffff25;
   border-radius: 24px;
   background: linear-gradient(145deg, #ffffff12, #ffffff05 56%, #57bfff0a);
-  padding: 40px;
+  padding: 26px;
   box-shadow: 0 24px 80px #00000055, inset 0 1px 0 #ffffff15;
   backdrop-filter: blur(22px) saturate(150%);
 }
@@ -1651,7 +1660,7 @@ button {
 .auth-card-icon {
   width: 46px;
   height: 46px;
-  margin-bottom: 28px;
+  margin-bottom: 16px;
   border: 1px solid #57bfff55;
   border-radius: 14px;
   background: #57bfff22;
@@ -1672,7 +1681,7 @@ button {
 }
 
 .auth-description {
-  margin: 12px 0 28px;
+  margin: 8px 0 15px;
   color: #a7acad;
   font-size: 14px;
   line-height: 1.65;
@@ -1680,12 +1689,12 @@ button {
 
 .auth-form {
   display: grid;
-  gap: 19px;
+  gap: 12px;
 }
 
 .auth-form label {
   display: grid;
-  gap: 9px;
+  gap: 8px;
   color: #d1d3d3;
   font-size: 13px;
   font-weight: 600;
@@ -1693,7 +1702,7 @@ button {
 
 .auth-form input {
   width: 100%;
-  min-height: 49px;
+  min-height: 44px;
   border: 1px solid #ffffff24;
   border-radius: 10px;
   background: #080b0c88;
@@ -1714,7 +1723,7 @@ button {
 
 .auth-submit {
   width: 100%;
-  min-height: 50px;
+  min-height: 48px;
   margin-top: 4px;
   border-color: #a7e2ff88;
   border-radius: 10px;
@@ -1730,31 +1739,52 @@ button {
   opacity: 0.7;
 }
 
-.auth-switch {
+.auth-demo {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  align-items: baseline;
-  gap: 4px 7px;
-  margin-top: 27px;
-  border-top: 1px solid #373b3d;
-  padding-top: 22px;
-  color: #a7acad;
-  font-size: 13px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-top: 18px;
+  border-top: 1px solid #ffffff1c;
+  padding-top: 15px;
 }
 
-.auth-mode-button {
+.auth-demo-copy {
+  min-width: 0;
+}
+
+.auth-demo-copy p {
+  margin: 0;
+  color: #c4c8ca;
+  font-size: 12px;
+}
+
+.auth-demo-copy small {
+  display: block;
+  margin-top: 4px;
+  color: #92999d;
+  font-size: 10px;
+}
+
+.auth-demo-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  padding: 7px 0;
   color: #81d1ff;
   font-size: 13px;
+  font-weight: 600;
 }
 
-.auth-mode-button:hover {
+.auth-demo-button:hover {
   color: #f2bf4b;
   text-decoration: underline;
 }
 
-.auth-mode-button:focus-visible,
-.auth-submit:focus-visible {
+.auth-submit:focus-visible,
+.auth-demo-button:focus-visible {
   outline: 2px solid #74d0ff;
   outline-offset: 3px;
 }
