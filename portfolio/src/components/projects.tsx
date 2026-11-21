@@ -108,47 +108,9 @@ const Projects = ({ onBack, onTrips, onProfile }: ProjectsProps) => {
         <article className="project-card">
           <div className="project-preview running-preview">
             <img
-              className="running-preview-map"
-              src={`${process.env.PUBLIC_URL}/bezecky-denik-topographic-map.svg`}
-              alt="Topografická mapa s trasou běhu z přihlašovací stránky běžeckého deníku"
+              src={`${process.env.PUBLIC_URL}/bezecky-denik-preview.png`}
+              alt="Náhled přihlašovací stránky běžeckého deníku: vrstevnicová mapa s trasou a popiskem „Každý kilometr se počítá. Tvá cesta, tvé tempo.“"
             />
-            <svg
-              className="running-preview-route"
-              aria-hidden="true"
-              focusable="false"
-              viewBox="0 0 520 230"
-              preserveAspectRatio="none"
-            >
-              <defs>
-                <linearGradient id="running-preview-route-gradient" x1="58" y1="167" x2="447" y2="49" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#48bfff" />
-                  <stop offset="1" stopColor="#f2bf4b" />
-                </linearGradient>
-              </defs>
-              <path className="running-preview-route-shadow" d="M58 167c55-3 40-53 93-47 34 4 25 36 66 29 35-6 28-50 67-56 44-7 54 28 90 9 23-12 33-37 73-53" />
-              <path className="running-preview-route-path" d="M58 167c55-3 40-53 93-47 34 4 25 36 66 29 35-6 28-50 67-56 44-7 54 28 90 9 23-12 33-37 73-53" />
-              <circle cx="58" cy="167" r="7" fill="#202426" stroke="#8bd8ff" strokeWidth="3" />
-              <circle cx="447" cy="49" r="7" fill="#f2bf4b" stroke="#ffedb2" strokeWidth="3" />
-            </svg>
-            <a
-              className="running-preview-map-credit"
-              href="https://www.openstreetmap.org/copyright"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              © OpenStreetMap contributors · Elevation: Mapzen Terrain
-            </a>
-            <div className="running-preview-caption">
-              <span className="running-preview-caption-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none">
-                  <path d="m13.5 5.5 2-2 2 2" />
-                  <path d="M15.5 3.5v5a3 3 0 0 1-3 3h-2a3 3 0 0 0-3 3v6" />
-                  <circle cx="7.5" cy="5.5" r="2" />
-                  <path d="m12 13 3 2 3-1" />
-                </svg>
-              </span>
-              <span><strong>Každý kilometr se počítá</strong><small>Tvá cesta, tvé tempo.</small></span>
-            </div>
           </div>
           <div className="project-details">
             <p className="project-number">
