@@ -18,6 +18,10 @@ Pro prohlédnutí aplikace bez Supabase klikni na přihlašovací obrazovce na *
 
 Před prvním přihlášením spusť SQL migraci [`supabase/migrations/20261119150000_create_runs.sql`](./supabase/migrations/20261119150000_create_runs.sql) v Supabase SQL Editoru. Tabulka používá Row Level Security; přihlášený uživatel může číst a měnit pouze vlastní běhy. Poté otevři [http://localhost:3000](http://localhost:3000) a přihlas se existujícím účtem. Aplikace registraci nových účtů nenabízí.
 
+## Nasazení na Netlify
+
+V Netlify vytvoř web z tohoto repozitáře a jako konfigurační soubor vyber [`../netlify-cvicmevrytme.toml`](../netlify-cvicmevrytme.toml). V nastavení webu doplň proměnné prostředí `NEXT_PUBLIC_SUPABASE_URL` a `NEXT_PUBLIC_SUPABASE_ANON_KEY` s hodnotami z projektu Supabase. Použij pouze veřejný anon/publishable klíč, nikdy `service_role` ani secret klíč.
+
 ## Import aktivit
 
 Tlačítkem **Importovat běh** vyber složku s TCX soubory z Google Fit. Importované běhy lze zobrazit v přehledu, porovnat libovolný počet aktivit a odebrat z deníku. Ostatní formáty už nelze v rozhraní vybrat; dříve uložené běhy tím nejsou dotčeny.

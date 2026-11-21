@@ -12,7 +12,7 @@ Repozitář obsahuje pět samostatných aplikací. Každá má vlastní `package
 | [Rybicky](./rybicky/README.md) | Next.js, React, Three.js, React Three Fiber | Interaktivní 3D scéna s rybami a možností je krmit kliknutím. |
 | [Weekdashboard](./weekdashboard/README.md) | Next.js, React, TypeScript, Supabase | Týdenní přehled dětských rutin a sledování jejich plnění. |
 
-Portfolio představuje Weekdashboard jako jeden z projektů.
+Portfolio představuje Weekdashboard, Klub rodičů a Běžecký deník.
 
 ## Spuštění
 
@@ -44,6 +44,7 @@ Příkazy spouštěj v adresáři příslušného projektu:
 
 - Kořenový [`netlify.toml`](./netlify.toml) nastavuje nasazení Portfolia.
 - [`netlify-weekdashboard.toml`](./netlify-weekdashboard.toml) nastavuje nasazení Weekdashboardu.
+- [`netlify-cvicmevrytme.toml`](./netlify-cvicmevrytme.toml) nastavuje nasazení Běžeckého deníku.
 - [`klubrodicu/netlify.toml`](./klubrodicu/netlify.toml) nastavuje nasazení webu Klubu rodičů.
 - [`supabase/dashboard-schema.sql`](./supabase/dashboard-schema.sql) obsahuje schéma databáze Weekdashboardu.
 - Projektové README popisují příslušné migrace a nastavení Supabase.

@@ -8,6 +8,7 @@ type ProjectsProps = {
 
 const weekdashboardUrl = "https://weekdashboard.netlify.app";
 const klubrodicuUrl = "https://klubrodicu.netlify.app";
+const bezeckyDenikUrl = "https://bezeckydenik.netlify.app";
 
 const Projects = ({ onBack, onTrips, onProfile }: ProjectsProps) => {
   return (
@@ -45,8 +46,8 @@ const Projects = ({ onBack, onTrips, onProfile }: ProjectsProps) => {
         <p className="projects-kicker">Vybrané projekty</p>
         <h1>Co vzniká pod rukama</h1>
         <p>
-          Malé aplikace a nápady, které postupně rostou. Tady se budou projekty
-          časem přidávat.
+          Malé aplikace a nápady, které postupně rostou. Tady sdílím projekty,
+          na kterých právě pracuji.
         </p>
       </header>
 
@@ -100,6 +101,45 @@ const Projects = ({ onBack, onTrips, onProfile }: ProjectsProps) => {
               rel="noopener noreferrer"
             >
               Otevřít web
+              <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </article>
+        <article className="project-card">
+          <div
+            className="project-preview running-preview"
+            role="img"
+            aria-label="Ukázka běžeckého deníku s přehledem běhů a GPS tras"
+          >
+            <div className="running-preview-panel">
+              <p>BĚŽECKÝ DENÍK</p>
+              <strong>Moje běhy</strong>
+              <div className="running-preview-stats">
+                <span>Celkem<br /><b>128 km</b></span>
+                <span>Aktivity<br /><b>16 běhů</b></span>
+              </div>
+              <svg viewBox="0 0 360 112" aria-hidden="true">
+                <path d="M8 92 44 77l34 8 39-41 35 17 34-32 31 15 31-23 32 19 42-29 30 16" />
+                <path className="running-preview-route" d="M28 34c8-16 30-10 27 5-2 10-16 12-10 23 5 10 20 3 26 15 7 15-13 24-22 14-7-8 1-19 13-22 15-4 23 14 35 6 13-9 4-28 18-31 13-3 15 16 28 14 11-2 13-19 26-18 15 1 11 20 24 24 13 3 20-13 33-7 12 5 3 21 15 27 12 5 20-8 31-3 8 4 7 15 18 16" />
+              </svg>
+            </div>
+          </div>
+          <div className="project-details">
+            <p className="project-number">
+              03 / Běžecký deník / osobní projekt
+            </p>
+            <h2>Běžecký deník</h2>
+            <p>
+              Osobní přehled běžeckých tréninků s importem z Google Fit,
+              porovnáváním GPS tras a bezpečnou synchronizací mezi zařízeními.
+            </p>
+            <a
+              className="project-link"
+              href={bezeckyDenikUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Otevřít běžecký deník
               <span aria-hidden="true">↗</span>
             </a>
           </div>

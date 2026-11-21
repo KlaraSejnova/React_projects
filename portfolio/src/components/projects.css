@@ -146,6 +146,69 @@
   background: #f7f4e8;
 }
 
+.running-preview {
+  display: grid;
+  place-items: center;
+  padding: 9%;
+  background:
+    radial-gradient(ellipse at 82% 18%, rgba(201, 168, 96, 0.28), transparent 35%),
+    #e8e4d4;
+}
+
+.running-preview-panel {
+  width: 100%;
+  padding: 7%;
+  background: #f7f4e8;
+  border: 1px solid rgba(38, 60, 52, 0.2);
+  box-shadow: 8px 9px 0 rgba(91, 73, 52, 0.14);
+}
+
+.running-preview-panel > p {
+  margin: 0 0 8px;
+  color: #6d4e38;
+  font-size: clamp(0.45rem, 1vw, 0.72rem);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.running-preview-panel > strong {
+  color: #18251f;
+  font-size: clamp(1.05rem, 3vw, 2rem);
+}
+
+.running-preview-stats {
+  display: flex;
+  gap: 12%;
+  margin: 5% 0 1%;
+  color: #66736b;
+  font-size: clamp(0.5rem, 1.15vw, 0.8rem);
+  line-height: 1.5;
+}
+
+.running-preview-stats b {
+  color: #18251f;
+  font-size: 1.25em;
+}
+
+.running-preview-panel svg {
+  display: block;
+  width: 100%;
+  overflow: visible;
+}
+
+.running-preview-panel svg path {
+  fill: none;
+  stroke: #b7ad94;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.running-preview-panel svg .running-preview-route {
+  stroke: #c49336;
+  stroke-width: 3;
+}
+
 .project-details {
   grid-area: details;
   display: flex;
