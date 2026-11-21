@@ -148,7 +148,10 @@
 
 .running-preview {
   align-self: center;
+  display: grid;
+  place-items: center;
   aspect-ratio: 1054 / 504;
+  padding: 1% 1.5%;
   background: #090d0e;
 }
 
