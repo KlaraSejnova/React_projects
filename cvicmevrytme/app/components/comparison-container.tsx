@@ -86,7 +86,7 @@ export default function ComparisonContainer({ gpsRoutes, comparedRuns, routeRun,
                         onClick={() => toggleComparison(run.id)}
                         type="button"
                       >
-                        <span className="compare-color" style={{ background: selectedColors.get(run.id) ?? "#50594e" }} />
+                        <span className="compare-color" style={{ background: selectedColors.get(run.id) ?? "#8e9497" }} />
                         {run.title} · {formatDate(run.date)}
                       </button>
                     );

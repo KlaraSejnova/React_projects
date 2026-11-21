@@ -57,15 +57,15 @@ export default function AuthScreen({ client }: { client: SupabaseClient<Database
               <svg aria-hidden="true" focusable="false" viewBox="0 0 520 230" fill="none" preserveAspectRatio="xMidYMid slice">
                 <defs>
                   <linearGradient id="auth-route-gradient" x1="58" y1="167" x2="447" y2="49" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#8264ff" />
-                    <stop offset="1" stopColor="#65d9ee" />
+                    <stop stopColor="#48bfff" />
+                    <stop offset="1" stopColor="#f2bf4b" />
                   </linearGradient>
                 </defs>
                 <image href="/auth-topographic-map.svg" x="0" y="0" width="520" height="230" preserveAspectRatio="none" />
                 <path className="auth-route-shadow" d="M58 167c55-3 40-53 93-47 34 4 25 36 66 29 35-6 28-50 67-56 44-7 54 28 90 9 23-12 33-37 73-53" />
                 <path className="auth-route-path" d="M58 167c55-3 40-53 93-47 34 4 25 36 66 29 35-6 28-50 67-56 44-7 54 28 90 9 23-12 33-37 73-53" />
-                <circle cx="58" cy="167" r="7" fill="#141b2a" stroke="#a48fff" strokeWidth="3" />
-                <circle cx="447" cy="49" r="7" fill="#65d9ee" stroke="#d4fbff" strokeWidth="3" />
+                <circle cx="58" cy="167" r="7" fill="#202426" stroke="#8bd8ff" strokeWidth="3" />
+                <circle cx="447" cy="49" r="7" fill="#f2bf4b" stroke="#ffedb2" strokeWidth="3" />
               </svg>
               <a className="auth-map-credit" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">
                 © OpenStreetMap contributors · Elevation: Mapzen Terrain

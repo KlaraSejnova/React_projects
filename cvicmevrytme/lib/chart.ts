@@ -3,10 +3,14 @@ import type { Run, TrackPoint } from "./runs";
 export type ChartPoint = { x: number; y: number };
 export type ChartMetric = "pace" | "heartRate" | "elevation";
 
-const COMPARE_COLORS = ["#4000ff", "#4ed8f5", "#b78cff"];
+const COMPARE_COLORS = ["#57bfff", "#f2bf4b", "#c2ccd1"];
 
 export function getCompareColor(index: number): string {
-  return COMPARE_COLORS[index] ?? `hsl(${Math.round((index * 137.508) % 360)} 75% 65%)`;
+  if (COMPARE_COLORS[index]) return COMPARE_COLORS[index];
+  const hues = [200, 45, 0];
+  const hue = hues[index % hues.length];
+  const lightness = 48 + (Math.floor(index / hues.length) % 5) * 8;
+  return `hsl(${hue} 62% ${lightness}%)`;
 }
 
 export function toggleRunSelection(selectedIds: string[], id: string): string[] {
