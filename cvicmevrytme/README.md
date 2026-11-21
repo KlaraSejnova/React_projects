@@ -20,7 +20,7 @@ Před prvním přihlášením spusť SQL migraci [`supabase/migrations/202611191
 
 ## Nasazení na Netlify
 
-V Netlify vytvoř web z tohoto repozitáře a jako konfigurační soubor vyber [`../netlify-cvicmevrytme.toml`](../netlify-cvicmevrytme.toml). V nastavení webu doplň proměnné prostředí `NEXT_PUBLIC_SUPABASE_URL` a `NEXT_PUBLIC_SUPABASE_ANON_KEY` s hodnotami z projektu Supabase. Použij pouze veřejný anon/publishable klíč, nikdy `service_role` ani secret klíč.
+Konfigurace nasazení je v [`netlify.toml`](./netlify.toml). Při vytvoření webu z tohoto monorepa nastav jako základní adresář `cvicmevrytme`. V nastavení webu doplň proměnné prostředí `NEXT_PUBLIC_SUPABASE_URL` a `NEXT_PUBLIC_SUPABASE_ANON_KEY` s hodnotami z projektu Supabase. Použij pouze veřejný anon/publishable klíč, nikdy `service_role` ani secret klíč.
 
 ## Import aktivit
 

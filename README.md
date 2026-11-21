@@ -44,7 +44,7 @@ Příkazy spouštěj v adresáři příslušného projektu:
 
 - Kořenový [`netlify.toml`](./netlify.toml) nastavuje nasazení Portfolia.
 - [`netlify-weekdashboard.toml`](./netlify-weekdashboard.toml) nastavuje nasazení Weekdashboardu.
-- [`netlify-cvicmevrytme.toml`](./netlify-cvicmevrytme.toml) nastavuje nasazení Běžeckého deníku.
+- [`cvicmevrytme/netlify.toml`](./cvicmevrytme/netlify.toml) nastavuje nasazení Běžeckého deníku.
 - [`klubrodicu/netlify.toml`](./klubrodicu/netlify.toml) nastavuje nasazení webu Klubu rodičů.
 - [`supabase/dashboard-schema.sql`](./supabase/dashboard-schema.sql) obsahuje schéma databáze Weekdashboardu.
 - Projektové README popisují příslušné migrace a nastavení Supabase.

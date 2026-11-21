@@ -1,5 +1,4 @@
 [build]
-  base = "cvicmevrytme"
   command = "npm run build"
   publish = ".next"
 
